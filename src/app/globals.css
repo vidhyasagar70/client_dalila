@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  /* Light & dark mode theme colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Font variables (linked from layout.tsx) */
+  --font-jost: "Jost", system-ui, sans-serif;
+  --font-playfair: "Playfair Display", serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* Global defaults */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-jost);
+  margin: 0;
+  padding: 0;
+}
+
+/* Font utility classes */
+.font-jost {
+  font-family: var(--font-jost);
+}
+
+.font-playfair {
+  font-family: var(--font-playfair);
+}
+
+/* ===== Custom Scrollbar Styling ===== */
+
+/* For Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 12px; /* Slightly increased width */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #c89e3a; /* Gold color */
+  border-radius: 10px;
+  border: 3px solid #f1f1f1; /* Adds clean contrast */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #b98d2e; /* Darker gold on hover */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c89e3a #f1f1f1;
+}
+
