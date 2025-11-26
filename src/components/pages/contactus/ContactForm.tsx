@@ -231,7 +231,7 @@ export default function ContactUsPage() {
                                             <p
                                                 className={`text-gray-600 text-base ${jost.className}`}
                                             >
-                                                +32 3 231 63 27
+                                                +32487939351
                                             </p>
                                         </div>
                                     </div>

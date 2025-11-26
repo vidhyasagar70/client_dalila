@@ -251,7 +251,7 @@ export default function RegisterPage() {
                         <div className="mt-2 mb-10 md:mb-20 space-y-2 text-sm opacity-90">
                             <div className="flex items-center justify-center gap-2">
                                 <Phone className="text-[#FFD166] w-4 h-4 flex-shrink-0" />
-                                <span>+32 3 231 63 27</span>
+                                <span>+32487939351</span>
                             </div>
                             <div className="flex items-center justify-center gap-2">
                                 <Mail className="text-[#FFD166] w-4 h-4 flex-shrink-0" />
