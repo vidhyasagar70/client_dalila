@@ -429,7 +429,7 @@ function CustomerDetailsContent() {
         }
 
         // Phone number validation (10-15 digits)
-        const phoneRegex = /^\d{10,15}$/;
+        const phoneRegex = /^\d{8,15}$/;
         if (!phoneRegex.test(phoneNumber)) {
             setError("Phone number must be 10-15 digits");
             return false;
@@ -744,7 +744,7 @@ function CustomerDetailsContent() {
                             <div className="flex items-center justify-center gap-2">
                                 <Phone className="text-[#FFD166] w-4 h-4 flex-shrink-0" />
 
-                                <span> +32 3 231 63 27</span>
+                                <span> +32487939351</span>
                             </div>
                             <div className="flex items-center justify-center gap-2">
                                 <Mail className="text-[#FFD166] w-4 h-4 flex-shrink-0" />
