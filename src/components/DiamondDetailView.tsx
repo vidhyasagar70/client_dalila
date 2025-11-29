@@ -48,7 +48,6 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
 }) => {
   const [selectedImage] = useState<string>(diamond.REAL_IMAGE || "");
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [isAddingToHold, setIsAddingToHold] = useState(false);
   const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
   const [enquiryText, setEnquiryText] = useState("");
@@ -86,7 +85,6 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
   }, []);
 
   const videoUrl = (diamond as DiamondData & { MP4?: string }).MP4 || "";
-  const videoThumbnail = diamond.REAL_IMAGE || "";
 
   const formatCurrency = (value: string | number) => {
     const num = parseFloat(String(value));
@@ -145,11 +143,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
     }
   };
 
-  const handleVideoClick = () => {
-    if (videoUrl) {
-      setIsPlayingVideo(true);
-    }
-  };
+
 
   const handleAddToHold = async () => {
     try {
@@ -342,48 +336,20 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
             <div className="lg:col-span-4 flex items-center justify-center">
               {/* Video Section (matched height with image) */}
               {videoUrl ? (
-                <div className="bg-white overflow-hidden h-[500px] w-full flex items-center justify-center">
-                  <div className="relative bg-gray-50 h-full w-full">
-                    {!isPlayingVideo ? (
-                      <div
-                        className="relative w-full h-full cursor-pointer group"
-                        onClick={handleVideoClick}
+                  <div className="bg-white overflow-hidden h-[500px] w-full flex items-center justify-center">
+                    <div className="relative bg-gray-50 h-full w-full">
+                      <video
+                        src={videoUrl}
+                        autoPlay
+                        loop
+                        muted
+                        className="w-full h-full object-contain"
                       >
-                        {videoThumbnail ? (
-                          <Image
-                            src={videoThumbnail}
-                            alt="Diamond Video"
-                            fill
-                            className="object-contain"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                            <span className="text-sm text-gray-400">Video Available</span>
-                          </div>
-                        )}
-
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                            <Play size={20} className="text-[#050C3A] ml-1" fill="currentColor" />
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="relative w-full h-full">
-                        <button
-                          onClick={() => setIsPlayingVideo(false)}
-                          className="absolute top-2 right-2 z-10 w-8 h-8 bg-black/60 hover:bg-black/80 rounded-full flex items-center justify-center transition-colors"
-                        >
-                          <X size={16} className="text-white" />
-                        </button>
-                        <video src={videoUrl} controls autoPlay className="w-full h-full object-contain">
-                          Your browser does not support the video tag.
-                        </video>
-                      </div>
-                    )}
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
                   </div>
-                </div>
-              ) : (
+                ) : (
                 <div className="bg-white border border-[#e9e2c6] overflow-hidden h-[500px] w-full flex items-center justify-center">
                   <div className="relative bg-gray-50 h-full w-full flex items-center justify-center">
                     <span className="text-sm text-gray-400">No Video Available</span>

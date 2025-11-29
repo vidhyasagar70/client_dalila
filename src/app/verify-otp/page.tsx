@@ -335,48 +335,9 @@ function OTPVerificationContent() {
                 )}
               </button>
 
-              {/* Resend OTP */}
-              <div className="text-center">
-                {countdown > 0 ? (
-                  <p className="text-sm text-gray-400">
-                    Resend code in{" "}
-                    <span className="text-[#FFD166] font-semibold">
-                      {countdown}s
-                    </span>
-                  </p>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleResendOtp}
-                    disabled={isResending}
-                    className="text-sm text-[#FFD166] hover:text-yellow-400 hover:underline transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mx-auto"
-                  >
-                    {isResending ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Sending...</span>
-                      </>
-                    ) : (
-                      <span>Resend Verification Code</span>
-                    )}
-                  </button>
-                )}
-              </div>
+             
 
-              {/* Login Link */}
-              <div className="mt-6 text-center text-xs text-[#474745]">
-                Already verified?{" "}
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    router.push("/login");
-                  }}
-                  className="text-[#FFD166] font-semibold hover:text-yellow-400 hover:underline transition-colors"
-                >
-                  Login Here
-                </a>
-              </div>
+             
             </form>
           </div>
         </div>

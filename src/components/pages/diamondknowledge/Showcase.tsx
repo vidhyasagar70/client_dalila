@@ -105,12 +105,12 @@ export default function Diamondshowcase() {
 
           <div>
             <AnimatedContainer direction="right">
-              <div className="relative h-[350px] md:h-[390px] w-full max-w-[340px] mx-auto  overflow-hidden shadow-2xl">
+              <div className="relative h-[350px] md:h-[390px] w-full max-w-[340px] mx-auto overflow-hidden shadow-2xl">
                 <Image
                   src="/images/threeimage.jpg"
                   alt="Diamond examination with tweezers"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   unoptimized
                 />
               </div>

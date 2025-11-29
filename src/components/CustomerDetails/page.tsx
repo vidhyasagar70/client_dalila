@@ -478,23 +478,23 @@ function CustomerDetailsContent() {
             </div>
 
            {/* Contact Info */}
-                        <div className="mt-4 space-y-2 text-sm opacity-90">
+                        <div className="mt-1 space-y-2 text-sm opacity-90">
                             <div className="flex items-center justify-center gap-2">
                                 <Phone className="text-[#FFD166] w-4 h-4 flex-shrink-0" />
 
-                                <span> +32 3 231 63 27</span>
+                                <span>+32487939351</span>
                             </div>
                             <div className="flex items-center justify-center gap-2">
                                 <Mail className="text-[#FFD166] w-4 h-4 flex-shrink-0" />
                                 <span>business@daliladiamonds.com</span>
                             </div>
-                            <div className="flex text-center items-center justify-center gap-2">
-                                <MapPin className="text-[#FFD166] w-4 h-4 flex-shrink-0" />
-                                <span>
-                                    Shreyas D. Gandhi, Hoveniersstraat 30, Box -
-                                    105,Suite 326, 2018 Antwerpen, BTW BE:
-                                    0736.671.250
-                                </span>
+                            <div className="flex items-baseline justify-center gap-2 text-center">
+                              <MapPin className="text-[#FFD166] w-4 h-4 flex-shrink-0" />
+                              <span>
+                                Shreyas D. Gandhi, Hoveniersstraat 30, Box -
+                                105,Suite 326, 2018 Antwerpen, BTW BE:
+                                0736.671.250
+                              </span>
                             </div>
                         </div>
                     </div>
