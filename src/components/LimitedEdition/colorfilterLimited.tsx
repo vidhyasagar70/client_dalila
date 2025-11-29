@@ -12,13 +12,19 @@ const mavenPro = Maven_Pro({
 });
 
 const STATIC_COLOR_OPTIONS = [
-  {label:"ALL",value:"ALL"},
   { label: "D", value: "D" },
   { label: "E", value: "E" },
   { label: "F", value: "F" },
   { label: "G", value: "G" },
   { label: "H", value: "H" },
-  
+  { label: "I", value: "I" },
+  { label: "J", value: "J" },
+  { label: "K", value: "K" },
+  { label: "L", value: "L" },
+  { label: "M", value: "M" },
+  { label: "N", value: "N" },
+  { label: "N-Z", value: "N-Z" },
+  { label: "Fancy", value: "FANCY" },
 ];
 
 interface ColorFilterProps {
