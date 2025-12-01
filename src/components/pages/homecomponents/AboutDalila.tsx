@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { Marcellus} from "next/font/google";
+import { Marcellus,Jost} from "next/font/google";
 import AnimatedContainer from "@/components/shared/AnimatedContainer";
 import { useRouter } from "next/navigation";
 
@@ -10,7 +10,13 @@ const marcellus = Marcellus({
   subsets: ["latin"],
   weight: "400",
 });
-
+const jost = Jost({
+  variable: "--font-jost",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  preload: true,
+});
 /** AboutDalila Section **/
 export default function AboutDalila() {
    const router = useRouter();
@@ -39,7 +45,7 @@ export default function AboutDalila() {
               </h3>
             </AnimatedContainer>
             <AnimatedContainer direction="up" delay={0.5}>
-              <p className="text-gray-500 text-xs sm:text-sm md:text-base leading-relaxed font-medium">
+              <p className={`${jost.className} text-gray-500 text-xs sm:text-sm md:text-base leading-relaxed font-medium`}>
                 At DALILA, we believe diamonds are more than gems — they are a
                 symbol of trust, innovation, and enduring luxury. As a leading
                 name in the natural diamond industry, we partner with businesses
@@ -52,7 +58,7 @@ export default function AboutDalila() {
             <div className="pt-4 md:pt-6">
               <AnimatedContainer direction="scale-out">
                 <button
-                  className="px-6 py-3 sm:px-8 sm:py-3.5 md:px-10 md:py-4 text-white font-bold text-xs sm:text-sm uppercase tracking-widest transition-all duration-300 hover:shadow-2xl hover:scale-105 active:scale-95 cursor-pointer"
+                  className={`px-6 py-3 sm:px-8 sm:py-3.5 md:px-10 md:py-4 text-white font-bold text-xs sm:text-sm uppercase tracking-widest transition-all duration-300 hover:shadow-2xl hover:scale-105 active:scale-95 cursor-pointer ${jost.className}`}
                   style={{ backgroundColor: "#c89e3a" }}  onClick={() => router.push('/inventory')}
                 >
                   Explore More

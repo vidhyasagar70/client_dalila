@@ -2,13 +2,17 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
-import { Playfair_Display } from "next/font/google";
+import {  Marcellus} from "next/font/google";
 import AnimatedContainer from "@/components/shared/AnimatedContainer";
+import { p } from "framer-motion/client";
 
-const playFair = Playfair_Display({
+
+const marcellus = Marcellus({
+  variable: "--font-marcellus",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "400",
 });
+
 
 interface ImagePopupProps {
   isOpen: boolean;
@@ -29,7 +33,7 @@ function ImagePopup({ isOpen, onClose, imageSrc, shapeName }: ImagePopupProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm ${playFair.className}`}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm ${marcellus.className}`}
       onClick={onClose}
     >
       <div
@@ -91,7 +95,7 @@ export default function DiamondShapes() {
 
   return (
     <div
-      className={`bg-gradient-to-b from-white to-gray-50 py-12 md:py-16 lg:py-20 ${playFair.className}`}
+      className={`bg-gradient-to-b from-white to-gray-50 py-12 md:py-16 lg:py-20 ${marcellus.className}`}
     >
       <div className="max-w-[1400px] mx-auto px-4">
         {/* Section Title */}

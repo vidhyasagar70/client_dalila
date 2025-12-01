@@ -1,12 +1,19 @@
 "use client";
 import { useRef, useEffect, useState } from "react";
-import { Playfair_Display } from "next/font/google";
 
-const playFair = Playfair_Display({
+import { Marcellus,Jost} from "next/font/google";
+const marcellus = Marcellus({
+  variable: "--font-marcellus",
+  subsets: ["latin"],
+  weight: "400",
+});
+const jost = Jost({
+  variable: "--font-jost",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+  preload: true,
 });
-
 export default function VideoContent() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoError, setVideoError] = useState(false);
@@ -66,12 +73,12 @@ export default function VideoContent() {
       <div className="relative z-10 h-full flex items-center justify-center px-6">
         <div className="text-center max-w-4xl">
           <h5
-            className={`text-white/90 text-sm md:text-base tracking-widest mb-6 font-light ${playFair.className}`}
+            className={`text-white/90 text-sm md:text-base tracking-widest mb-6 font-light ${jost.className}`}
           >
             A LEGACY OF REFINEMENT, SHAPED TO PERFECTION
           </h5>
           <h1
-            className={`text-4xl md:text-5xl lg:text-6xl text-white leading-tight tracking-wide font-light ${playFair.className}`}
+            className={`text-4xl md:text-5xl lg:text-6xl text-white leading-tight tracking-wide font-light ${marcellus.className}`}
           >
             Every diamond, delicately refined through skill & crafted by the
             hands of true perfectionists.

@@ -1,15 +1,23 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Playfair_Display } from "next/font/google";
+import { Marcellus,Jost} from "next/font/google";
 import GoldButton from "@/components/ui/button";
 import AnimatedContainer from "@/components/shared/AnimatedContainer";
 
-const playFair = Playfair_Display({
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700"],
-});
 
+const marcellus = Marcellus({
+  variable: "--font-marcellus",
+  subsets: ["latin"],
+  weight: "400",
+});
+const jost = Jost({
+  variable: "--font-jost",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  preload: true,
+});
 export default function HomeContent() {
     const router = useRouter();
 
@@ -35,7 +43,7 @@ export default function HomeContent() {
                         <div className="max-w-xl">
                             <AnimatedContainer direction="up">
                                 <h2
-                                    className={`text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-light mb-4 md:mb-6 lg:mb-7 text-gray-900 leading-[1.15] tracking-tight ${playFair.className}`}
+                                    className={`text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-light mb-4 md:mb-6 lg:mb-7 text-gray-900 leading-[1.15] tracking-tight ${marcellus.className}`}
                                 >
                                     Sell Your Diamonds
                                     <br />
@@ -46,7 +54,7 @@ export default function HomeContent() {
                             </AnimatedContainer>
                             <AnimatedContainer direction="up" delay={0.3}>
                                 <p
-                                    className={`text-gray-600 leading-relaxed mb-6 md:mb-8 text-xs sm:text-sm md:text-[15px] lg:text-base font-normal ${playFair.className}`}
+                                    className={`text-gray-600 leading-relaxed mb-6 md:mb-8 text-xs sm:text-sm md:text-[15px] lg:text-base font-normal ${jost.className}`}
                                 >
                                     Selling your diamond or fine jewelry should
                                     be a seamless, secure, and rewarding
@@ -73,7 +81,7 @@ export default function HomeContent() {
                         <div className="max-w-xl">
                             <AnimatedContainer direction="up" delay={0.1}>
                                 <h2
-                                    className={`text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-light mb-4 md:mb-6 lg:mb-7 text-gray-900 leading-[1.15] tracking-tight ${playFair.className}`}
+                                    className={`text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-light mb-4 md:mb-6 lg:mb-7 text-gray-900 leading-[1.15] tracking-tight ${marcellus.className}`}
                                 >
                                     The Language of
                                     <br />
@@ -82,7 +90,7 @@ export default function HomeContent() {
                             </AnimatedContainer>
                             <AnimatedContainer direction="up" delay={0.3}>
                                 <p
-                                    className={`text-gray-600 leading-relaxed mb-6 md:mb-8 text-xs sm:text-sm md:text-[15px] lg:text-base font-normal ${playFair.className}`}
+                                    className={`text-gray-600 leading-relaxed mb-6 md:mb-8 text-xs sm:text-sm md:text-[15px] lg:text-base font-normal ${jost.className}`}
                                 >
                                     Diamonds are more than just gemstones — they
                                     are timeless symbols of love, craftsmanship,

@@ -1,11 +1,21 @@
 "use client";
 import { useRef, useEffect } from "react";
-import { Playfair_Display } from "next/font/google";
+
+import { Marcellus,Jost} from "next/font/google";
 import AnimatedContainer from "@/components/shared/AnimatedContainer";
 import { useRouter } from "next/navigation";
-const playFair = Playfair_Display({
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700"],
+
+const marcellus = Marcellus({
+  variable: "--font-marcellus",
+  subsets: ["latin"],
+  weight: "400",
+});
+const jost = Jost({
+  variable: "--font-jost",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  preload: true,
 });
 
 export default function BookComponent() {
@@ -34,7 +44,7 @@ export default function BookComponent() {
                     >
                         <AnimatedContainer direction="up">
                             <h1
-                                className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white mb-3 md:mb-4 leading-tight ${playFair.className}`}
+                                className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white mb-3 md:mb-4 leading-tight ${marcellus.className}`}
                             >
                                 From Classic Cuts to Rare Shapes, We Have It All
                             </h1>
@@ -42,7 +52,7 @@ export default function BookComponent() {
 
                         <AnimatedContainer direction="up" delay={0.3}>
                             <p
-                                className={`text-gray-300 text-xs sm:text-sm md:text-base leading-relaxed mb-4 md:mb-6 ${playFair.className}`}
+                                className={`text-gray-300 text-xs sm:text-sm md:text-base leading-relaxed mb-4 md:mb-6 ${jost.className}`}
                             >
                                 At Dalila, every diamond tells a story of
                                 unmatched brilliance. From timeless classics to
@@ -55,7 +65,7 @@ export default function BookComponent() {
                         </AnimatedContainer>
                         <AnimatedContainer direction="up">
                             <button
-                                className={`py-2 px-4 md:py-2.5 md:px-5 lg:px-6 text-xs sm:text-sm lg:text-base text-white border border-[#c89e3a] hover:bg-[#c89e3a] hover:text-white transition-colors cursor-pointer whitespace-nowrap w-fit ${playFair.className}`}
+                                className={`py-2 px-4 md:py-2.5 md:px-5 lg:px-6 text-xs sm:text-sm lg:text-base text-white border border-[#c89e3a] hover:bg-[#c89e3a] hover:text-white transition-colors cursor-pointer whitespace-nowrap w-fit ${jost.className}`}
                                 onClick={() => router.push("/inventory")}
                             >
                                 BOOK NOW

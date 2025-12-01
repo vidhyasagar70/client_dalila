@@ -1,11 +1,21 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { Playfair_Display } from "next/font/google";
+;
 import AnimatedContainer from "@/components/shared/AnimatedContainer";
+import { Marcellus,Jost} from "next/font/google";
+import { p } from "framer-motion/client";
 
-const playFair = Playfair_Display({
+const marcellus = Marcellus({
+  variable: "--font-marcellus",
+  subsets: ["latin"],
+  weight: "400",
+});
+const jost = Jost({
+  variable: "--font-jost",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+  preload: true,
 });
 
 export default function DiamondExperience() {
@@ -78,12 +88,12 @@ export default function DiamondExperience() {
           <AnimatedContainer direction="right">
             <div className="flex flex-col gap-1 md:mt-65">
               <h6
-                className={`text-3xl md:text-4xl max-sm:text-center font-light leading-tight text-blue-600 ${playFair.className}`}
+                className={`text-3xl md:text-4xl max-sm:text-center font-light leading-tight text-blue-600 ${marcellus.className}`}
               >
                 50+ years of family expertise
               </h6>
               <p
-                className={`text-2xl md:text-3xl text-gray-800 font-light max-sm:text-center ${playFair.className}`}
+                className={`text-2xl md:text-3xl text-gray-800 font-light max-sm:text-center ${marcellus.className}`}
               >
                 in the diamond business.
               </p>

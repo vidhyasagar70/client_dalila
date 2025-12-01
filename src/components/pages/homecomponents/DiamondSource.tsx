@@ -1,11 +1,19 @@
 "use client";
 import { useRef, useEffect } from "react";
-import { Playfair_Display } from "next/font/google";
-import AnimatedContainer from "@/components/shared/AnimatedContainer";
 
-const playFair = Playfair_Display({
+import AnimatedContainer from "@/components/shared/AnimatedContainer";
+import { Marcellus,Jost} from "next/font/google";
+const marcellus = Marcellus({
+  variable: "--font-marcellus",
+  subsets: ["latin"],
+  weight: "400",
+});
+const jost = Jost({
+  variable: "--font-jost",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+  preload: true,
 });
 
 export default function DiamondSource() {
@@ -48,14 +56,14 @@ export default function DiamondSource() {
             <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 p-6 sm:p-8 md:p-10 lg:p-12 shadow-2xl h-[300px] sm:h-[350px] md:h-[450px] lg:h-[500px] flex flex-col justify-center">
               <AnimatedContainer direction="up">
                 <h1
-                  className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white mb-3 md:mb-4 leading-tight font-serif ${playFair.className}`}
+                  className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white mb-3 md:mb-4 leading-tight font-serif ${marcellus.className}`}
                 >
                   Diamond Sourcing
                 </h1>
               </AnimatedContainer>
               <AnimatedContainer direction="up" delay={0.3}>
                 <p
-                  className={`text-gray-300 text-xs sm:text-sm md:text-base leading-relaxed ${playFair.className}`}
+                  className={`text-gray-300 text-xs sm:text-sm md:text-base leading-relaxed ${jost.className}`}
                 >
                   At Dalila, we have the ability to source diamonds of any
                   shape, size, or quality, tailored exactly to your preferences.
