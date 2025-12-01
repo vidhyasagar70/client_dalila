@@ -5,10 +5,11 @@ import Image from "next/image";
 import {
   ArrowLeft,
   Loader2,
-  Play,
+
   X,
   Clock,
   MessageCircle,
+  Download,
 } from "lucide-react";
 import type { DiamondData } from "@/types/Diamondtable";
 import { cartApi, holdApi, queryApi } from "@/lib/api";
@@ -93,7 +94,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
       : `$${num.toLocaleString(undefined, {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
-        })} USD`;
+        })}`;
   };
 
   const handleAddToCart = async () => {
@@ -268,7 +269,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
     data: [string, string | number][];
     certiPdfUrl?: string;
   }) => (
-    <div className="bg-white overflow-hidden border border-[#e9e2c6]">
+    <div className="bg-white overflow-hidden border border-[#e9e2c6] h-fit">
       <div className="bg-[#050C3A] text-white px-4 py-3">
         <h3 className="font-semibold text-sm">{title}</h3>
       </div>
@@ -336,20 +337,31 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
             <div className="lg:col-span-4 flex items-center justify-center">
               {/* Video Section (matched height with image) */}
               {videoUrl ? (
-                  <div className="bg-white overflow-hidden h-[500px] w-full flex items-center justify-center">
-                    <div className="relative bg-gray-50 h-full w-full">
-                      <video
-                        src={videoUrl}
-                        autoPlay
-                        loop
-                        muted
-                        className="w-full h-full object-contain"
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
+                <div className="bg-white overflow-hidden h-[500px] w-full flex items-center justify-center">
+                  <div className="relative bg-gray-50 h-full w-full">
+                    {/* Download button at top-right */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(videoUrl, '_blank');
+                      }}
+                      className="absolute top-4 right-2 z-10 bg-white/80 rounded-full p-1 hover:bg-white shadow cursor-pointer"
+                      title="Download Video"
+                    >
+                      <Download className="w-5 h-7 text-[#050C3A] " />
+                    </button>
+                    <video
+                      src={videoUrl}
+                      autoPlay
+                      loop
+                      muted
+                      className="w-full h-full object-contain"
+                    >
+                      Your browser does not support the video tag.
+                    </video>
                   </div>
-                ) : (
+                </div>
+              ) : (
                 <div className="bg-white border border-[#e9e2c6] overflow-hidden h-[500px] w-full flex items-center justify-center">
                   <div className="relative bg-gray-50 h-full w-full flex items-center justify-center">
                     <span className="text-sm text-gray-400">No Video Available</span>
@@ -499,12 +511,18 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                 ["Packet No", diamond.STONE_NO || "N/A"],
                 ["Report No", diamond.REPORT_NO || "N/A"],
                 ["Lab", diamond.LAB || "N/A"],
-                ["Rap.($)", diamond.RAP_PRICE || "N/A"],
+                // ["Rap.($)", diamond.RAP_PRICE || "N/A"],
+               
+                 ["Rap price", formatCurrency(diamond.RAP_PRICE ?? "N/A")],
+                ["Disc %", diamond.DISC_PER ? `${(diamond.DISC_PER / 100).toFixed(2)}%` : "N/A"],
+                ["Net Rate", formatCurrency(diamond.NET_RATE ?? "N/A")],
+                 ["Net Value", formatCurrency(diamond.NET_VALUE)],
+                
                 ["Shape", diamond.SHAPE || "N/A"],
                 ["Carat", diamond.CARATS || diamond.SIZE || "N/A"],
                 ["Color", diamond.COLOR || "N/A"],
                 ["Clarity", diamond.CLARITY || "N/A"],
-                ["Shade", diamond.TINGE || "NO BGM"],
+                ["Shade", diamond.TINGE || "N/A"],
                 ["Cut", diamond.CUT || "N/A"],
                 ["Polish", diamond.POL || "N/A"],
                 ["Symmetry", diamond.SYM || "N/A"],
