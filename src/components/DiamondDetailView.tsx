@@ -319,15 +319,16 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
           msOverflowStyle: "none",
         }}
       >
+
         {/* Header with Back Button and Title */}
-        <div className="bg-[#050C3A] text-white px-6 py-4 flex items-center gap-4 sticky top-0 z-10 mt-8">
+        <div className="bg-[#050C3A] text-white px-6 py-4 flex items-center gap-4 sticky top-0 z-50 mt-8">
           <button
             onClick={onClose}
-            className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors"
+            className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors border-2 border-white rounded px-3 py-1.5 hover:bg-white/10"
           >
             <ArrowLeft size={20} />
+            <span>Back</span>
           </button>
-          <h2 className="text-xl font-bold">Back</h2>
         </div>
 
         <div className="p-6 pb-20">
@@ -503,8 +504,8 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
           </div>
 
           {/* Bottom Tables Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Details */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-[95%] mx-auto">
+            {/* Left Column - Details */}
             <DetailTable
               title="Details"
               data={[
@@ -514,7 +515,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                 // ["Rap.($)", diamond.RAP_PRICE || "N/A"],
                
                  ["Rap price", formatCurrency(diamond.RAP_PRICE ?? "N/A")],
-                ["Disc %", diamond.DISC_PER ? `${(diamond.DISC_PER / 100).toFixed(2)}%` : "N/A"],
+                ["Disc %", diamond.DISC_PER ? `${Math.abs(diamond.DISC_PER / 100).toFixed(2)}%` : "N/A"],
                 ["Net Rate", formatCurrency(diamond.NET_RATE ?? "N/A")],
                  ["Net Value", formatCurrency(diamond.NET_VALUE)],
                 
@@ -531,47 +532,50 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               certiPdfUrl={diamond.CERTI_PDF}
             />
 
-            {/* Measurements */}
-            <DetailTable
-              title="Measurements"
-              data={[
-                ["Table%", diamond.TABLE_PER || "N/A"],
-                ["Depth%", diamond.DEPTH_PER || "N/A"],
-                [
-                  "Length",
-                  diamond.MEASUREMENTS?.split("x")[0]?.trim() || "N/A",
-                ],
-                // ["Width", diamond.MEASUREMENTS?.split("x")[1]?.trim() || "N/A"],
-                // ["Depth", diamond.MEASUREMENTS?.split("x")[2]?.trim() || "N/A"],
-                // ["Ratio", "-"],
-                ["Crown Angle", diamond.CROWN_ANGLE || "N/A"],
-                ["Crown Height", diamond.CROWN_HEIGHT || "N/A"],
-                ["Pav Angle", diamond.PAVILLION_ANGLE || "N/A"],
-                ["Pav Height", diamond.PAVILLION_HEIGHT || "N/A"],
-                // ["Girdle", "THN"],
-                // ["Culet", "NON"],
-                // ["Laser Ins.", "-"],
-              ]}
-            />
+            {/* Right Column - Measurements and Inclusion Details stacked */}
+            <div className="space-y-6">
+              {/* Measurements */}
+              <DetailTable
+                title="Measurements"
+                data={[
+                  ["Table%", diamond.TABLE_PER || "N/A"],
+                  ["Depth%", diamond.DEPTH_PER || "N/A"],
+                  [
+                    "Length",
+                    diamond.MEASUREMENTS?.split("x")[0]?.trim() || "N/A",
+                  ],
+                  // ["Width", diamond.MEASUREMENTS?.split("x")[1]?.trim() || "N/A"],
+                  // ["Depth", diamond.MEASUREMENTS?.split("x")[2]?.trim() || "N/A"],
+                  // ["Ratio", "-"],
+                  ["Crown Angle", diamond.CROWN_ANGLE || "N/A"],
+                  ["Crown Height", diamond.CROWN_HEIGHT || "N/A"],
+                  ["Pav Angle", diamond.PAVILLION_ANGLE || "N/A"],
+                  ["Pav Height", diamond.PAVILLION_HEIGHT || "N/A"],
+                  // ["Girdle", "THN"],
+                  // ["Culet", "NON"],
+                  // ["Laser Ins.", "-"],
+                ]}
+              />
 
-            {/* Inclusion Details */}
-            <DetailTable
-              title="Inclusion Details"
-              data={[
-                ["Center Natts", diamond.CN || "-"],
-                ["Side Natts", diamond.SN || "-"],
-                ["Center White", diamond.CW || "-"],
-                ["Side White", diamond.SW || "-"],
-                // ["Table open", "TO-O"],
-                // ["Crown open", "CO-O"],
-                // ["Pavilion open", "PO-O"],
-                ["Eye Clean", diamond.EY_CLN || "-"],
-                // ["Herat & Arrow", diamond.HA || diamond.H_AND_A || "-"],
-                // ["Brilliancy", "EX"],
-                // ["Type2 Cert", "-"],
-                ["Location", diamond.LOCATION || "-"],
-              ]}
-            />
+              {/* Inclusion Details */}
+              <DetailTable
+                title="Inclusion Details"
+                data={[
+                  ["Center Natts", diamond.CN || "-"],
+                  ["Side Natts", diamond.SN || "-"],
+                  ["Center White", diamond.CW || "-"],
+                  ["Side White", diamond.SW || "-"],
+                  // ["Table open", "TO-O"],
+                  // ["Crown open", "CO-O"],
+                  // ["Pavilion open", "PO-O"],
+                  ["Eye Clean", diamond.EY_CLN || "-"],
+                  // ["Herat & Arrow", diamond.HA || diamond.H_AND_A || "-"],
+                  // ["Brilliancy", "EX"],
+                  // ["Type2 Cert", "-"],
+                  ["Location", diamond.LOCATION || "-"],
+                ]}
+              />
+            </div>
           </div>
         </div>
         <Footer/>
