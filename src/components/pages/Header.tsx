@@ -42,14 +42,12 @@ export default function Header() {
 
         const tokenTimestamp = localStorage.getItem("authTokenTimestamp");
         if (!tokenTimestamp) {
-            // If no timestamp exists, set it now for existing sessions
-            // This handles users who were logged in before this feature was added
             localStorage.setItem("authTokenTimestamp", Date.now().toString());
             return false;
         }
 
         const tokenAge = Date.now() - parseInt(tokenTimestamp, 10);
-        const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+        const ONE_DAY_MS = 24 * 60 * 60 * 1000; 
 
         return tokenAge >= ONE_DAY_MS;
     };
@@ -397,21 +395,21 @@ export default function Header() {
                             )}
                         </div>
 
-                        {/* Diamond Knowledge and Blogs */}
-                        {navigationItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={
-                                    item.requiresAuth
-                                        ? handleInventoryClick
-                                        : undefined
-                                }
-                                className="py-3 px-1.5 xl:px-2.5 text-xs xl:text-base text-white hover:text-[#c89e3a] transition-colors whitespace-nowrap"
-                            >
-                                {item.label}
-                            </Link>
-                        ))}
+                        {/* Diamond Knowledge */}
+                        <Link
+                            href="/diamondKnowledge"
+                            className="py-3 px-1.5 xl:px-2.5 text-xs xl:text-base text-white hover:text-[#c89e3a] transition-colors whitespace-nowrap"
+                        >
+                            Diamond Knowledge
+                        </Link>
+
+                        {/* Blogs */}
+                        <Link
+                            href="/blogs"
+                            className="py-3 px-1.5 xl:px-2.5 text-xs xl:text-base text-white hover:text-[#c89e3a] transition-colors whitespace-nowrap"
+                        >
+                            Blogs
+                        </Link>
                     </nav>
 
                     <div
@@ -746,22 +744,23 @@ export default function Header() {
                                 </div>
                             </div>
 
-                            {/* Diamond Knowledge and Blogs */}
-                            {navigationItems.map((item) => (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    onClick={(e) => {
-                                        if (item.requiresAuth) {
-                                            handleInventoryClick(e);
-                                        }
-                                        setIsMobileMenuOpen(false);
-                                    }}
-                                    className="text-white hover:text-[#c89e3a] transition-colors text-lg py-2"
-                                >
-                                    {item.label}
-                                </Link>
-                            ))}
+                            {/* Diamond Knowledge */}
+                            <Link
+                                href="/diamondKnowledge"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="text-white hover:text-[#c89e3a] transition-colors text-lg py-2"
+                            >
+                                Diamond Knowledge
+                            </Link>
+
+                            {/* Blogs */}
+                            <Link
+                                href="/blogs"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="text-white hover:text-[#c89e3a] transition-colors text-lg py-2"
+                            >
+                                Blogs
+                            </Link>
 
                             {/* Contact Us - Always visible in mobile */}
                             <button

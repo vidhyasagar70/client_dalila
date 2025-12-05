@@ -35,19 +35,25 @@ const mavenPro = Maven_Pro({
 export default function DiamondStockTableWithFilter() {
   // Admin check state
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshMessage, setRefreshMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const userStr = localStorage.getItem("user");
-      if (userStr) {
+      const token = localStorage.getItem("authToken");
+      if (userStr && token) {
         try {
           const user = JSON.parse(userStr);
           setIsAdmin(user.role === "ADMIN" || user.role === "SUPER_ADMIN");
+          setIsLoggedIn(true);
         } catch {
           setIsAdmin(false);
+          setIsLoggedIn(false);
         }
+      } else {
+        setIsLoggedIn(false);
       }
     }
   }, []);
@@ -351,29 +357,33 @@ export default function DiamondStockTableWithFilter() {
         <div className="flex-1"></div>
 
         <div className="flex items-center gap-2">
-          <AddToCartButton
-            selectedCount={selectedDiamonds.length}
-            selectedStoneNumbers={selectedDiamonds.map((d) => d.STONE_NO)}
-            onAddToCart={handleAddToCart}
-          />
+          {isLoggedIn && (
+            <>
+              <AddToCartButton
+                selectedCount={selectedDiamonds.length}
+                selectedStoneNumbers={selectedDiamonds.map((d) => d.STONE_NO)}
+                onAddToCart={handleAddToCart}
+              />
 
-          <HoldButton
-            selectedCount={selectedDiamonds.length}
-            selectedStoneNumbers={selectedDiamonds.map((d) => d.STONE_NO)}
-            onAddToHold={handleAddToHold}
-          />
+              <HoldButton
+                selectedCount={selectedDiamonds.length}
+                selectedStoneNumbers={selectedDiamonds.map((d) => d.STONE_NO)}
+                onAddToHold={handleAddToHold}
+              />
 
-          <CompareButton
-            selectedCount={selectedDiamonds.length}
-            onCompare={handleCompare}
-            disabled={selectedDiamonds.length === 0}
-          />
+              <CompareButton
+                selectedCount={selectedDiamonds.length}
+                onCompare={handleCompare}
+                disabled={selectedDiamonds.length === 0}
+              />
 
-          <EmailButton
-            selectedCount={selectedDiamonds.length}
-            selectedStoneNumbers={selectedDiamonds.map((d) => d.STONE_NO)}
-            onEmail={handleEmail}
-          />
+              <EmailButton
+                selectedCount={selectedDiamonds.length}
+                selectedStoneNumbers={selectedDiamonds.map((d) => d.STONE_NO)}
+                onEmail={handleEmail}
+              />
+            </>
+          )}
 
           <button
             onClick={() => setShowFilters(!showFilters)}
