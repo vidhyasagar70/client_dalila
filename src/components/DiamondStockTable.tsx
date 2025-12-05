@@ -60,6 +60,16 @@ const DiamondStockTable: React.FC<TableProps> = ({
 
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if user is logged in
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("authToken");
+      const user = localStorage.getItem("user");
+      setIsLoggedIn(!!(token && user));
+    }
+  }, []);
 
   // Clear selections when trigger changes (from parent component)
   useEffect(() => {
@@ -526,34 +536,36 @@ const DiamondStockTable: React.FC<TableProps> = ({
                       </div>
                     </button>
                   </th>
-                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
-                    <button
-                      onClick={() => handleSort("STONE_NO")}
-                      className="flex items-center gap-1 hover:text-gray-300 transition-colors"
-                    >
-                      Stock ID
-                      <div className="flex flex-col -space-y-1">
-                        <ChevronUp
-                          size={12}
-                          className={
-                            sortConfig?.key === "STONE_NO" &&
-                            sortConfig.direction === "asc"
-                              ? "opacity-100"
-                              : "opacity-30"
-                          }
-                        />
-                        <ChevronDown
-                          size={12}
-                          className={
-                            sortConfig?.key === "STONE_NO" &&
-                            sortConfig.direction === "desc"
-                              ? "opacity-100"
-                              : "opacity-30"
-                          }
-                        />
-                      </div>
-                    </button>
-                  </th>
+                  {isLoggedIn && (
+                    <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
+                      <button
+                        onClick={() => handleSort("STONE_NO")}
+                        className="flex items-center gap-1 hover:text-gray-300 transition-colors"
+                      >
+                        Stock ID
+                        <div className="flex flex-col -space-y-1">
+                          <ChevronUp
+                            size={12}
+                            className={
+                              sortConfig?.key === "STONE_NO" &&
+                              sortConfig.direction === "asc"
+                                ? "opacity-100"
+                                : "opacity-30"
+                            }
+                          />
+                          <ChevronDown
+                            size={12}
+                            className={
+                              sortConfig?.key === "STONE_NO" &&
+                              sortConfig.direction === "desc"
+                                ? "opacity-100"
+                                : "opacity-30"
+                            }
+                          />
+                        </div>
+                      </button>
+                    </th>
+                  )}
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
                     Shape
                   </th>
@@ -608,18 +620,22 @@ const DiamondStockTable: React.FC<TableProps> = ({
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
                     Pav Height
                   </th>
-                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
-                    Rap Price
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Disc%
-                  </th>
-                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
-                    Net Rate
-                  </th>
-                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
-                    Net Value
-                  </th>
+                  {isLoggedIn && (
+                    <>
+                      <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
+                        Rap Price
+                      </th>
+                      <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
+                        Disc%
+                      </th>
+                      <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
+                        Net Rate
+                      </th>
+                      <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
+                        Net Value
+                      </th>
+                    </>
+                  )}
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
                     Location
                   </th>
@@ -707,12 +723,14 @@ const DiamondStockTable: React.FC<TableProps> = ({
                         </div>
                       </div>
                     </td>
-                    <td
-                      className="px-2 py-1 text-[14px] text-gray-700 font-medium truncate cursor-pointer hover:text-blue-600 hover:underline"
-                      onClick={(e) => handleStockIdClick(e, row)}
-                    >
-                      {row.STONE_NO}
-                    </td>
+                    {isLoggedIn && (
+                      <td
+                        className="px-2 py-1 text-[14px] text-gray-700 font-medium truncate cursor-pointer hover:text-blue-600 hover:underline"
+                        onClick={(e) => handleStockIdClick(e, row)}
+                      >
+                        {row.STONE_NO}
+                      </td>
+                    )}
                     <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
                       {row.SHAPE}
                     </td>
@@ -769,18 +787,22 @@ const DiamondStockTable: React.FC<TableProps> = ({
                     <td className="px-2 py-1 text-[14px] text-gray-700">
                       {row.PAVILLION_HEIGHT || "N/A"}
                     </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {formatCurrency(row.RAP_PRICE ?? 0)}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] font-semibold text-red-600">
-                      {formatPercentage(row.DISC_PER ?? 0)}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {formatCurrency(row.NET_RATE ?? 0)}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700 font-medium">
-                      {formatCurrency(row.NET_VALUE ?? 0)}
-                    </td>
+                    {isLoggedIn && (
+                      <>
+                        <td className="px-2 py-1 text-[14px] text-gray-700">
+                          {formatCurrency(row.RAP_PRICE ?? 0)}
+                        </td>
+                        <td className="px-2 py-1 text-[14px] font-semibold text-red-600">
+                          {formatPercentage(row.DISC_PER ?? 0)}
+                        </td>
+                        <td className="px-2 py-1 text-[14px] text-gray-700">
+                          {formatCurrency(row.NET_RATE ?? 0)}
+                        </td>
+                        <td className="px-2 py-1 text-[14px] text-gray-700 font-medium">
+                          {formatCurrency(row.NET_VALUE ?? 0)}
+                        </td>
+                      </>
+                    )}
                     <td className="px-2 py-1 text-[14px] text-gray-700">
                       {row.LOCATION}
                     </td>

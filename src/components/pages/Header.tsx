@@ -398,7 +398,7 @@ export default function Header() {
                         </div>
 
                         {/* Diamond Knowledge and Blogs */}
-                        {navigationItems.slice(1).map((item) => (
+                        {navigationItems.map((item) => (
                             <Link
                                 key={item.href}
                                 href={item.href}
@@ -448,6 +448,12 @@ export default function Header() {
                             </div>
                         ) : !isLoggedIn ? (
                             <>
+                                <button
+                                    onClick={() => router.push("/inventory")}
+                                    className="py-3 px-3 xl:px-4 xl:py-2.5 xl:h-10 text-xs xl:text-sm text-white border border-[#c89e3a] hover:bg-[#c89e3a] hover:text-white transition-colors whitespace-nowrap cursor-pointer"
+                                >
+                                    INVENTORY
+                                </button>
                                 <button
                                     onClick={() => router.push("/login")}
                                     className="py-3 px-3 xl:px-4 xl:py-2.5 xl:h-10 text-xs xl:text-sm text-white border border-[#c89e3a] hover:bg-[#c89e3a] hover:text-white transition-colors whitespace-nowrap cursor-pointer"
@@ -741,7 +747,7 @@ export default function Header() {
                             </div>
 
                             {/* Diamond Knowledge and Blogs */}
-                            {navigationItems.slice(1).map((item) => (
+                            {navigationItems.map((item) => (
                                 <Link
                                     key={item.href}
                                     href={item.href}
