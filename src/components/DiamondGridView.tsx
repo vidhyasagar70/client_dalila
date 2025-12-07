@@ -45,76 +45,30 @@ const DiamondGridView: React.FC<GridViewProps> = ({
     null,
   );
 
-    // Track login status
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Track login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    useEffect(() => {
-      if (typeof window !== "undefined") {
-        let userStr = localStorage.getItem("user");
-        let token = localStorage.getItem("authToken");
-        if (!userStr) {
-          const cookies = document.cookie.split(";");
-          const userCookie = cookies.find((c) => c.trim().startsWith("user="));
-          if (userCookie) {
-            try {
-              userStr = decodeURIComponent(userCookie.split("=")[1].trim());
-            } catch (e) {
-              // ignore
-            }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      let userStr = localStorage.getItem("user");
+      const token = localStorage.getItem("authToken");
+      if (!userStr) {
+        const cookies = document.cookie.split(";");
+        const userCookie = cookies.find((c) => c.trim().startsWith("user="));
+        if (userCookie) {
+          try {
+            userStr = decodeURIComponent(userCookie.split("=")[1].trim());
+          } catch {
+            // ignore
           }
         }
-        setIsLoggedIn(!!userStr || !!token);
       }
-    }, []);
+      setIsLoggedIn(!!userStr || !!token);
+    }
+  }, []);
 
   // Memoize filter strings to prevent unnecessary re-renders
-  const filterKey = useMemo(() => {
-    return JSON.stringify({
-      searchTerm,
-      selectedShape: Array.isArray(selectedShape)
-        ? selectedShape.sort().join(",")
-        : "",
-      selectedColor: Array.isArray(selectedColor)
-        ? selectedColor.sort().join(",")
-        : "",
-      selectedMinCarat,
-      selectedMaxCarat,
-      selectedFluor: Array.isArray(selectedFluor)
-        ? selectedFluor.sort().join(",")
-        : "",
-      selectedClarity: Array.isArray(selectedClarity)
-        ? selectedClarity.sort().join(",")
-        : "",
-      selectedCut,
-      selectedPolish,
-      selectedSymmetry,
-      selectedLocations: Array.isArray(selectedLocations)
-        ? selectedLocations.sort().join(",")
-        : "",
-      selectedLabs: Array.isArray(selectedLabs)
-        ? selectedLabs.sort().join(",")
-        : "",
-      keySymbolFilters,
-      inclusionFilters,
-      priceFilters,
-    });
-  }, [
-    searchTerm,
-    selectedShape,
-    selectedColor,
-    selectedMinCarat,
-    selectedMaxCarat,
-    selectedFluor,
-    selectedClarity,
-    selectedCut,
-    selectedPolish,
-    selectedSymmetry,
-    selectedLocations,
-    selectedLabs,
-    keySymbolFilters,
-    inclusionFilters,
-    priceFilters,
-  ]);
+  // ...removed unused filterKey...
 
   useEffect(() => {
     const fetchDiamonds = async () => {
@@ -248,23 +202,23 @@ const DiamondGridView: React.FC<GridViewProps> = ({
       }
     };
     fetchDiamonds();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     searchTerm,
-    JSON.stringify(selectedShape),
-    JSON.stringify(selectedColor),
     selectedMinCarat,
     selectedMaxCarat,
-    JSON.stringify(selectedFluor),
-    JSON.stringify(selectedClarity),
     selectedCut,
     selectedPolish,
     selectedSymmetry,
-    JSON.stringify(selectedLocations),
-    JSON.stringify(selectedLabs),
-    JSON.stringify(keySymbolFilters),
-    JSON.stringify(inclusionFilters),
-    JSON.stringify(priceFilters),
+    // Extracted complex dependencies
+    useMemo(() => JSON.stringify(selectedShape), [selectedShape]),
+    useMemo(() => JSON.stringify(selectedColor), [selectedColor]),
+    useMemo(() => JSON.stringify(selectedFluor), [selectedFluor]),
+    useMemo(() => JSON.stringify(selectedClarity), [selectedClarity]),
+    useMemo(() => JSON.stringify(selectedLocations), [selectedLocations]),
+    useMemo(() => JSON.stringify(selectedLabs), [selectedLabs]),
+    useMemo(() => JSON.stringify(keySymbolFilters), [keySymbolFilters]),
+    useMemo(() => JSON.stringify(inclusionFilters), [inclusionFilters]),
+    useMemo(() => JSON.stringify(priceFilters), [priceFilters]),
   ]);
 
   // Calculate pagination with rowsPerPage
