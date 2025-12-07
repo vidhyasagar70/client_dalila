@@ -1,7 +1,9 @@
 "use client";
 import Image from "next/image";
 import { Marcellus, Jost } from "next/font/google";
+import { useState, useEffect } from "react";
 import AnimatedContainer from "@/components/shared/AnimatedContainer";
+
 const marcellus = Marcellus({
   variable: "--font-marcellus",
   subsets: ["latin"],
@@ -16,11 +18,40 @@ const jost = Jost({
 });
 
 export default function Diamondshowcase() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  const carouselImages = [
+    "/images/firstimage.jpg",
+    "/images/secondimage.jpg", 
+    "/images/thirdimage.jpg", 
+  ];
+
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => 
+      prev === 0 ? carouselImages.length - 1 : prev - 1
+    );
+  };
+
   return (
     <div className="bg-white py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12">
         {/* Sell Diamonds Section */}
-
         <div className="grid md:grid-cols-2 gap-16 items-center mb-32">
           <AnimatedContainer direction="left">
             <div>
@@ -52,16 +83,13 @@ export default function Diamondshowcase() {
                 <p
                   className={`text-gray-600 leading-relaxed mb-8 text-[15px] md:text-base font-normal ${jost.className}`}
                 >
-                  Diamonds are more than gemstones they are timeless symbols of love, craftsmanship and nature’s brilliance.
+                  Diamonds are more than gemstones they are timeless symbols of love, craftsmanship and nature's brilliance.
                    Formed deep within the Earth over billions of years, each natural diamond carries its own story.
-                    Whether you’re choosing your very first stone or refining a lifelong collection,
-                     understanding a diamond’s key characteristics helps you make a truly confident choice.
+                    Whether you're choosing your very first stone or refining a lifelong collection,
+                     understanding a diamond's key characteristics helps you make a truly confident choice.
 
-                     This guide walks you through every facet from how diamonds are formed to what makes each one unique.
-
-
+                     This guide walks you through every facet from how diamonds are formed to what makes each one unique.
                 </p>
-                
               </div>
             </AnimatedContainer>
           </div>
@@ -103,16 +131,28 @@ export default function Diamondshowcase() {
             </div>
           </AnimatedContainer>
 
-         <div>
+          <div>
             <AnimatedContainer direction="right">
-              <div className="relative h-[450px] md:h-[520px] w-full max-w-[400px] md:max-w-[480px] mx-auto overflow-hidden shadow-2xl">
-                <Image
-                  src="/images/threeimage.jpg"
-                  alt="Diamond examination with tweezers"
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
+              <div className="relative h-[370px] md:h-[400px] w-full max-w-[380px] mx-auto overflow-hidden shadow-2xl group">
+                {/* Carousel Images */}
+                {carouselImages.map((image: string, index: number) => (
+                  <div
+                    key={index}
+                    className={`absolute inset-0 transition-opacity duration-500 ${
+                      index === currentImageIndex ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
+                    <Image
+                      src={image}
+                      alt={`Diamond showcase ${index + 1}`}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                ))}
+
+                
               </div>
             </AnimatedContainer>
           </div>
