@@ -1394,6 +1394,40 @@ export const userApi = {
       throw error;
     }
   },
+
+  // Contact form submission
+  submitContactForm: async (data: {
+    email: string;
+    name: string;
+    phoneNo: string;
+    message: string;
+  }) => {
+    try {
+      const response = await apiClient.post<ApiResponse<{
+        message: string;
+      }>>("/api/users/contact", data);
+      return response.data;
+    } catch (error: unknown) {
+      console.error("Contact form submission error:", error);
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as {
+          response?: {
+            status?: number;
+            data?: { error?: string; message?: string; success?: boolean };
+          };
+        };
+        
+        if (axiosError.response?.data) {
+          throw new Error(
+            axiosError.response.data.error ||
+              axiosError.response.data.message ||
+              "Failed to submit contact form",
+          );
+        }
+      }
+      throw error;
+    }
+  },
 };
 
 // Quotation API endpoints

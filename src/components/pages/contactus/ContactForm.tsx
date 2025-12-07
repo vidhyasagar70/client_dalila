@@ -3,6 +3,9 @@ import { useState, ChangeEvent } from "react";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { Marcellus, Jost } from "next/font/google";
 import AnimatedContainer from "@/components/shared/AnimatedContainer";
+import { userApi } from "@/lib/api";
+import toast from "react-hot-toast";
+
 const marcellus = Marcellus({
     variable: "--font-marcellus",
     subsets: ["latin"],
@@ -23,6 +26,7 @@ export default function ContactUsPage() {
         phone: "",
         message: "",
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const goldColor = "#B58900";
     const goldGradient = "linear-gradient(to right, #B58900 0%, #B58900 100%)";
@@ -36,9 +40,48 @@ export default function ContactUsPage() {
         });
     };
 
-    const handleSubmit = () => {
-        console.log("Form submitted:", formData);
-        alert("Message sent successfully!");
+    const handleSubmit = async () => {
+        // Validate form data
+        if (!formData.name || !formData.email || !formData.phone || !formData.message) {
+            toast.error("Please fill in all fields");
+            return;
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            toast.error("Please enter a valid email address");
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const response = await userApi.submitContactForm({
+                name: formData.name,
+                email: formData.email,
+                phoneNo: formData.phone,
+                message: formData.message,
+            });
+
+            if (response.success) {
+                toast.success(response.message || "Message sent successfully!");
+                // Clear form
+                setFormData({
+                    name: "",
+                    email: "",
+                    phone: "",
+                    message: "",
+                });
+            } else {
+                toast.error(response.message || "Failed to send message. Please try again.");
+            }
+        } catch (error) {
+            console.error("Contact form error:", error);
+            toast.error(error instanceof Error ? error.message : "Failed to send message. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -125,7 +168,8 @@ export default function ContactUsPage() {
                                             <div className="flex justify-center items-center h-full ml-10">
                                                 <button
                                                     onClick={handleSubmit}
-                                                    className="px-10 py-3 text-white font-semibold transition-all duration-300 rounded-none uppercase cursor-pointer tracking-wide text-sm"
+                                                    disabled={isSubmitting}
+                                                    className="px-10 py-3 text-white font-semibold transition-all duration-300 rounded-none uppercase cursor-pointer tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                                                     style={{
                                                         background:
                                                             goldGradient,
@@ -133,10 +177,12 @@ export default function ContactUsPage() {
                                                             "0 2px 4px rgba(181, 137, 0, 0.2)",
                                                     }}
                                                     onMouseEnter={(e) => {
-                                                        e.currentTarget.style.background =
-                                                            "linear-gradient(to right, #9d7400 0%, #9d7400 100%)";
-                                                        e.currentTarget.style.boxShadow =
-                                                            "0 4px 8px rgba(181, 137, 0, 0.3)";
+                                                        if (!isSubmitting) {
+                                                            e.currentTarget.style.background =
+                                                                "linear-gradient(to right, #9d7400 0%, #9d7400 100%)";
+                                                            e.currentTarget.style.boxShadow =
+                                                                "0 4px 8px rgba(181, 137, 0, 0.3)";
+                                                        }
                                                     }}
                                                     onMouseLeave={(e) => {
                                                         e.currentTarget.style.background =
@@ -145,7 +191,7 @@ export default function ContactUsPage() {
                                                             "0 2px 4px rgba(181, 137, 0, 0.2)";
                                                     }}
                                                 >
-                                                    Send Message
+                                                    {isSubmitting ? "Sending..." : "Send Message"}
                                                 </button>
                                             </div>
                                         </div>
