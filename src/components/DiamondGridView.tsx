@@ -45,6 +45,28 @@ const DiamondGridView: React.FC<GridViewProps> = ({
     null,
   );
 
+    // Track login status
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        let userStr = localStorage.getItem("user");
+        let token = localStorage.getItem("authToken");
+        if (!userStr) {
+          const cookies = document.cookie.split(";");
+          const userCookie = cookies.find((c) => c.trim().startsWith("user="));
+          if (userCookie) {
+            try {
+              userStr = decodeURIComponent(userCookie.split("=")[1].trim());
+            } catch (e) {
+              // ignore
+            }
+          }
+        }
+        setIsLoggedIn(!!userStr || !!token);
+      }
+    }, []);
+
   // Memoize filter strings to prevent unnecessary re-renders
   const filterKey = useMemo(() => {
     return JSON.stringify({
@@ -606,21 +628,6 @@ const DiamondGridView: React.FC<GridViewProps> = ({
                   key={diamond._id}
                   className="bg-white rounded-lg hover:shadow-lg transition-all duration-300 overflow-hidden relative border border-[#f9e8cd]"
                 >
-                  {/* Heart Icon */}
-                  <button className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center bg-white/80 hover:bg-white rounded-full transition-colors">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#666"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                  </button>
 
                   {/* Image Container */}
                   <div className="relative w-full h-40 bg-gray-50 p-3">
@@ -670,19 +677,21 @@ const DiamondGridView: React.FC<GridViewProps> = ({
                     </div>
 
                     <div className="flex justify-center">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (onRowClick) {
-                            onRowClick(diamond);
-                          } else {
-                            setSelectedDiamond(diamond);
-                          }
-                        }}
-                        className="mt-2 px-4 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200 rounded border border-gray-300"
-                      >
-                        View Details
-                      </button>
+                      {isLoggedIn && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (onRowClick) {
+                              onRowClick(diamond);
+                            } else {
+                              setSelectedDiamond(diamond);
+                            }
+                          }}
+                          className="mt-2 px-4 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200 rounded border border-gray-300"
+                        >
+                          View Details
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
