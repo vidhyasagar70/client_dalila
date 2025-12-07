@@ -32,21 +32,7 @@ export default function Diamondshowcase() {
       setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
-
-  const goToImage = (index: number) => {
-    setCurrentImageIndex(index);
-  };
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === 0 ? carouselImages.length - 1 : prev - 1
-    );
-  };
+  }, [carouselImages.length]);
 
   return (
     <div className="bg-white py-24">
@@ -83,10 +69,10 @@ export default function Diamondshowcase() {
                 <p
                   className={`text-gray-600 leading-relaxed mb-8 text-[15px] md:text-base font-normal ${jost.className}`}
                 >
-                  Diamonds are more than gemstones they are timeless symbols of love, craftsmanship and nature's brilliance.
+                  Diamonds are more than gemstones they are timeless symbols of love, craftsmanship and nature&apos;s brilliance.
                    Formed deep within the Earth over billions of years, each natural diamond carries its own story.
-                    Whether you're choosing your very first stone or refining a lifelong collection,
-                     understanding a diamond's key characteristics helps you make a truly confident choice.
+                    Whether you&apos;re choosing your very first stone or refining a lifelong collection,
+                     understanding a diamond&apos;s key characteristics helps you make a truly confident choice.
 
                      This guide walks you through every facet from how diamonds are formed to what makes each one unique.
                 </p>
@@ -123,7 +109,7 @@ export default function Diamondshowcase() {
                 <p
                   className={`text-gray-600 leading-relaxed mb-8 text-[15px] md:text-base font-normal ${jost.className}`}
                 >
-                  Each diamond&apos;s journey  from mine to masterpiece 
+                  Each diamond&apos;s journey — from mine to masterpiece —
                   involves ethical sourcing, expert craftsmanship, and precise
                   grading to ensure its authenticity and value.
                 </p>
