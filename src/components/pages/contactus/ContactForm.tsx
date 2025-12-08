@@ -274,15 +274,15 @@ export default function ContactUsPage() {
                                             <Phone className="w-5 h-5 text-white" />
                                         </div>
                                         <div>
-                                             <p
-                                                className={`text-gray-600 text-base ${jost.className}`}
+                                            <p
+                                                className={`text-gray-900 font-medium text-base mb-1 ${jost.className}`}
                                             >
-                                                +32 3 613 94 74
+                                                <span className="text-gray-700">Landline:</span> +32 3 613 94 74
                                             </p>
                                             <p
-                                                className={`text-gray-600 text-base ${jost.className}`}
+                                                className={`text-gray-900 font-medium text-base ${jost.className}`}
                                             >
-                                                +32487939351
+                                                <span className="text-gray-700">Phone:</span> +32 487 93 93 51
                                             </p>
                                         </div>
                                     </div>
