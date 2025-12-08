@@ -27,6 +27,7 @@ interface CustomerData {
   lastName: string;
   phoneNumber: string;
   countryCode: string;
+  landline?: string;
   address: Address;
   businessInfo: BusinessInfo;
   submittedAt?: string;
@@ -485,6 +486,12 @@ export default function MembersManagement() {
                   </th>
                   <th
                     className="px-3 py-3.5 text-left text-xs font-semibold text-white"
+                    style={{ width: "100px" }}
+                  >
+                    Landline
+                  </th>
+                  <th
+                    className="px-3 py-3.5 text-left text-xs font-semibold text-white"
                     style={{ width: "120px" }}
                   >
                     Company
@@ -519,7 +526,7 @@ export default function MembersManagement() {
                 {loading ? (
                   <tr>
                     <td
-                      colSpan={10}
+                      colSpan={11}
                       className="px-4 py-8 text-center text-gray-500 text-xs"
                     >
                       Loading members...
@@ -561,6 +568,9 @@ export default function MembersManagement() {
                         </td>
                         <td className="px-2 py-2 text-xs text-gray-900">
                           {phone}
+                        </td>
+                        <td className="px-2 py-2 text-xs text-gray-900">
+                          {userData?.landline || "N/A"}
                         </td>
                         <td className="px-2 py-2 text-xs text-gray-900">
                           {userData?.businessInfo?.companyName || "N/A"}
@@ -610,7 +620,7 @@ export default function MembersManagement() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={10} className="px-4 py-8 text-center">
+                    <td colSpan={11} className="px-4 py-8 text-center">
                       <p className="text-gray-500 font-medium text-xs">
                         {activeTab === "waiting"
                           ? "No pending members found"

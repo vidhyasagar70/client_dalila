@@ -49,6 +49,7 @@ function CustomerDetailsContent() {
   const [lastName, setLastName] = useState<string>("");
   const [countryCode, setCountryCode] = useState<string>("91");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [landline, setLandline] = useState<string>("");
 
   // Address Information
   const [street, setStreet] = useState<string>("");
@@ -282,6 +283,7 @@ function CustomerDetailsContent() {
         lastName: lastName.trim(),
         phoneNumber: pn.trim(), // Just the number without country code
         countryCode: `+${cc}`,
+        landline: landline.trim() || undefined,
         address: {
           street: street.trim(),
           city: city.trim(),
@@ -317,6 +319,7 @@ function CustomerDetailsContent() {
         setFirstName("");
         setLastName("");
         setPhoneNumber("");
+        setLandline("");
         setStreet("");
         setCity("");
         setState("");
@@ -602,6 +605,17 @@ function CustomerDetailsContent() {
                     countryCodeEditable={false}
                     enableAreaCodes={true}
                     masks={{ in: "+.. ........." }}
+                  />
+                </div>
+
+                <div className="mt-3">
+                  <input
+                    type="tel"
+                    value={landline}
+                    onChange={(e) => setLandline(e.target.value)}
+                    disabled={isLoading}
+                    placeholder="Landline (Optional)"
+                    className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   />
                 </div>
               </div>
