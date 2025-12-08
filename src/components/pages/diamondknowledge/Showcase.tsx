@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Marcellus, Jost } from "next/font/google";
 import { useState, useEffect } from "react";
 import AnimatedContainer from "@/components/shared/AnimatedContainer";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const marcellus = Marcellus({
   variable: "--font-marcellus",
@@ -19,6 +20,7 @@ const jost = Jost({
 
 export default function Diamondshowcase() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   
   const carouselImages = [
     "/images/firstimage.jpg",
@@ -26,13 +28,28 @@ export default function Diamondshowcase() {
     "/images/thirdimage.jpg", 
   ];
 
-  
   useEffect(() => {
+    if (!isAutoPlaying) return;
+    
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, [carouselImages.length]);
+  }, [carouselImages.length, isAutoPlaying]);
+
+  const goToPrevious = () => {
+    setIsAutoPlaying(false);
+    setCurrentImageIndex((prev) => 
+      prev === 0 ? carouselImages.length - 1 : prev - 1
+    );
+    setTimeout(() => setIsAutoPlaying(true), 5000);
+  };
+
+  const goToNext = () => {
+    setIsAutoPlaying(false);
+    setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
+    setTimeout(() => setIsAutoPlaying(true), 5000);
+  };
 
   return (
     <div className="bg-white py-24">
@@ -120,25 +137,63 @@ export default function Diamondshowcase() {
           <div>
             <AnimatedContainer direction="right">
               <div className="relative h-[370px] md:h-[400px] w-full max-w-[380px] mx-auto overflow-hidden shadow-2xl group">
-                {/* Carousel Images */}
-                {carouselImages.map((image: string, index: number) => (
-                  <div
-                    key={index}
-                    className={`absolute inset-0 transition-opacity duration-500 ${
-                      index === currentImageIndex ? "opacity-100" : "opacity-0"
-                    }`}
-                  >
-                    <Image
-                      src={image}
-                      alt={`Diamond showcase ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-                ))}
+                {/* Carousel Container with sliding effect */}
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out h-full"
+                  style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                >
+                  {carouselImages.map((image: string, index: number) => (
+                    <div
+                      key={index}
+                      className="min-w-full h-full relative"
+                    >
+                      <Image
+                        src={image}
+                        alt={`Diamond showcase ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
+                  ))}
+                </div>
 
+                {/* Navigation Buttons */}
+                <button
+                  onClick={goToPrevious}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 z-10"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
                 
+                <button
+                  onClick={goToNext}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all duration-200 opacity-0 group-hover:opacity-100 z-10"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+
+                {/* Indicator Dots */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                  {carouselImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setIsAutoPlaying(false);
+                        setCurrentImageIndex(index);
+                        setTimeout(() => setIsAutoPlaying(true), 5000);
+                      }}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        index === currentImageIndex 
+                          ? "bg-white w-8" 
+                          : "bg-white/50 hover:bg-white/75"
+                      }`}
+                      aria-label={`Go to image ${index + 1}`}
+                    />
+                  ))}
+                </div>
               </div>
             </AnimatedContainer>
           </div>

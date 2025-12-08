@@ -274,6 +274,11 @@ export default function ContactUsPage() {
                                             <Phone className="w-5 h-5 text-white" />
                                         </div>
                                         <div>
+                                             <p
+                                                className={`text-gray-600 text-base ${jost.className}`}
+                                            >
+                                                +32 3 613 94 74
+                                            </p>
                                             <p
                                                 className={`text-gray-600 text-base ${jost.className}`}
                                             >
