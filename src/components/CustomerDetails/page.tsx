@@ -551,13 +551,13 @@ function CustomerDetailsContent() {
               )}
 
               {/* Personal Information Section */}
-              <div className="mb-6">
+              <div className="mb-2">
                 <h3 className="text-white text-lg font-semibold mb-3 flex items-center gap-2">
                   <User className="w-5 h-5 text-[#FFD166]" />
                   Personal Information
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                   <input
                     type="text"
                     value={firstName}
@@ -621,7 +621,7 @@ function CustomerDetailsContent() {
               </div>
 
               {/* Address Information Section */}
-              <div className="mb-6">
+              <div className="mb-2">
                 <h3 className="text-white text-lg font-semibold mb-3 flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-[#FFD166]" />
                   Address Information
@@ -685,7 +685,7 @@ function CustomerDetailsContent() {
               </div>
 
               {/* Business Information Section */}
-              <div className="mb-6">
+              <div className="mb-2">
                 <h3 className="text-white text-lg font-semibold mb-3 flex items-center gap-2">
                   <Building2 className="w-5 h-5 text-[#FFD166]" />
                   Business Information
@@ -742,7 +742,7 @@ function CustomerDetailsContent() {
               </div>
 
               {/* Info Text */}
-              <div className="mb-6 p-3 bg-blue-500/20 border border-blue-500 rounded-lg">
+              <div className="mb-3 p-3 bg-blue-500/20 border border-blue-500 rounded-lg">
                 <p className="text-xs text-blue-200 flex items-start gap-2">
                   <FileText className="w-4 h-4 flex-shrink-0 mt-0.5" />
                   <span>
@@ -771,10 +771,7 @@ function CustomerDetailsContent() {
                 )}
               </button>
 
-              {/* Required Fields Notice */}
-              <p className="mt-4 text-center text-xs text-gray-400">
-                * Required fields
-              </p>
+            
             </form>
           </div>
         </div>
