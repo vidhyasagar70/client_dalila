@@ -283,7 +283,7 @@ function CustomerDetailsContent() {
         lastName: lastName.trim(),
         phoneNumber: pn.trim(), // Just the number without country code
         countryCode: `+${cc}`,
-        landline: landline.trim() || undefined,
+        landlineNumber: landline.trim() || undefined,
         address: {
           street: street.trim(),
           city: city.trim(),
