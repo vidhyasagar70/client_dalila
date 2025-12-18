@@ -29,8 +29,6 @@ interface CaratRange {
 
 // Static carat ranges matching your UI image
 const STATIC_CARAT_RANGES: CaratRange[] = [
-  { label: "0.17 - 0.22", value: "0.17-0.22", min: 0.17, max: 0.22 },
-  { label: "0.23 - 0.29", value: "0.23-0.29", min: 0.23, max: 0.29 },
   { label: "0.30 - 0.39", value: "0.30-0.39", min: 0.3, max: 0.39 },
   { label: "0.40 - 0.49", value: "0.40-0.49", min: 0.4, max: 0.49 },
   { label: "0.50 - 0.69", value: "0.50-0.69", min: 0.5, max: 0.69 },
@@ -42,7 +40,9 @@ const STATIC_CARAT_RANGES: CaratRange[] = [
   { label: "2.00 - 2.99", value: "2.00-2.99", min: 2.0, max: 2.99 },
   { label: "3.00 - 3.99", value: "3.00-3.99", min: 3.0, max: 3.99 },
   { label: "4.00 - 4.99", value: "4.00-4.99", min: 4.0, max: 4.99 },
-  { label: "5.00 - 99.99", value: "5.00-99.99", min: 5.0, max: 99.99 },
+  { label: "5.00 - 6.99", value: "5.00-6.99", min: 5.0, max: 6.99 },
+  { label: "7.01 - 9.99", value: "7.01-9.99", min: 7.01, max: 9.99 },
+  { label: "10.00 - 99.99", value: "10.00-99.99", min: 10.0, max: 99.99 },
 ];
 
 export function CaratFilterLimited({ selectedCaratRanges, onCaratChange }: CaratFilterProps) {
