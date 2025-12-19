@@ -330,15 +330,11 @@ const DiamondStockTable: React.FC<LimitedTableProps> = ({
 
   return (
     <>
-      <div
-        className={`w-full flex flex-col bg-gray-50 p-4 ${mavenPro.className}`}
-      >
+      <div className={`w-full flex flex-col bg-gray-50 p-4 ${mavenPro.className}`}>
         <div className="bg-white shadow-sm flex flex-col rounded-lg">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse table-fixed">
-              <thead
-                className={`bg-[#050c3a] text-white sticky top-0 z-10 ${mavenPro.className}`}
-              >
+              <thead className={`bg-[#050c3a] text-white sticky top-0 z-10 ${mavenPro.className}`}>
                 <tr>
                   <th className="w-12 px-2 py-3 text-center">
                     <input
@@ -348,7 +344,7 @@ const DiamondStockTable: React.FC<LimitedTableProps> = ({
                       className="w-4 h-4 cursor-pointer [accent-color:#050C3A]"
                     />
                   </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
+                  {/* <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
                     <button
                       onClick={() => handleSort("REAL_IMAGE")}
                       className="flex items-center gap-1 hover:text-gray-300 transition-colors"
@@ -365,7 +361,7 @@ const DiamondStockTable: React.FC<LimitedTableProps> = ({
                         />
                       </div>
                     </button>
-                  </th>
+                  </th> */}
                   <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
                     <button
                       onClick={() => handleSort("STONE_NO")}
@@ -394,102 +390,38 @@ const DiamondStockTable: React.FC<LimitedTableProps> = ({
                       </div>
                     </button>
                   </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Shape
-                  </th>
-                  <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">
-                    Carat
-                  </th>
-                  <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">
-                    Color
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Clarity
-                  </th>
-                  <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">
-                    Cut
-                  </th>
-                  <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">
-                    Polish
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Symmetry
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Fluor
-                  </th>
-                  <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">
-                    Lab
-                  </th>
-                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
-                    Report No
-                  </th>
-                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
-                    Report Date
-                  </th>
-                  <th className="w-28 px-2 py-3 text-left text-[14px] font-medium">
-                    Measure
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Table%
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Depth%
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Crn Angle
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Crn Height
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Pav Angle
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Pav Height
-                  </th>
-                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
-                    Rap Price
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Disc%
-                  </th>
-                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
-                    Net Rate
-                  </th>
-                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
-                    Net Value
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Location
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Stage
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    Tinge
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    CN
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    CW
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    SN
-                  </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
-                    SW
-                  </th>
-                  <th className="w-32 px-2 py-3 text-left text-[14px] font-medium">
-                    Key Symbols
-                  </th>
-                  <th className="w-60 px-2 py-3 text-left text-[14px] font-medium">
-                    Comments
-                  </th>
-                  <th className="w-60 px-2 py-3 text-left text-[14px] font-medium">
-                    Report Comments
-                  </th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Location</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Stage</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Shape</th>
+                  <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Carat</th>
+                  <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Color</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Clarity</th>
+                  <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Cut</th>
+                  <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Polish</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Symmetry</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Fluor</th>
+                  <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Lab</th>
+                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Rap Price</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Disc%</th>
+                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Net Rate</th>
+                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Net Value</th>
+                  <th className="w-60 px-2 py-3 text-left text-[14px] font-medium">Comments</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Depth%</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Table%</th>
+                  <th className="w-28 px-2 py-3 text-left text-[14px] font-medium">Measure</th>
+                  <th className="w-32 px-2 py-3 text-left text-[14px] font-medium">Key Symbols</th>
+                  <th className="w-60 px-2 py-3 text-left text-[14px] font-medium">Report Comments</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Crn Angle</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Crn Height</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Pav Angle</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Pav Height</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">CN</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">CW</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">SN</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">SW</th>
+                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Report No</th>
+                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Report Date</th>
+                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Tinge</th>
                 </tr>
               </thead>
 
@@ -517,7 +449,7 @@ const DiamondStockTable: React.FC<LimitedTableProps> = ({
                         className="w-4 h-4 cursor-pointer [accent-color:#050C3A]"
                       />
                     </td>
-                    <td className="px-1 py-0.5">
+                    {/* <td className="px-1 py-0.5">
                       <div className="flex flex-col items-center gap-0.5">
                         <div className="relative w-12 h-12">
                           <div className="w-full h-full bg-gray-100 rounded overflow-hidden">
@@ -546,119 +478,45 @@ const DiamondStockTable: React.FC<LimitedTableProps> = ({
                           </div>
                         </div>
                       </div>
-                    </td>
+                    </td> */}
                     <td
                       className="px-2 py-1 text-[14px] text-gray-700 font-medium truncate cursor-pointer hover:text-blue-600 hover:underline"
                       onClick={(e) => handleStockIdClick(e, row)}
                     >
                       {row.STONE_NO}
                     </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
-                      {row.SHAPE}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.CARATS}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.COLOR}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.CLARITY}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.CUT || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.POL || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.SYM || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.FLOUR || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.LAB}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
-                      {row.REPORT_NO}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
-                      {row.REPORT_DATE
-                        ? new Date(row.REPORT_DATE).toLocaleDateString()
-                        : "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
-                      {row.MEASUREMENTS || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.TABLE_PER || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.DEPTH_PER || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.CROWN_ANGLE || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.CROWN_HEIGHT || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.PAVILLION_ANGLE || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.PAVILLION_HEIGHT || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {formatCurrency(row.RAP_PRICE)}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] font-semibold text-red-600">
-                      {formatPercentage(row.DISC_PER)}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {formatCurrency(row.NET_RATE ?? 0)}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700 font-medium">
-                      {formatCurrency(row.NET_VALUE ?? 0)}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.LOCATION}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.STAGE}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
-                      {row.TINGE || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.CN || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.CW || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.SN || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700">
-                      {row.SW || "N/A"}
-                    </td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
-                      {row.KEY_TO_SYMBOLS || "N/A"}
-                    </td>
-                    <td
-                      className="px-2 py-1 text-[14px] text-gray-700 max-w-[240px]"
-                      title={row.COMMENTS_1}
-                    >
-                      <div className="truncate">{row.COMMENTS_1 || "N/A"}</div>
-                    </td>
-                    <td
-                      className="px-2 py-1 text-[14px] text-gray-700 max-w-[240px]"
-                      title={row.REPORT_COMMENTS}
-                    >
-                      <div className="truncate">
-                        {row.REPORT_COMMENTS || "N/A"}
-                      </div>
-                    </td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.LOCATION}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.STAGE}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.SHAPE}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.CARATS}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.COLOR}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.CLARITY}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.CUT || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.POL || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.SYM || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.FLOUR || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.LAB}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{formatCurrency(row.RAP_PRICE)}</td>
+                    <td className="px-2 py-1 text-[14px] font-semibold text-red-600">{formatPercentage(row.DISC_PER)}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{formatCurrency(row.NET_RATE ?? 0)}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700 font-medium">{formatCurrency(row.NET_VALUE ?? 0)}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700 max-w-[240px]" title={row.COMMENTS_1}><div className="truncate">{row.COMMENTS_1 || "N/A"}</div></td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.DEPTH_PER || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.TABLE_PER || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.MEASUREMENTS || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.KEY_TO_SYMBOLS || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700 max-w-[240px]" title={row.REPORT_COMMENTS}><div className="truncate">{row.REPORT_COMMENTS || "N/A"}</div></td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.CROWN_ANGLE || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.CROWN_HEIGHT || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.PAVILLION_ANGLE || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.PAVILLION_HEIGHT || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.CN || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.CW || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.SN || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.SW || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.REPORT_NO}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.REPORT_DATE ? new Date(row.REPORT_DATE).toLocaleDateString() : "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.TINGE || "N/A"}</td>
                   </tr>
                 ))}
               </tbody>

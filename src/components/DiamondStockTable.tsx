@@ -518,7 +518,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
                       className="w-4 h-4 cursor-pointer [accent-color:#050C3A]"
                     />
                   </th>
-                  <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
+                  {/* <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">
                     <button
                       onClick={() => handleSort("REAL_IMAGE")}
                       className="flex items-center gap-1 hover:text-gray-300 transition-colors"
@@ -535,7 +535,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
                         />
                       </div>
                     </button>
-                  </th>
+                  </th> */}
                   {isLoggedIn && (
                     <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">
                       <button
@@ -629,7 +629,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
                         className="w-4 h-4 cursor-pointer [accent-color:#050C3A]"
                       />
                     </td>
-                    <td className="px-1 py-0.5">
+                    {/* <td className="px-1 py-0.5">
                       <div className="flex flex-col items-center gap-0.5">
                         <div className="relative w-12 h-12">
                           <div className="w-full h-full bg-gray-100 rounded-none overflow-hidden">
@@ -658,7 +658,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
                           </div>
                         </div>
                       </div>
-                    </td>
+                    </td> */}
                     {isLoggedIn && (
                       <td
                         className="px-2 py-1 text-[14px] text-gray-700 font-medium truncate cursor-pointer hover:text-blue-600 hover:underline"
