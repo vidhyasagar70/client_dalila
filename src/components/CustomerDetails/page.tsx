@@ -50,6 +50,7 @@ function CustomerDetailsContent() {
   const [countryCode, setCountryCode] = useState<string>("91");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [landline, setLandline] = useState<string>("");
+  const [landlineCountryCode, setLandlineCountryCode] = useState<string>("91");
 
   // Address Information
   const [street, setStreet] = useState<string>("");
@@ -283,7 +284,8 @@ function CustomerDetailsContent() {
         lastName: lastName.trim(),
         phoneNumber: pn.trim(), // Just the number without country code
         countryCode: `+${cc}`,
-        landlineNumber: landline.trim() || undefined,
+        landlineCountryCode: landline ? `+${landlineCountryCode}` : undefined,
+        landlineNumber: landline ? landline.replace(/[^0-9]/g, "").replace(new RegExp(`^${landlineCountryCode}`), "") : undefined,
         address: {
           street: street.trim(),
           city: city.trim(),
@@ -527,7 +529,7 @@ function CustomerDetailsContent() {
             {/* Form */}
             <form
               onSubmit={handleSubmit}
-              className="relative z-10 w-full max-w-[500px] mt-12"
+              className="relative z-10 w-full max-w-[500px] mt-10"
             >
               <h2
                 className={`text-2xl md:text-3xl font-semibold text-white mb-6 text-center ${playFair.className}`}
@@ -557,7 +559,7 @@ function CustomerDetailsContent() {
                   Personal Information
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <input
                     type="text"
                     value={firstName}
@@ -565,7 +567,7 @@ function CustomerDetailsContent() {
                     required
                     disabled={isLoading}
                     placeholder="First Name *"
-                    className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="w-full px-3 py-1.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   />
 
                   <input
@@ -575,11 +577,12 @@ function CustomerDetailsContent() {
                     required
                     disabled={isLoading}
                     placeholder="Last Name *"
-                    className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="w-full px-3 py-1.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   />
                 </div>
 
-                <div className="mt-3">
+                <div className="mt-2">
+                  <label className="block text-sm font-medium text-white mb-1">Phone Number *</label>
                   <PhoneInput
                     country={"in"}
                     value={phoneNumber}
@@ -589,13 +592,14 @@ function CustomerDetailsContent() {
                         setCountryCode(data.dialCode);
                       }
                     }}
+                    placeholder="Phone Number *"
                     inputProps={{
                       name: "phone",
                       required: true,
                       disabled: isLoading,
                       autoFocus: false,
                     }}
-                    inputClass="!w-full !pl-16 !pr-4 !py-2.5 !rounded-lg !bg-white !border !border-gray-300 !focus:border-[#FFD166] !text-black !placeholder-gray-500 !focus:outline-none !focus:ring-2 !focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed !transition-all !duration-200"
+                    inputClass="!w-full !pl-16 !pr-4 !py-2 !rounded-lg !bg-white !border !border-gray-300 !focus:border-[#FFD166] !text-black !placeholder-gray-500 !focus:outline-none !focus:ring-2 !focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed !transition-all !duration-200"
                     buttonClass="!bg-white !border-none !rounded-lg !shadow-none !pl-2 !pr-2"
                     dropdownClass="!bg-white !text-black !rounded-lg !shadow-lg"
                     containerClass="w-full"
@@ -608,14 +612,34 @@ function CustomerDetailsContent() {
                   />
                 </div>
 
-                <div className="mt-3">
-                  <input
-                    type="tel"
+                <div className="mt-2">
+                  <label className="block text-sm font-medium text-white mb-1">Landline Number (Optional)</label>
+                  <PhoneInput
+                    country={"in"}
                     value={landline}
-                    onChange={(e) => setLandline(e.target.value)}
-                    disabled={isLoading}
-                    placeholder="Landline (Optional)"
-                    className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    onChange={(value: string, data: CountryData) => {
+                      setLandline(value);
+                      if (data && typeof data === "object" && "dialCode" in data && data.dialCode) {
+                        setLandlineCountryCode(data.dialCode);
+                      }
+                    }}
+                    placeholder="Landline Number (Optional)"
+                    inputProps={{
+                      name: "landline",
+                      required: false,
+                      disabled: isLoading,
+                      autoFocus: false,
+                    }}
+                    inputClass="!w-full !pl-16 !pr-4 !py-2 !rounded-lg !bg-white !border !border-gray-300 !focus:border-[#FFD166] !text-black !placeholder-gray-500 !focus:outline-none !focus:ring-2 !focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed !transition-all !duration-200"
+                    buttonClass="!bg-white !border-none !rounded-lg !shadow-none !pl-2 !pr-2"
+                    dropdownClass="!bg-white !text-black !rounded-lg !shadow-lg"
+                    containerClass="w-full"
+                    enableSearch
+                    disableSearchIcon={false}
+                    specialLabel=""
+                    countryCodeEditable={false}
+                    enableAreaCodes={true}
+                    masks={{ in: "+.. ........." }}
                   />
                 </div>
               </div>
@@ -627,7 +651,7 @@ function CustomerDetailsContent() {
                   Address Information
                 </h3>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <input
                     type="text"
                     value={street}
@@ -635,7 +659,7 @@ function CustomerDetailsContent() {
                     required
                     disabled={isLoading}
                     placeholder="Street Address *"
-                    className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="w-full px-3 py-1.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -646,7 +670,7 @@ function CustomerDetailsContent() {
                       required
                       disabled={isLoading}
                       placeholder="City *"
-                      className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      className="w-full px-3 py-1.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                     />
 
                     <input
@@ -656,7 +680,7 @@ function CustomerDetailsContent() {
                       required
                       disabled={isLoading}
                       placeholder="State/Province *"
-                      className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      className="w-full px-3 py-1.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                     />
                   </div>
 
@@ -668,7 +692,7 @@ function CustomerDetailsContent() {
                       required
                       disabled={isLoading}
                       placeholder="Postal Code *"
-                      className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      className="w-full px-3 py-1.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                     />
 
                     <input
@@ -678,7 +702,7 @@ function CustomerDetailsContent() {
                       required
                       disabled={isLoading}
                       placeholder="Country *"
-                      className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      className="w-full px-3 py-1.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -691,7 +715,7 @@ function CustomerDetailsContent() {
                   Business Information
                 </h3>
 
-                <div className="space-y-3">
+                <div className="space-y-1.5">
                   <input
                     type="text"
                     value={companyName}
@@ -699,7 +723,7 @@ function CustomerDetailsContent() {
                     required
                     disabled={isLoading}
                     placeholder="Company Name *"
-                    className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="w-full px-3 py-1.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   />
 
                   <select
@@ -707,7 +731,7 @@ function CustomerDetailsContent() {
                     onChange={(e) => setBusinessType(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="w-full px-3 py-1.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   >
                     <option value="">Select Business Type *</option>
                     {businessTypes.map((type) => (
@@ -724,7 +748,7 @@ function CustomerDetailsContent() {
                     required
                     disabled={isLoading}
                     placeholder="VAT/Tax Number (e.g., GSTIN1234567) *"
-                    className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="w-full px-3 py-1.5 rounded-lg bg-white border border-gray-300 focus:border-[#FFD166] text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD166] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   />
 
                   <div className="relative">
@@ -756,7 +780,7 @@ function CustomerDetailsContent() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[#d4a018] hover:bg-[#c4a639] text-white cursor-pointer font-semibold py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full bg-[#d4a018] hover:bg-[#c4a639] text-white cursor-pointer font-semibold py-2 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2 transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 {isLoading ? (
                   <>
