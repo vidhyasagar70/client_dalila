@@ -2198,7 +2198,7 @@ export const inventoryApi = {
       const response = await apiClient.put<{
         success: boolean;
         message: string;
-        data?: any;
+        data?: unknown;
       }>(
         `/api/users/admin/supplier-settings/${encodeURIComponent(supplierName)}/filters`,
         filters

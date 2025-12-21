@@ -244,54 +244,6 @@ export default function Header() {
         }
     };
 
-    const handleInventoryClick = (e: React.MouseEvent) => {
-        // Dispatch event to close any open diamond detail modal
-        if (typeof window !== "undefined") {
-            const closeModalEvent = new CustomEvent("close-diamond-modal");
-            window.dispatchEvent(closeModalEvent);
-        }
-
-        if (!isLoggedIn) {
-            e.preventDefault();
-            router.push("/login");
-        } else if (
-            userRole !== "ADMIN" &&
-            userRole !== "SUPER_ADMIN" &&
-            userStatus !== "APPROVED"
-        ) {
-            e.preventDefault();
-            alert(
-                "Your account is pending approval. Please wait for admin verification to access the inventory."
-            );
-        }
-    };
-
-    let navigationItems: {
-        href: string;
-        label: string;
-        requiresAuth?: boolean;
-    }[] = [];
-
-    if (!isLoggedIn) {
-        navigationItems = [
-            { href: "/aboutUs", label: "About us" },
-            { href: "/diamondKnowledge", label: "Diamond Knowledge" },
-            { href: "/blogs", label: "Blogs" },
-        ];
-    } else if (isAdmin) {
-        navigationItems = [
-            { href: "/aboutUs", label: "About us" },
-            { href: "/diamondKnowledge", label: "Diamond Knowledge" },
-            { href: "/blogs", label: "Blogs" },
-        ];
-    } else {
-        navigationItems = [
-            { href: "/aboutUs", label: "About us" },
-            { href: "/diamondKnowledge", label: "Diamond Knowledge" },
-            { href: "/blogs", label: "Blogs" },
-        ];
-    }
-
     return (
         <header
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${

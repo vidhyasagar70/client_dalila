@@ -27,7 +27,6 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
   const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [updatingSupplier, setUpdatingSupplier] = useState<string | null>(null);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [selectedSupplierForConfig, setSelectedSupplierForConfig] = useState<string>("");
 
@@ -35,41 +34,6 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
   React.useEffect(() => {
     setSuppliers(initialSuppliers);
   }, [initialSuppliers]);
-
-  const handleToggleVisibility = async (
-    supplierName: string,
-    currentStatus: boolean,
-  ) => {
-    try {
-      setUpdatingSupplier(supplierName);
-      const newStatus = !currentStatus;
-      
-      // Call API to update supplier visibility
-      await inventoryApi.updateSupplierVisibility(supplierName, newStatus);
-
-      // Store visibility state in localStorage
-      localStorage.setItem(`supplier_visibility_${supplierName}`, JSON.stringify(newStatus));
-
-      // Update local state only after successful API call
-      setSuppliers((prev) =>
-        prev.map((supplier) =>
-          supplier.name === supplierName
-            ? { ...supplier, isVisible: newStatus }
-            : supplier,
-        ),
-      );
-
-      // Notify parent to refresh data
-      if (onSupplierUpdate) {
-        onSupplierUpdate();
-      }
-    } catch (error) {
-      console.error("Error updating supplier visibility:", error);
-      alert("Failed to update supplier visibility. Please try again.");
-    } finally {
-      setUpdatingSupplier(null);
-    }
-  };
 
   const handleOpenConfigModal = (supplierName: string) => {
     setSelectedSupplierForConfig(supplierName);
