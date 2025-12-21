@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Maven_Pro } from "next/font/google";
 import { ChevronUp, ChevronDown, Loader2, ChevronLeft, ChevronRight } from "lucide-react";

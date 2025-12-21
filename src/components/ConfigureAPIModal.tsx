@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { X } from "lucide-react";
 import ShapeFilter from "./ShapeFilter";
 import CaratFilter from "./CaratFilter";
@@ -8,6 +8,35 @@ import ClarityFilter from "./ClarityFilter";
 import ColorFilter from "./ColorFilter";
 import InventoryDiamondTable from "./InventoryDiamondTable";
 import { inventoryApi } from "@/lib/api";
+
+interface InventoryDiamond {
+  _id: string;
+  STONE_NO: string;
+  source: string;
+  SHAPE: string;
+  CARATS: string;
+  COLOR: string;
+  CLARITY: string;
+  CUT: string;
+  POL: string;
+  SYM: string;
+  FLOUR: string;
+  LAB: string;
+  LOCATION: string;
+  NET_RATE: string;
+  DISC_PER: string;
+  NET_VALUE: string;
+  RAP_PRICE: string;
+  DEPTH_PER: string;
+  TABLE_PER: string;
+  MEASUREMENTS: string;
+  REPORT_NO: string;
+  REAL_IMAGE: string;
+  MP4: string;
+  CERTI_PDF: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface ConfigureAPIModalProps {
   isOpen: boolean;
@@ -38,7 +67,7 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
 
   const [isApplying, setIsApplying] = useState(false);
   const [activeTab, setActiveTab] = useState<'inventory' | 'api'>('inventory');
-  const [diamondData, setDiamondData] = useState<any[]>([]);
+  const [diamondData, setDiamondData] = useState<InventoryDiamond[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,19 +79,12 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
     }
   }, [isOpen]);
 
-  // Fetch diamond data when filters change
-  useEffect(() => {
-    if (isOpen && activeTab === 'inventory') {
-      fetchFilteredData();
-    }
-  }, [isOpen, activeTab, selectedShapes, selectedCaratRanges, selectedClarities, selectedColors]);
-
-  const fetchFilteredData = async () => {
+  const fetchFilteredData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const params: any = {
+      const params: Record<string, string | number> = {
         supplier: supplierName,
         page: 1,
         limit: 10000,
@@ -96,7 +118,14 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [supplierName, selectedShapes, selectedCaratRanges, selectedClarities, selectedColors]);
+
+  // Fetch diamond data when filters change
+  useEffect(() => {
+    if (isOpen && activeTab === 'inventory') {
+      fetchFilteredData();
+    }
+  }, [isOpen, activeTab, fetchFilteredData]);
 
   const clearAllFilters = () => {
     setSelectedShapes([]);

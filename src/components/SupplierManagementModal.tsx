@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { X, ChevronLeft, ChevronRight, Settings } from "lucide-react";
-import { inventoryApi } from "@/lib/api";
+// import { inventoryApi } from "@/lib/api";
 import ConfigureAPIModal from "./ConfigureAPIModal";
 
 interface Supplier {
