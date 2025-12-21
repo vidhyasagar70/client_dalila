@@ -2055,6 +2055,162 @@ export const formApi = {
   },
 };
 
+// Inventory API
+export const inventoryApi = {
+  // Get all diamonds for admin/superadmin
+  getAllDiamonds: async (params?: {
+    page?: number;
+    limit?: number;
+  }) => {
+    try {
+      const queryParams = new URLSearchParams();
+      if (params?.page) queryParams.append("page", params.page.toString());
+      if (params?.limit) queryParams.append("limit", params.limit.toString());
+
+      const url = `/api/diamonds/admin/search${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+      const response = await apiClient.get<{
+        success: boolean;
+        message: string;
+        data: Array<{
+          _id: string;
+          ARROW_IMAGE: string;
+          BRANCH: string;
+          CARATS: string;
+          CERTI_PDF: string;
+          CLARITY: string;
+          CLARITY_CHARACTERISTICS: string;
+          CN: string;
+          COLOR: string;
+          COMMENTS_1: string;
+          CROWN_ANGLE: string;
+          CROWN_HEIGHT: string;
+          CUT: string;
+          CW: string;
+          DEPTH_PER: string;
+          DISC_PER: string;
+          DNA: string;
+          FLOUR: string;
+          HA: string;
+          HEART_IMAGE: string;
+          KEY_TO_SYMBOLS: string[];
+          LAB: string;
+          LOCATION: string;
+          MEASUREMENTS: string;
+          MP4: string;
+          NET_RATE: string;
+          NET_VALUE: string;
+          PAVILLION_ANGLE: string;
+          PAVILLION_HEIGHT: string;
+          POL: string;
+          RAP_PRICE: string;
+          REAL_IMAGE: string;
+          REPORT_COMMENTS: string;
+          REPORT_DATE: string;
+          REPORT_NO: string;
+          SHAPE: string;
+          SN: string;
+          STAGE: string;
+          STONE_NO: string;
+          SW: string;
+          SYM: string;
+          TABLE_PER: string;
+          TINGE: string;
+          source: string;
+          HandVideo: string;
+          TweezerVideo: string;
+          __v: number;
+          createdAt: string;
+          updatedAt: string;
+        }>;
+        pagination: {
+          currentPage: number;
+          totalPages: number;
+          totalRecords: number;
+          recordsPerPage: number;
+          hasNextPage: boolean;
+          hasPrevPage: boolean;
+        };
+        appliedFilters: Record<string, unknown>;
+        totalFilteredRecords: number;
+      }>(url);
+
+      return response.data;
+    } catch (error) {
+      console.error("Get inventory diamonds error:", error);
+      throw error;
+    }
+  },
+
+  // Update supplier visibility settings
+  updateSupplierVisibility: async (
+    supplierName: string,
+    isVisible: boolean,
+  ) => {
+    try {
+      const response = await apiClient.put<{
+        success: boolean;
+        message: string;
+      }>(`/api/users/admin/supplier-settings/${encodeURIComponent(supplierName)}/`, {
+        isVisible,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Update supplier visibility error:", error);
+      throw error;
+    }
+  },
+
+  // Get suppliers list
+  getSuppliers: async () => {
+    try {
+      const response = await apiClient.get<{
+        success: boolean;
+        data: Array<{
+          name: string;
+          link: string;
+          totalDiamonds: number;
+          isVisible: boolean;
+        }>;
+      }>("/api/users/admin/suppliers");
+      return response.data;
+    } catch (error) {
+      console.error("Get suppliers error:", error);
+      throw error;
+    }
+  },
+
+  // Apply filters to supplier
+  applySupplierFilters: async (
+    supplierName: string,
+    filters: {
+      isFilterEnabled: boolean;
+      shapes?: string[];
+      colors?: string[];
+      carats?: {
+        min: number;
+        max: number;
+      };
+      cuts?: string[];
+      clarities?: string[];
+    }
+  ) => {
+    try {
+      const response = await apiClient.put<{
+        success: boolean;
+        message: string;
+        data?: any;
+      }>(
+        `/api/users/admin/supplier-settings/${encodeURIComponent(supplierName)}/filters`,
+        filters
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Apply supplier filters error:", error);
+      throw error;
+    }
+  },
+};
+
 // Export token management functions
 export { getAuthToken, setAuthToken, removeAuthToken, isAuthenticated };
 
@@ -2084,6 +2240,7 @@ const apiExport = {
   holdApi,
   queryApi,
   formApi,
+  inventoryApi,
   healthCheck,
 };
 

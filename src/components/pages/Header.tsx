@@ -35,6 +35,7 @@ export default function Header() {
     const createAdminPage = pathname === "/create-admin";
     const buyFormPage = pathname === "/buy-form";
     const holdstonePage = pathname === "/holdstone";
+    const inventoryManagementPage = pathname === "/inventory-management";
 
     // Function to check if token has expired
     const isTokenExpired = (): boolean => {
@@ -309,7 +310,7 @@ export default function Header() {
                 limitedEditionPage ||
                 createAdminPage ||
                 buyFormPage ||
-                holdstonePage ||
+                holdstonePage || inventoryManagementPage||
                 CartPage
                     ? "bg-[#050c3a] shadow-lg "
                     : "bg-transparent py-2.5 md:py-3"
@@ -447,12 +448,6 @@ export default function Header() {
                         ) : !isLoggedIn ? (
                             <>
                                 <button
-                                    onClick={() => router.push("/inventory")}
-                                    className="py-3 px-3 xl:px-4 xl:py-2.5 xl:h-10 text-xs xl:text-sm text-white border border-[#c89e3a] hover:bg-[#c89e3a] hover:text-white transition-colors whitespace-nowrap cursor-pointer"
-                                >
-                                    INVENTORY
-                                </button>
-                                <button
                                     onClick={() => router.push("/login")}
                                     className="py-3 px-3 xl:px-4 xl:py-2.5 xl:h-10 text-xs xl:text-sm text-white border border-[#c89e3a] hover:bg-[#c89e3a] hover:text-white transition-colors whitespace-nowrap cursor-pointer"
                                 >
@@ -513,7 +508,7 @@ export default function Header() {
                                     </div>
                                 )}
 
-                                {/* INVENTORY - Available for Admin or APPROVED users */}
+                                {/* INVENTORY - Available for all logged-in users (including admins) */}
                                 <button
                                     onClick={(e) => {
                                         // Close any open diamond detail modal
@@ -582,6 +577,12 @@ export default function Header() {
                                                 }
                                                 className="absolute top-full left-0 mt-0 w-64 bg-white shadow-lg border border-gray-200 rounded-sm z-50"
                                             >
+                                                <Link
+                                                    href="/inventory-management"
+                                                    className="block px-4 py-3 text-sm text-gray-700 hover:bg-[#c89e3a] hover:text-white transition-colors border-b border-gray-100"
+                                                >
+                                                    Inventory & Suppliers
+                                                </Link>
                                                 <Link
                                                     href="/member"
                                                     className="block px-4 py-3 text-sm text-gray-700 hover:bg-[#c89e3a] hover:text-white transition-colors border-b border-gray-100"
@@ -803,7 +804,7 @@ export default function Header() {
                                 </div>
                             )}
 
-                            {/* Inventory - Available for Admin or APPROVED users */}
+                            {/* Inventory - Available for all logged-in users (including admins) */}
                             {isLoggedIn && (
                                 <button
                                     onClick={(e) => {
@@ -849,6 +850,15 @@ export default function Header() {
                                         <ChevronDown size={18} />
                                     </p>
                                     <div className="pl-4 flex flex-col gap-2">
+                                        <button
+                                            onClick={() => {
+                                                setIsMobileMenuOpen(false);
+                                                router.push("/inventory-management");
+                                            }}
+                                            className="text-left text-gray-300 hover:text-[#c89e3a] transition-colors text-base py-2"
+                                        >
+                                            Inventory & Suppliers
+                                        </button>
                                         <button
                                             onClick={() => {
                                                 setIsMobileMenuOpen(false);

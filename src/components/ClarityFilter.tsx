@@ -48,6 +48,7 @@ interface ClarityFilterProps {
   onCutChange: (cut: string) => void;
   onPolishChange: (polish: string) => void;
   onSymmetryChange: (symmetry: string) => void;
+  hideExtras?: boolean;
 }
 
 export default function ClarityFilter({
@@ -61,6 +62,7 @@ export default function ClarityFilter({
   onCutChange,
   onPolishChange,
   onSymmetryChange,
+  hideExtras = false,
 }: ClarityFilterProps) {
   const cutArray = selectedCut ? selectedCut.split(",") : [];
   const polishArray = selectedPolish ? selectedPolish.split(",") : [];
@@ -152,7 +154,7 @@ export default function ClarityFilter({
         style={{
           border: "0.25px solid #f9e8cd",
           borderTop: "none",
-          height: "288px",
+          height: hideExtras ? "auto" : "288px",
         }}
       >
         {/* Clarity Options */}
@@ -181,143 +183,147 @@ export default function ClarityFilter({
         </div>
 
         {/* Special Options */}
-        <div className="grid grid-cols-5 gap-1 mb-3 mt-3 items-center">
-          <div style={{ minWidth: "35px" }}></div>
-          {STATIC_SPECIAL_OPTIONS.map((option) => (
-            <button
-              key={option}
-              onClick={() => handleSpecialClick(option)}
-              className={`px-1 py-0.5 transition-colors ${
-                selectedSpecial === option
-                  ? "text-white"
-                  : "text-white hover:opacity-80"
-              }`}
-              style={{
-                backgroundColor:
-                  selectedSpecial === option ? "#00003390" : "#000033",
-                border: "none",
-                borderRadius: "0",
-                minHeight: "30px",
-                fontSize: "14px",
-                fontWeight: "400",
-                maxWidth: "55px",
-              }}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-
-        {/* Cut, Polish, Symmetry */}
-        <div className="flex flex-col gap-4">
-          {/* Cut Row */}
-          <div className="grid grid-cols-5 gap-1 items-center">
-            <div
-              className="px-1.5 py-1.5 text-xs font-normal text-white flex items-center justify-center"
-              style={{
-                backgroundColor: "#000033",
-                borderRadius: "0",
-                minHeight: "24px",
-                minWidth: "35px",
-              }}
-            >
-              Cut :
+        {!hideExtras && (
+          <>
+            <div className="grid grid-cols-5 gap-1 mb-3 mt-3 items-center">
+              <div style={{ minWidth: "35px" }}></div>
+              {STATIC_SPECIAL_OPTIONS.map((option) => (
+                <button
+                  key={option}
+                  onClick={() => handleSpecialClick(option)}
+                  className={`px-1 py-0.5 transition-colors ${
+                    selectedSpecial === option
+                      ? "text-white"
+                      : "text-white hover:opacity-80"
+                  }`}
+                  style={{
+                    backgroundColor:
+                      selectedSpecial === option ? "#00003390" : "#000033",
+                    border: "none",
+                    borderRadius: "0",
+                    minHeight: "30px",
+                    fontSize: "14px",
+                    fontWeight: "400",
+                    maxWidth: "55px",
+                  }}
+                >
+                  {option}
+                </button>
+              ))}
             </div>
-            {["EX", "VG", "GD", "FR"].map((cut) => (
-              <button
-                key={cut}
-                onClick={() => handleCutClick(cut)}
-                className={`px-1.5 py-0.5 text-small font-normal transition-colors ${
-                  cutArray.includes(cut)
-                    ? "text-gray-800 bg-[#FAF6EB]"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-                style={{
-                  border: cutArray.includes(cut)
-                    ? "0.25px solid #FAF6EB"
-                    : "0.25px solid #f9e8cd",
-                  borderRadius: "0",
-                  minHeight: "24px",
-                  maxWidth: "55px",
-                }}
-              >
-                {cut}
-              </button>
-            ))}
-          </div>
 
-          {/* Polish Row */}
-          <div className="grid grid-cols-5 gap-1 items-center">
-            <div
-              className="px-1.5 py-1.5 text-xs font-normal text-white flex items-center justify-center"
-              style={{
-                backgroundColor: "#000033",
-                borderRadius: "0",
-                minHeight: "24px",
-                minWidth: "35px",
-              }}
-            >
-              Pol :
-            </div>
-            {["EX", "VG", "GD", "FR"].map((polish) => (
-              <button
-                key={polish}
-                onClick={() => handlePolishClick(polish)}
-                className={`px-1.5 py-0.5 text-small font-medium transition-colors ${
-                  polishArray.includes(polish)
-                    ? "text-gray-800 bg-[#FAF6EB]"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-                style={{
-                  border: polishArray.includes(polish)
-                    ? "0.25px solid #FAF6EB"
-                    : "0.25px solid #f9e8cd",
-                  borderRadius: "0",
-                  minHeight: "24px",
-                  maxWidth: "55px",
-                }}
-              >
-                {polish}
-              </button>
-            ))}
-          </div>
+            {/* Cut, Polish, Symmetry */}
+            <div className="flex flex-col gap-4">
+              {/* Cut Row */}
+              <div className="grid grid-cols-5 gap-1 items-center">
+                <div
+                  className="px-1.5 py-1.5 text-xs font-normal text-white flex items-center justify-center"
+                  style={{
+                    backgroundColor: "#000033",
+                    borderRadius: "0",
+                    minHeight: "24px",
+                    minWidth: "35px",
+                  }}
+                >
+                  Cut :
+                </div>
+                {["EX", "VG", "GD", "FR"].map((cut) => (
+                  <button
+                    key={cut}
+                    onClick={() => handleCutClick(cut)}
+                    className={`px-1.5 py-0.5 text-small font-normal transition-colors ${
+                      cutArray.includes(cut)
+                        ? "text-gray-800 bg-[#FAF6EB]"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                    style={{
+                      border: cutArray.includes(cut)
+                        ? "0.25px solid #FAF6EB"
+                        : "0.25px solid #f9e8cd",
+                      borderRadius: "0",
+                      minHeight: "24px",
+                      maxWidth: "55px",
+                    }}
+                  >
+                    {cut}
+                  </button>
+                ))}
+              </div>
 
-          {/* Symmetry Row */}
-          <div className="grid grid-cols-5 gap-1 items-center">
-            <div
-              className="px-1.5 py-1.5 text-xs font-normal text-white flex items-center justify-center"
-              style={{
-                backgroundColor: "#000033",
-                borderRadius: "0",
-                minHeight: "24px",
-                minWidth: "35px",
-              }}
-            >
-              Sym :
+              {/* Polish Row */}
+              <div className="grid grid-cols-5 gap-1 items-center">
+                <div
+                  className="px-1.5 py-1.5 text-xs font-normal text-white flex items-center justify-center"
+                  style={{
+                    backgroundColor: "#000033",
+                    borderRadius: "0",
+                    minHeight: "24px",
+                    minWidth: "35px",
+                  }}
+                >
+                  Pol :
+                </div>
+                {["EX", "VG", "GD", "FR"].map((polish) => (
+                  <button
+                    key={polish}
+                    onClick={() => handlePolishClick(polish)}
+                    className={`px-1.5 py-0.5 text-small font-medium transition-colors ${
+                      polishArray.includes(polish)
+                        ? "text-gray-800 bg-[#FAF6EB]"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                    style={{
+                      border: polishArray.includes(polish)
+                        ? "0.25px solid #FAF6EB"
+                        : "0.25px solid #f9e8cd",
+                      borderRadius: "0",
+                      minHeight: "24px",
+                      maxWidth: "55px",
+                    }}
+                  >
+                    {polish}
+                  </button>
+                ))}
+              </div>
+
+              {/* Symmetry Row */}
+              <div className="grid grid-cols-5 gap-1 items-center">
+                <div
+                  className="px-1.5 py-1.5 text-xs font-normal text-white flex items-center justify-center"
+                  style={{
+                    backgroundColor: "#000033",
+                    borderRadius: "0",
+                    minHeight: "24px",
+                    minWidth: "35px",
+                  }}
+                >
+                  Sym :
+                </div>
+                {["EX", "VG", "GD", "FR"].map((symmetry) => (
+                  <button
+                    key={symmetry}
+                    onClick={() => handleSymmetryClick(symmetry)}
+                    className={`px-1.5 py-0.5 text-small font-medium transition-colors ${
+                      symmetryArray.includes(symmetry)
+                        ? "text-gray-800 bg-[#FAF6EB]"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                    style={{
+                      border: symmetryArray.includes(symmetry)
+                        ? "0.25px solid #FAF6EB"
+                        : "0.25px solid #f9e8cd",
+                      borderRadius: "0",
+                      minHeight: "24px",
+                      maxWidth: "55px",
+                    }}
+                  >
+                    {symmetry}
+                  </button>
+                ))}
+              </div>
             </div>
-            {["EX", "VG", "GD", "FR"].map((symmetry) => (
-              <button
-                key={symmetry}
-                onClick={() => handleSymmetryClick(symmetry)}
-                className={`px-1.5 py-0.5 text-small font-medium transition-colors ${
-                  symmetryArray.includes(symmetry)
-                    ? "text-gray-800 bg-[#FAF6EB]"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-                style={{
-                  border: symmetryArray.includes(symmetry)
-                    ? "0.25px solid #FAF6EB"
-                    : "0.25px solid #f9e8cd",
-                  borderRadius: "0",
-                  minHeight: "24px",
-                  maxWidth: "55px",
-                }}
-              >
-                {symmetry}
-              </button>
-            ))}
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
