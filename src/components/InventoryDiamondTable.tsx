@@ -693,7 +693,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                   onClick={() => handleSort("SYM")}
                 >
                   <div className="flex items-center">
-                    Symmetry
+                    Sym
                     <SortIcon columnKey="SYM" />
                   </div>
                 </th>
