@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { X, ChevronLeft, ChevronRight, Settings } from "lucide-react";
+import Toggle from "./ui/Toggle";
 import { inventoryApi } from "@/lib/api";
 import ConfigureAPIModal from "./ConfigureAPIModal";
 import toast from "react-hot-toast";
@@ -9,6 +10,7 @@ import toast from "react-hot-toast";
 interface Supplier {
   name: string;
   totalDiamonds: number;
+  activeDiamonds?: number;
   isVisible: boolean;
 }
 
@@ -39,14 +41,26 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
       const updatedSuppliers = await Promise.all(
         supplierList.map(async (supplier) => {
           try {
-            const response = await inventoryApi.searchDiamonds({
+            // Fetch total diamonds (all, unfiltered)
+            const totalRes = await inventoryApi.searchDiamonds({
               supplier: supplier.name,
               page: 1,
-              limit: 1, // We only need the pagination info, not the data
+              limit: 1,
             });
+            const totalCount = totalRes.pagination?.totalRecords || 0;
+
+            // Fetch active diamonds (filtered, as in inventory-management Active Diamonds card)
+            // This must use the /api/diamonds/search endpoint, not admin, and get totalFilteredRecords
+            const activeRes = await fetch(
+              `https://dalila-inventory-service-dev.caratlogic.com/api/diamonds/search?supplier=${encodeURIComponent(supplier.name)}`
+            );
+            const activeData = await activeRes.json();
+            const activeCount = activeData.totalFilteredRecords ?? 0;
+
             return {
               ...supplier,
-              totalDiamonds: response.pagination?.totalRecords || 0,
+              totalDiamonds: totalCount,
+              activeDiamonds: activeCount,
             };
           } catch (error) {
             console.error(`Error fetching count for ${supplier.name}:`, error);
@@ -198,6 +212,9 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
                       Total Diamonds
                     </th>
                     <th className="text-center py-3 px-4 font-semibold">
+                      Active Diamonds
+                    </th>
+                    <th className="text-center py-3 px-4 font-semibold">
                       Action
                     </th>
                   </tr>
@@ -218,19 +235,20 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
                           supplier.totalDiamonds.toLocaleString()
                         )}
                       </td>
+                      <td className="py-3 px-4 text-center text-gray-800">
+                        {loadingCounts ? (
+                          <span className="text-gray-400">Loading...</span>
+                        ) : (
+                          (supplier.activeDiamonds || 0).toLocaleString()
+                        )}
+                      </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={() => handleToggleVisibility(supplier.name, supplier.isVisible)}
-                            className={`px-4 py-1.5 rounded text-sm font-medium transition-colors ${
-                              supplier.isVisible
-                                ? 'bg-[#050C3A] text-white'
-                                : 'bg-gray-400 hover:bg-gray-500 text-white'
-                            }`}
-                            title={supplier.isVisible ? 'Click to deactivate' : 'Click to activate'}
-                          >
-                            {supplier.isVisible ? 'Active' : 'Inactive'}
-                          </button>
+                          <Toggle
+                            checked={supplier.isVisible}
+                            onChange={() => handleToggleVisibility(supplier.name, supplier.isVisible)}
+                            disabled={loadingCounts}
+                          />
                           <button
                             onClick={() => handleOpenConfigModal(supplier.name)}
                             className="p-2 rounded-full bg-[#050C3A] text-white hover:bg-[#070d4a] transition-colors"

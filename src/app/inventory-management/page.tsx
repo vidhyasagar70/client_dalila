@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, memo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Maven_Pro } from "next/font/google";
-import { Package, Users, Grid3x3, List } from "lucide-react";
+import { Package, Users, Gem, List } from "lucide-react";
 import InventoryDiamondTable from "@/components/InventoryDiamondTable";
+import DiamondStockTable from "@/components/DiamondStockTable";
 import SupplierManagementModal from "@/components/SupplierManagementModal";
 import SearchBar from "@/components/SearchBar";
 import { inventoryApi } from "@/lib/api";
@@ -15,6 +16,33 @@ const mavenPro = Maven_Pro({
   weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
+
+// Singleton wrapper to ensure DiamondStockTable only renders once
+const ActiveDiamondsTableWrapper = memo(() => {
+  const hasRendered = useRef(false);
+  const isMounted = useRef(true);
+  
+  useEffect(() => {
+    if (!hasRendered.current) {
+      hasRendered.current = true;
+      console.log('ActiveDiamondsTable mounted');
+    }
+    
+    return () => {
+      isMounted.current = false;
+      console.log('ActiveDiamondsTable unmounting');
+    };
+  }, []);
+
+  // Only render once, never update
+  if (!isMounted.current) {
+    return null;
+  }
+
+  return <DiamondStockTable key="active-diamonds-singleton" />;
+}, () => true); // Always return true to prevent any re-renders
+
+ActiveDiamondsTableWrapper.displayName = 'ActiveDiamondsTableWrapper';
 
 interface InventoryDiamond {
   _id: string;
@@ -52,12 +80,13 @@ export default function InventoryManagement() {
   const [_diamonds, setDiamonds] = useState<InventoryDiamond[]>([]);
   const [_filteredDiamonds, setFilteredDiamonds] = useState<InventoryDiamond[]>([]);
   const [totalDiamonds, setTotalDiamonds] = useState(0);
+  const [activeDiamonds, setActiveDiamonds] = useState(0);
   const [activeSuppliers, setActiveSuppliers] = useState(0);
   const [totalSuppliers, setTotalSuppliers] = useState(0);
   const [suppliers, setSuppliers] = useState<Array<{ name: string; totalDiamonds: number; isVisible: boolean }>>([]);
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const [viewMode, setViewMode] = useState<"inventory" | "active">("inventory");
   const [_searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<InventoryDiamond[]>([]);
@@ -70,6 +99,7 @@ export default function InventoryManagement() {
     hasPrevPage: boolean;
   } | undefined>(undefined);
   const [isSearchMode, setIsSearchMode] = useState(false);
+  const [hasActiveDiamondsBeenViewed, setHasActiveDiamondsBeenViewed] = useState(false);
 
   useEffect(() => {
     // Check if user is admin or superadmin
@@ -96,6 +126,7 @@ export default function InventoryManagement() {
 
     if (checkAuthorization()) {
       fetchInventoryData();
+      fetchActiveDiamondsCount();
     }
   }, [router]);
 
@@ -135,6 +166,19 @@ export default function InventoryManagement() {
       setSearchPagination(undefined);
     } finally {
       setIsSearching(false);
+    }
+  };
+
+  const fetchActiveDiamondsCount = async () => {
+    try {
+      const response = await fetch('https://dalila-inventory-service-dev.caratlogic.com/api/diamonds/search');
+      const data = await response.json();
+      
+      if (data.success && data.totalFilteredRecords !== undefined) {
+        setActiveDiamonds(data.totalFilteredRecords);
+      }
+    } catch (err) {
+      console.error('Error fetching active diamonds count:', err);
     }
   };
 
@@ -213,7 +257,7 @@ export default function InventoryManagement() {
 
       {/* Stats Cards */}
       <div className="w-full px-1 sm:px-2 md:px-4 py-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {/* Total Diamonds Card */}
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <div className="flex items-center justify-between">
@@ -227,6 +271,24 @@ export default function InventoryManagement() {
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   All stocks (currently available)
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Active Diamonds Card */}
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 font-medium flex items-center gap-2">
+                  <Package className="w-4 h-4" />
+                  Active Diamonds
+                </p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">
+                  {activeDiamonds < 10 ? `0${activeDiamonds}` : activeDiamonds}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Filtered and active stocks
                 </p>
               </div>
             </div>
@@ -275,26 +337,29 @@ export default function InventoryManagement() {
             {/* Left Side - View Toggles */}
             <div className="flex items-center gap-1 bg-gray-100 rounded-md p-0.5">
               <button
-                onClick={() => setViewMode('list')}
+                onClick={() => setViewMode('inventory')}
                 className={`flex items-center gap-1 px-2 py-1 rounded-md text-sm transition-colors ${
-                  viewMode === 'list'
+                  viewMode === 'inventory'
                     ? 'bg-[#050c3a] text-white'
                     : 'text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 <List className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Table View</span>
+                <span className="hidden sm:inline">Inventory View</span>
               </button>
               <button
-                onClick={() => setViewMode('grid')}
+                onClick={() => {
+                  setViewMode('active');
+                  setHasActiveDiamondsBeenViewed(true);
+                }}
                 className={`flex items-center gap-1 px-2 py-1 rounded-md text-sm transition-colors ${
-                  viewMode === 'grid'
+                  viewMode === 'active'
                     ? 'bg-[#050c3a] text-white'
                     : 'text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                <Grid3x3 className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Grid View</span>
+                <Gem className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Active Diamonds</span>
               </button>
             </div>
 
@@ -317,21 +382,32 @@ export default function InventoryManagement() {
           </div>
         </div>
 
-        {/* Inventory Table/Grid */}
+        {/* Inventory Table/Active Diamonds */}
         <div className="mt-4 w-full">
-          {isSearchMode ? (
-            <InventoryDiamondTable
-              data={searchResults}
-              loading={isSearching}
-              error={null}
-              viewMode={viewMode}
-              externalPagination={searchPagination}
-            />
-          ) : (
-            <InventoryDiamondTable
-              viewMode={viewMode}
-            />
+          {/* Active Diamonds Table - Only mount after first view */}
+          {hasActiveDiamondsBeenViewed && (
+            <div 
+              key="active-diamonds-container"
+              style={{ display: viewMode === 'active' ? 'block' : 'none' }}
+            >
+              <ActiveDiamondsTableWrapper />
+            </div>
           )}
+          
+          {/* Inventory Table - Always mounted */}
+          <div style={{ display: viewMode === 'inventory' ? 'block' : 'none' }}>
+            {isSearchMode ? (
+              <InventoryDiamondTable
+                data={searchResults}
+                loading={isSearching}
+                error={null}
+                viewMode="list"
+                externalPagination={searchPagination}
+              />
+            ) : (
+              <InventoryDiamondTable viewMode="list" />
+            )}
+          </div>
         </div>
       </div>
 

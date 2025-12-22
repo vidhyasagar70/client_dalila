@@ -35,7 +35,7 @@ export default function RootLayout({
       className={`${playfair.variable} ${jost.variable}`}
       suppressHydrationWarning
     >
-      <body className="antialiased bg-background text-foreground font-jost">
+      <body className="antialiased bg-background text-foreground font-jost" suppressHydrationWarning>
         <HeaderFooterWrapper>{children}</HeaderFooterWrapper>
         <Toaster
           position="bottom-right"

@@ -89,7 +89,7 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
     }
   }, [isOpen]);
 
-  const fetchFilteredData = useCallback(async (page = 1, limit = 10) => {
+  const fetchFilteredData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -110,16 +110,14 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
         colors: selectedColors,
         clarities: selectedClarities,
         minCarat,
-        maxCarat,
-        page,
-        limit
+        maxCarat
       });
 
-      // Use the new searchDiamonds API method
+      // Fetch ALL diamonds at once (no pagination for this modal)
       const response = await inventoryApi.searchDiamonds({
         supplier: supplierName,
-        page,
-        limit,
+        page: 1,
+        limit: 10000, // High limit to get all results
         shapes: selectedShapes.length > 0 ? selectedShapes : undefined,
         colors: selectedColors.length > 0 ? selectedColors : undefined,
         clarities: selectedClarities.length > 0 ? selectedClarities : undefined,
@@ -143,15 +141,11 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
   // Fetch diamond data when filters change
   useEffect(() => {
     if (isOpen && activeTab === 'inventory') {
-      fetchFilteredData(1, rowsPerPage);
+      fetchFilteredData();
     }
-  }, [isOpen, activeTab, selectedShapes, selectedCaratRanges, selectedClarities, selectedColors, supplierName, rowsPerPage, fetchFilteredData]);
+  }, [isOpen, activeTab, selectedShapes, selectedCaratRanges, selectedClarities, selectedColors, supplierName, fetchFilteredData]);
 
-  const handlePageChange = (page: number, newRowsPerPage: number) => {
-    console.log('Page changed to:', page, 'rows per page:', newRowsPerPage);
-    setRowsPerPage(newRowsPerPage);
-    fetchFilteredData(page, newRowsPerPage);
-  };
+
 
   const clearAllFilters = () => {
     setSelectedShapes([]);
@@ -319,15 +313,16 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
                   data={diamondData}
                   loading={loading}
                   error={error}
-                  pageSize={rowsPerPage}
                   viewMode="list"
-                  externalPagination={paginationInfo}
-                  onPageChange={handlePageChange}
+                  pageSize={10}
+                  noPagination={false}
+                  filterSource="Dharam Web Api"
                 />
-                {/* Debug info */}
-                <div className="mt-2 text-sm text-gray-600">
-                  Total diamonds loaded: {diamondData.length}
-                  {paginationInfo && ` | Total in database: ${paginationInfo.totalRecords}`}
+                {/* Diamond count */}
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p className="text-sm font-semibold text-blue-900">
+                    Total Dharam Web Api Diamonds: {diamondData.filter((d) => d.source === "Dharam Web Api").length}
+                  </p>
                 </div>
               </div>
             </>

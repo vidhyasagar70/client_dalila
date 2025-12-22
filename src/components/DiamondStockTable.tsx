@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -99,7 +99,14 @@ const DiamondStockTable: React.FC<TableProps> = ({
     };
   }, []);
 
+  const hasFetchedRef = useRef(false);
+
   useEffect(() => {
+    // Prevent multiple fetches - only fetch once when component mounts
+    if (hasFetchedRef.current) {
+      return;
+    }
+
     const fetchDiamonds = async () => {
       try {
         setLoading(true);
@@ -340,6 +347,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
         setData([]);
       } finally {
         setLoading(false);
+        hasFetchedRef.current = true;
       }
     };
 

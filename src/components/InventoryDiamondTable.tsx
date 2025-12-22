@@ -59,6 +59,8 @@ interface InventoryTableProps {
   viewMode?: "list" | "grid";
   externalPagination?: PaginationData;
   onPageChange?: (page: number, rowsPerPage: number) => void;
+  filterSource?: string;
+  noPagination?: boolean;
 }
 
 const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
@@ -69,6 +71,8 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
   viewMode = "list",
   externalPagination,
   onPageChange,
+  filterSource,
+  noPagination = false,
 }) => {
   const router = useRouter();
   const [data, setData] = useState<InventoryDiamond[]>(propData || []);
@@ -249,12 +253,33 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
     setCurrentPage(1); // Reset to first page when sorting
   };
 
-  // Use data directly from API (already paginated) or use external data as-is (server-side paginated)
-  const paginatedData = isExternalData 
-    ? data // Don't slice - data is already paginated from backend
-    : data;
+  // Optionally filter by source if filterSource is provided
+  let paginatedData: InventoryDiamond[];
+  let totalRecords: number;
+
+  if (noPagination) {
+    // Show all data without pagination
+    paginatedData = filterSource ? data.filter((d) => d.source === filterSource) : data;
+    totalRecords = paginatedData.length;
+  } else {
+    // Internal pagination for local data (when externalPagination is not provided)
+    const isInternalPagination = isExternalData && !externalPagination;
+    if (isInternalPagination) {
+      const filtered = filterSource ? data.filter((d) => d.source === filterSource) : data;
+      const startIdx = (currentPage - 1) * rowsPerPage;
+      const endIdx = startIdx + rowsPerPage;
+      paginatedData = filtered.slice(startIdx, endIdx);
+      totalRecords = filtered.length;
+    } else if (isExternalData) {
+      paginatedData = filterSource ? data.filter((d) => d.source === filterSource) : data;
+      totalRecords = paginatedData.length;
+    } else {
+      paginatedData = data;
+      totalRecords = pagination?.totalRecords || 0;
+    }
+  }
+  
   const totalPages = pagination?.totalPages || 1;
-  const totalRecords = pagination?.totalRecords || 0;
 
   const formatCurrency = (value: string | number) => {
     const num = parseFloat(String(value));
@@ -468,17 +493,18 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
           </div>
 
           {/* Pagination for Grid View */}
-          <div
-            className="px-4 py-3 mt-6 border-t border-gray-200 flex items-center justify-between"
-            style={{
-              background: "linear-gradient(to right, #faf6eb 0%, #faf6eb 100%)",
-            }}
-          >
-            <div className="text-sm text-gray-700 font-medium">
-              Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
-              {Math.min(currentPage * rowsPerPage, totalRecords)} of{" "}
-              {totalRecords.toLocaleString()} diamonds
-            </div>
+          {!noPagination && (
+            <div
+              className="px-4 py-3 mt-6 border-t border-gray-200 flex items-center justify-between"
+              style={{
+                background: "linear-gradient(to right, #faf6eb 0%, #faf6eb 100%)",
+              }}
+            >
+              <div className="text-sm text-gray-700 font-medium">
+                Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
+                {Math.min(currentPage * rowsPerPage, totalRecords)} of{" "}
+                {totalRecords.toLocaleString()} diamonds
+              </div>
 
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
@@ -536,6 +562,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
               </div>
             </div>
           </div>
+          )}
         </div>
       </div>
     );
@@ -780,17 +807,18 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
           </table>
         </div>
 
-        <div
-          className="px-4 py-3 border-t border-gray-200 flex items-center justify-between flex-shrink-0"
-          style={{
-            background: "linear-gradient(to right, #faf6eb 0%, #faf6eb 100%)",
-          }}
-        >
-          <div className="text-sm text-gray-700 font-medium">
-            Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
-            {Math.min(currentPage * rowsPerPage, totalRecords)} of{" "}
-            {totalRecords.toLocaleString()} diamonds
-          </div>
+        {!noPagination && (
+          <div
+            className="px-4 py-3 border-t border-gray-200 flex items-center justify-between flex-shrink-0"
+            style={{
+              background: "linear-gradient(to right, #faf6eb 0%, #faf6eb 100%)",
+            }}
+          >
+            <div className="text-sm text-gray-700 font-medium">
+              Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
+              {Math.min(currentPage * rowsPerPage, totalRecords)} of{" "}
+              {totalRecords.toLocaleString()} diamonds
+            </div>
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
@@ -848,6 +876,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );
