@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Maven_Pro } from "next/font/google";
 import { ChevronUp, ChevronDown, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
@@ -42,30 +42,201 @@ interface InventoryDiamond {
   updatedAt: string;
 }
 
+interface PaginationData {
+  currentPage: number;
+  totalPages: number;
+  totalRecords: number;
+  recordsPerPage: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
 interface InventoryTableProps {
-  data: InventoryDiamond[];
-  loading: boolean;
-  error: string | null;
+  data?: InventoryDiamond[];
+  loading?: boolean;
+  error?: string | null;
   pageSize?: number;
   viewMode?: "list" | "grid";
+  externalPagination?: PaginationData;
+  onPageChange?: (page: number, rowsPerPage: number) => void;
 }
 
 const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
-  data,
-  loading,
-  error,
-  pageSize = 20,
+  data: propData,
+  loading: propLoading,
+  error: propError,
+  pageSize = 10,
   viewMode = "list",
+  externalPagination,
+  onPageChange,
 }) => {
   const router = useRouter();
+  const [data, setData] = useState<InventoryDiamond[]>(propData || []);
+  const [loading, setLoading] = useState(propLoading ?? false);
+  const [error, setError] = useState<string | null>(propError || null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(pageSize);
+  const [pagination, setPagination] = useState<PaginationData | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: "asc" | "desc";
   } | null>(null);
+  
+  // Track if component is being used with external data (from props)
+  const isExternalData = propData !== undefined;
+
+  // Update local state when props change (for external data usage)
+  useEffect(() => {
+    if (isExternalData) {
+      console.log('InventoryTable - External data update:', {
+        dataLength: propData?.length,
+        loading: propLoading,
+        error: propError,
+        externalPagination
+      });
+      
+      setData(propData || []);
+      setLoading(propLoading ?? false);
+      setError(propError || null);
+      setIsTransitioning(false); // Clear transition state
+      
+      // Use external pagination if provided
+      if (externalPagination) {
+        // Keep the original total records from backend
+        const adjustedPagination = {
+          ...externalPagination,
+          totalPages: Math.ceil(externalPagination.totalRecords / rowsPerPage),
+          recordsPerPage: rowsPerPage,
+          hasNextPage: Math.ceil(externalPagination.totalRecords / rowsPerPage) > externalPagination.currentPage,
+          hasPrevPage: externalPagination.currentPage > 1,
+        };
+        setPagination(adjustedPagination);
+        setCurrentPage(externalPagination.currentPage); // Sync with external pagination's current page
+        console.log('Using external pagination:', adjustedPagination);
+      } else {
+        // Create mock pagination for external data
+        const totalRecords = propData?.length || 0;
+        const totalPages = Math.ceil(totalRecords / rowsPerPage);
+        setPagination({
+          currentPage: 1,
+          totalPages,
+          totalRecords,
+          recordsPerPage: rowsPerPage,
+          hasNextPage: totalPages > 1,
+          hasPrevPage: false,
+        });
+        setCurrentPage(1); // Reset to first page when new data comes in
+      }
+    }
+  }, [propData, propLoading, propError, isExternalData, rowsPerPage, externalPagination]);
+
+  // Reset to page 1 when rowsPerPage changes to prevent out-of-bounds errors
+  useEffect(() => {
+    if (pagination && currentPage > pagination.totalPages) {
+      console.warn(`Current page ${currentPage} exceeds total pages ${pagination.totalPages}, resetting to page 1`);
+      setCurrentPage(1);
+    }
+  }, [pagination, currentPage]);
+  
+  // Clear pagination when rowsPerPage changes to prevent stale data
+  useEffect(() => {
+    // Don't reset pagination for external data - it's managed by the parent
+    if (!isExternalData) {
+      setIsTransitioning(true);
+      setPagination(null);
+      setCurrentPage(1);
+    }
+  }, [rowsPerPage, isExternalData]);
+
+  // Fetch data from API (only when not using external data)
+  useEffect(() => {
+    // Skip fetch if using external data (props)
+    if (isExternalData) {
+      return;
+    }
+
+    const fetchInventoryData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      // Validate page number before making request
+      if (currentPage < 1) {
+        setCurrentPage(1);
+        setLoading(false);
+        return;
+      }
+      
+      // If we have pagination info and page exceeds it, don't fetch
+      if (pagination && currentPage > pagination.totalPages) {
+        console.warn(`Page ${currentPage} exceeds totalPages ${pagination.totalPages}, resetting`);
+        setCurrentPage(pagination.totalPages);
+        setLoading(false);
+        return;
+      }
+      
+      try {
+        const url = new URL('https://dalila-inventory-service-dev.caratlogic.com/api/diamonds/admin/search');
+        url.searchParams.append('page', currentPage.toString());
+        url.searchParams.append('limit', rowsPerPage.toString());
+        
+        if (sortConfig) {
+          url.searchParams.append('sortBy', sortConfig.key);
+          url.searchParams.append('sortOrder', sortConfig.direction);
+        }
+
+        const response = await fetch(url.toString(), {
+          method: 'GET',
+          credentials: 'include', // Include cookies for admin authentication
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          if (response.status === 500 && currentPage > 1) {
+            // If page is out of bounds, reset to page 1
+            console.warn(`Page ${currentPage} out of bounds, resetting to page 1`);
+            setCurrentPage(1);
+            setLoading(false);
+            return;
+          }
+          throw new Error(`Failed to fetch inventory data: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          setData(result.data);
+          setPagination(result.pagination);
+          setIsTransitioning(false);
+          
+          // If current page exceeds total pages, go to last page
+          if (result.pagination && currentPage > result.pagination.totalPages) {
+            setCurrentPage(result.pagination.totalPages);
+          }
+        } else {
+          throw new Error('Invalid response format from API');
+        }
+      } catch (err) {
+        console.error('Error fetching inventory:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load inventory data');
+        setData([]);
+        setIsTransitioning(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInventoryData();
+  }, [currentPage, rowsPerPage, sortConfig, isExternalData]);
 
   const handleSort = (key: string) => {
+    // Disable sorting when using external data
+    if (isExternalData) {
+      return;
+    }
+    
     let direction: "asc" | "desc" = "asc";
     if (
       sortConfig &&
@@ -75,38 +246,15 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
       direction = "desc";
     }
     setSortConfig({ key, direction });
+    setCurrentPage(1); // Reset to first page when sorting
   };
 
-  const sortedData = useMemo(() => {
-    if (data.length === 0) return data;
-
-    if (!sortConfig) return data;
-
-    const sorted = [...data].sort((a, b) => {
-      const aValue = a[sortConfig.key as keyof InventoryDiamond];
-      const bValue = b[sortConfig.key as keyof InventoryDiamond];
-
-      const aNum = parseFloat(String(aValue));
-      const bNum = parseFloat(String(bValue));
-      if (!isNaN(aNum) && !isNaN(bNum)) {
-        return sortConfig.direction === "asc" ? aNum - bNum : bNum - aNum;
-      }
-
-      const aStr = String(aValue).toLowerCase();
-      const bStr = String(bValue).toLowerCase();
-      if (aStr < bStr) return sortConfig.direction === "asc" ? -1 : 1;
-      if (aStr > bStr) return sortConfig.direction === "asc" ? 1 : -1;
-      return 0;
-    });
-
-    return sorted;
-  }, [data, sortConfig]);
-
-  const totalPages = Math.ceil(sortedData.length / rowsPerPage);
-  const paginatedData = sortedData.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage,
-  );
+  // Use data directly from API (already paginated) or use external data as-is (server-side paginated)
+  const paginatedData = isExternalData 
+    ? data // Don't slice - data is already paginated from backend
+    : data;
+  const totalPages = pagination?.totalPages || 1;
+  const totalRecords = pagination?.totalRecords || 0;
 
   const formatCurrency = (value: string | number) => {
     const num = parseFloat(String(value));
@@ -137,8 +285,27 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
   };
 
   const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
+    // Block navigation during loading or transitions
+    if (loading || isTransitioning) {
+      console.warn('Navigation blocked during loading/transition');
+      return;
+    }
+    
+    // Ensure page is within valid bounds and not already on that page
+    if (page < 1 || page === currentPage || !totalPages || !pagination) {
+      return;
+    }
+    
+    // Only navigate if page is within bounds of current pagination
+    if (page <= totalPages && page <= pagination.totalPages) {
       setCurrentPage(page);
+      
+      // If using external data with page change callback, notify parent to fetch new data
+      if (isExternalData && onPageChange) {
+        onPageChange(page, rowsPerPage);
+      }
+    } else {
+      console.warn(`Cannot navigate to page ${page}. Max is ${totalPages}`);
     }
   };
 
@@ -148,8 +315,13 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
   };
 
   const renderPaginationButtons = () => {
-    const buttons = [];
+    const buttons: React.ReactElement[] = [];
     const maxButtons = 5;
+    
+    // Safety check to prevent rendering invalid page numbers
+    if (!totalPages || totalPages < 1 || isTransitioning || !pagination) {
+      return buttons;
+    }
 
     let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
     const endPage = Math.min(totalPages, startPage + maxButtons - 1);
@@ -163,6 +335,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
         <button
           key={i}
           onClick={() => goToPage(i)}
+          disabled={i === currentPage}
           className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
             currentPage === i
               ? "bg-[#050c3a] text-white"
@@ -177,7 +350,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
     return buttons;
   };
 
-  if (loading) {
+  if (loading && data.length === 0 && !isExternalData) {
     return (
       <div className="w-full h-96 flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -214,8 +387,15 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
   if (viewMode === "grid") {
     return (
       <div className={`w-full flex flex-col bg-gray-50 p-4 ${mavenPro.className}`}>
-        <div className="bg-white shadow-sm rounded-lg p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="bg-white shadow-sm rounded-lg p-6 relative">
+          {/* Loading Overlay */}
+          {(loading || isTransitioning) && (
+            <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-20 rounded-lg">
+              <Loader2 className="w-8 h-8 animate-spin text-[#050c3a]" />
+            </div>
+          )}
+          
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ${(loading || isTransitioning) ? 'opacity-50 pointer-events-none' : ''}`}>
             {paginatedData.map((diamond) => (
               <div
                 key={diamond._id}
@@ -274,12 +454,12 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                         <span className="text-gray-600">$/ct:</span>
                         <span className="font-semibold text-gray-900">{formatCurrency(diamond.NET_RATE)}</span>
                       </div>
-                      <div className="flex justify-between">
+                      {/* <div className="flex justify-between">
                         <span className="text-gray-600">Total:</span>
                         <span className="font-semibold text-green-600">
                           {diamond.NET_VALUE !== "NA" ? formatCurrency(diamond.NET_VALUE) : "N/A"}
                         </span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -296,8 +476,8 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
           >
             <div className="text-sm text-gray-700 font-medium">
               Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
-              {Math.min(currentPage * rowsPerPage, sortedData.length)} of{" "}
-              {sortedData.length} diamonds
+              {Math.min(currentPage * rowsPerPage, totalRecords)} of{" "}
+              {totalRecords.toLocaleString()} diamonds
             </div>
 
             <div className="flex items-center gap-4">
@@ -306,38 +486,40 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                   Items per page
                 </span>
                 <select
-                  className="border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-800 bg-white cursor-pointer hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#070b3a] focus:border-transparent transition-all"
+                  className="border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-800 bg-white cursor-pointer hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#070b3a] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   value={rowsPerPage}
+                  disabled={loading || isTransitioning}
                   onChange={(e) => {
                     setRowsPerPage(Number(e.target.value));
-                    setCurrentPage(1);
+                    // currentPage will be reset by the useEffect
                   }}
                 >
-                  <option value={8}>8</option>
-                  <option value={12}>12</option>
-                  <option value={16}>16</option>
+                  <option value={10}>10</option>
                   <option value={20}>20</option>
-                  <option value={24}>24</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                 
                 </select>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => goToPage(currentPage - 1)}
-                  disabled={currentPage === 1}
+                  disabled={currentPage === 1 || loading}
                   className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
 
-                {renderPaginationButtons()}
+                {!loading && renderPaginationButtons()}
 
-                {totalPages > 10 && currentPage < totalPages - 4 && (
+                {!loading && totalPages > 10 && currentPage < totalPages - 4 && (
                   <>
                     <span className="px-2 text-gray-500">...</span>
                     <button
                       onClick={() => goToPage(totalPages)}
-                      className="px-3 py-1 rounded text-sm font-medium bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 transition-colors"
+                      disabled={currentPage === totalPages || loading}
+                      className="px-3 py-1 rounded text-sm font-medium bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {totalPages}
                     </button>
@@ -346,7 +528,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
 
                 <button
                   onClick={() => goToPage(currentPage + 1)}
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage >= totalPages || !pagination?.hasNextPage || loading}
                   className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -364,8 +546,15 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
     <div
       className={`w-full flex flex-col bg-gray-50 p-4 ${mavenPro.className}`}
     >
-      <div className="bg-white shadow-sm flex flex-col rounded-none">
-        <div className="overflow-x-auto">
+      <div className="bg-white shadow-sm flex flex-col rounded-none relative">
+        {/* Loading Overlay */}
+        {(loading || isTransitioning) && (
+          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-20">
+            <Loader2 className="w-8 h-8 animate-spin text-[#050c3a]" />
+          </div>
+        )}
+        
+        <div className={`overflow-x-auto ${(loading || isTransitioning) ? 'opacity-50 pointer-events-none' : ''}`}>
           <table className="w-full border-collapse table-fixed">
             <thead
               className={`bg-[#050c3a] text-white sticky top-0 z-10 ${mavenPro.className}`}
@@ -599,8 +788,8 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
         >
           <div className="text-sm text-gray-700 font-medium">
             Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
-            {Math.min(currentPage * rowsPerPage, sortedData.length)} of{" "}
-            {sortedData.length} diamonds
+            {Math.min(currentPage * rowsPerPage, totalRecords)} of{" "}
+            {totalRecords.toLocaleString()} diamonds
           </div>
 
           <div className="flex items-center gap-4">
@@ -609,38 +798,40 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                 Rows per page
               </span>
               <select
-                className="border border-gray-300 rounded-none px-3 py-1.5 text-sm text-gray-800 bg-white cursor-pointer hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#070b3a] focus:border-transparent transition-all"
+                className="border border-gray-300 rounded-none px-3 py-1.5 text-sm text-gray-800 bg-white cursor-pointer hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#070b3a] focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 value={rowsPerPage}
+                disabled={loading || isTransitioning}
                 onChange={(e) => {
                   setRowsPerPage(Number(e.target.value));
-                  setCurrentPage(1);
+                  // currentPage will be reset by the useEffect
                 }}
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>
                 <option value={50}>50</option>
                 <option value={100}>100</option>
-                <option value={200}>200</option>
+                
               </select>
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => goToPage(currentPage - 1)}
-                disabled={currentPage === 1}
+                disabled={currentPage === 1 || loading}
                 className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
 
-              {renderPaginationButtons()}
+              {!loading && renderPaginationButtons()}
 
-              {totalPages > 10 && currentPage < totalPages - 4 && (
+              {!loading && totalPages > 10 && currentPage < totalPages - 4 && (
                 <>
                   <span className="px-2 text-gray-500">...</span>
                   <button
                     onClick={() => goToPage(totalPages)}
-                    className="px-3 py-1 rounded text-sm font-medium bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 transition-colors"
+                    disabled={currentPage === totalPages || loading}
+                    className="px-3 py-1 rounded text-sm font-medium bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {totalPages}
                   </button>
@@ -649,7 +840,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
 
               <button
                 onClick={() => goToPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
+                disabled={currentPage >= totalPages || !pagination?.hasNextPage || loading}
                 className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight className="w-5 h-5" />

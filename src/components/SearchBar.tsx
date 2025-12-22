@@ -29,14 +29,14 @@ export default function SearchBar({
 
   return (
     <div>
-      <div className="flex items-center border border-gray-200 rounded-none overflow-hidden shadow-sm w-fit bg-transparent backdrop-blur-sm">
-        <div className="flex items-center px-3 py-1.5 border-r border-gray-200">
+      <div className="flex items-center border border-gray-200 rounded-none overflow-hidden shadow-sm w-fit bg-white">
+        <div className="flex items-center px-3 py-1.5 border-r border-gray-200 bg-gray-50">
           <Image
             src="/filtersicon/filtersearch.png"
             alt="Search"
             width={16}
             height={16}
-            className="w-4 h-4"
+            className="w-4 h-4 opacity-100"
             priority
           />
         </div>
@@ -46,7 +46,7 @@ export default function SearchBar({
           onChange={(e) => setSearchInput(e.target.value)}
           onKeyDown={handleKeyPress}
           placeholder="Search by Stone ID"
-          className="px-3 py-1 outline-none text-sm text-black placeholder-gray-500 bg-transparent min-w-[280px]"
+          className="px-3 py-1 outline-none text-sm text-black placeholder-gray-500 bg-white min-w-[280px]"
           disabled={isSearching}
         />
         {searchInput && (

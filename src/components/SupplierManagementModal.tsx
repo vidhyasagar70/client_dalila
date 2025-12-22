@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import { X, ChevronLeft, ChevronRight, Settings } from "lucide-react";
-// import { inventoryApi } from "@/lib/api";
+import { inventoryApi } from "@/lib/api";
 import ConfigureAPIModal from "./ConfigureAPIModal";
+import toast from "react-hot-toast";
 
 interface Supplier {
   name: string;
@@ -29,11 +30,51 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
   const [itemsPerPage] = useState(10);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [selectedSupplierForConfig, setSelectedSupplierForConfig] = useState<string>("");
+  const [loadingCounts, setLoadingCounts] = useState(false);
 
-  // Update suppliers when prop changes
+  // Fetch real diamond counts for all suppliers
+  const fetchRealDiamondCounts = async (supplierList: Supplier[]) => {
+    setLoadingCounts(true);
+    try {
+      const updatedSuppliers = await Promise.all(
+        supplierList.map(async (supplier) => {
+          try {
+            const response = await inventoryApi.searchDiamonds({
+              supplier: supplier.name,
+              page: 1,
+              limit: 1, // We only need the pagination info, not the data
+            });
+            return {
+              ...supplier,
+              totalDiamonds: response.pagination?.totalRecords || 0,
+            };
+          } catch (error) {
+            console.error(`Error fetching count for ${supplier.name}:`, error);
+            return supplier; // Keep original count if fetch fails
+          }
+        })
+      );
+      setSuppliers(updatedSuppliers);
+    } catch (error) {
+      console.error('Error fetching diamond counts:', error);
+    } finally {
+      setLoadingCounts(false);
+    }
+  };
+
+  // Update suppliers when prop changes and fetch real counts
   React.useEffect(() => {
-    setSuppliers(initialSuppliers);
+    if (initialSuppliers.length > 0) {
+      fetchRealDiamondCounts(initialSuppliers);
+    }
   }, [initialSuppliers]);
+
+  // Fetch real counts when modal opens
+  React.useEffect(() => {
+    if (isOpen && initialSuppliers.length > 0) {
+      fetchRealDiamondCounts(initialSuppliers);
+    }
+  }, [isOpen, initialSuppliers]);
 
   const handleOpenConfigModal = (supplierName: string) => {
     setSelectedSupplierForConfig(supplierName);
@@ -44,6 +85,37 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
     // Refresh data after config is saved
     if (onSupplierUpdate) {
       onSupplierUpdate();
+    }
+  };
+
+  const handleToggleVisibility = async (supplierName: string, currentStatus: boolean) => {
+    try {
+      const newStatus = !currentStatus;
+      const response = await inventoryApi.toggleSupplierVisibility(supplierName, newStatus);
+      
+      if (response.success) {
+        toast.success(response.message || `Supplier ${newStatus ? 'activated' : 'deactivated'} successfully`);
+        
+        // Update local state
+        setSuppliers(prev => 
+          prev.map(s => 
+            s.name === supplierName ? { ...s, isVisible: newStatus } : s
+          )
+        );
+        
+        // Update localStorage
+        localStorage.setItem(`supplier_visibility_${supplierName}`, JSON.stringify(newStatus));
+        
+        // Notify parent to refresh
+        if (onSupplierUpdate) {
+          onSupplierUpdate();
+        }
+      } else {
+        toast.error(response.message || 'Failed to update supplier status');
+      }
+    } catch (err) {
+      console.error('Error toggling supplier visibility:', err);
+      toast.error(err instanceof Error ? err.message : 'Failed to update supplier status');
     }
   };
 
@@ -140,13 +212,28 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
                         {supplier.name}
                       </td>
                       <td className="py-3 px-4 text-center text-gray-800">
-                        {supplier.totalDiamonds.toLocaleString()}
+                        {loadingCounts ? (
+                          <span className="text-gray-400">Loading...</span>
+                        ) : (
+                          supplier.totalDiamonds.toLocaleString()
+                        )}
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center justify-center gap-2">
                           <button
+                            onClick={() => handleToggleVisibility(supplier.name, supplier.isVisible)}
+                            className={`px-4 py-1.5 rounded text-sm font-medium transition-colors ${
+                              supplier.isVisible
+                                ? 'bg-[#050C3A] text-white'
+                                : 'bg-gray-400 hover:bg-gray-500 text-white'
+                            }`}
+                            title={supplier.isVisible ? 'Click to deactivate' : 'Click to activate'}
+                          >
+                            {supplier.isVisible ? 'Active' : 'Inactive'}
+                          </button>
+                          <button
                             onClick={() => handleOpenConfigModal(supplier.name)}
-                            className="p-2 rounded-full bg-[#050C3A] text-white transition-colors"
+                            className="p-2 rounded-full bg-[#050C3A] text-white hover:bg-[#070d4a] transition-colors"
                             title="Configure API"
                           >
                             <Settings className="w-4 h-4" />

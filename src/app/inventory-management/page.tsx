@@ -47,10 +47,10 @@ interface InventoryDiamond {
 
 export default function InventoryManagement() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [diamonds, setDiamonds] = useState<InventoryDiamond[]>([]);
-  const [filteredDiamonds, setFilteredDiamonds] = useState<InventoryDiamond[]>([]);
+  const [_loading, setLoading] = useState(true);
+  const [_error, setError] = useState<string | null>(null);
+  const [_diamonds, setDiamonds] = useState<InventoryDiamond[]>([]);
+  const [_filteredDiamonds, setFilteredDiamonds] = useState<InventoryDiamond[]>([]);
   const [totalDiamonds, setTotalDiamonds] = useState(0);
   const [activeSuppliers, setActiveSuppliers] = useState(0);
   const [totalSuppliers, setTotalSuppliers] = useState(0);
@@ -58,8 +58,18 @@ export default function InventoryManagement() {
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [_searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<InventoryDiamond[]>([]);
+  const [searchPagination, setSearchPagination] = useState<{
+    currentPage: number;
+    totalPages: number;
+    totalRecords: number;
+    recordsPerPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  } | undefined>(undefined);
+  const [isSearchMode, setIsSearchMode] = useState(false);
 
   useEffect(() => {
     // Check if user is admin or superadmin
@@ -89,25 +99,44 @@ export default function InventoryManagement() {
     }
   }, [router]);
 
-  useEffect(() => {
-    // Filter diamonds based on search term
-    if (searchTerm.trim() === "") {
-      setFilteredDiamonds(diamonds);
-    } else {
-      const filtered = diamonds.filter((diamond) => {
-        const search = searchTerm.toLowerCase();
-        return (
-          diamond.STONE_NO?.toLowerCase().includes(search) ||
-          diamond.SHAPE?.toLowerCase().includes(search) ||
-          diamond.COLOR?.toLowerCase().includes(search) ||
-          diamond.CLARITY?.toLowerCase().includes(search) ||
-          diamond.source?.toLowerCase().includes(search)
-        );
-      });
-      setFilteredDiamonds(filtered);
+  const handleSearchBar = async (term: string) => {
+    setSearchTerm(term);
+    
+    // If search term is empty, exit search mode and show all inventory
+    if (term.trim() === "") {
+      setIsSearchMode(false);
+      setSearchResults([]);
+      setSearchPagination(undefined);
+      setIsSearching(false);
+      return;
     }
-    setIsSearching(false);
-  }, [searchTerm, diamonds]);
+
+    // Make API call with search term
+    setIsSearching(true);
+    setIsSearchMode(true);
+    
+    try {
+      const response = await inventoryApi.searchDiamonds({
+        searchTerm: term,
+        page: 1,
+        limit: 100, // Get more results for search
+      });
+
+      if (response.success && response.data) {
+        setSearchResults(response.data);
+        setSearchPagination(response.pagination);
+      } else {
+        setSearchResults([]);
+        setSearchPagination(undefined);
+      }
+    } catch (err) {
+      console.error('Error searching diamonds:', err);
+      setSearchResults([]);
+      setSearchPagination(undefined);
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
   const fetchInventoryData = async () => {
     try {
@@ -164,12 +193,6 @@ export default function InventoryManagement() {
   const handleSupplierUpdate = () => {
     // Refresh inventory and supplier data after supplier update
     fetchInventoryData();
-  };
-
-
-  const handleSearchBar = (term: string) => {
-    setIsSearching(true);
-    setSearchTerm(term);
   };
 
   if (!isAuthorized) {
@@ -296,13 +319,19 @@ export default function InventoryManagement() {
 
         {/* Inventory Table/Grid */}
         <div className="mt-4 w-full">
-          <InventoryDiamondTable
-            data={filteredDiamonds}
-            loading={loading}
-            error={error}
-            pageSize={20}
-            viewMode={viewMode}
-          />
+          {isSearchMode ? (
+            <InventoryDiamondTable
+              data={searchResults}
+              loading={isSearching}
+              error={null}
+              viewMode={viewMode}
+              externalPagination={searchPagination}
+            />
+          ) : (
+            <InventoryDiamondTable
+              viewMode={viewMode}
+            />
+          )}
         </div>
       </div>
 

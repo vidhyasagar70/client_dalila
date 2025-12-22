@@ -56,6 +56,10 @@ const DiamondStockTable: React.FC<TableProps> = ({
   const [selectedDiamond, setSelectedDiamond] = useState<DiamondData | null>(
     null,
   );
+  
+  // Server-side pagination state
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
@@ -167,8 +171,8 @@ const DiamondStockTable: React.FC<TableProps> = ({
         let response;
         if (hasAnyFilter) {
           const filters: FilterParams = {
-            page: 1,
-            limit: 10000,
+            page: currentPage,
+            limit: rowsPerPage,
           };
 
           if (hasShapeFilter) {
@@ -283,7 +287,12 @@ const DiamondStockTable: React.FC<TableProps> = ({
 
           response = await diamondApi.search(filters);
         } else {
-          response = await diamondApi.getAllNoPagination();
+          // For no filters, use pagination parameters
+          const filters: FilterParams = {
+            page: currentPage,
+            limit: rowsPerPage,
+          };
+          response = await diamondApi.search(filters);
         }
 
         if (response?.success && response.data) {
@@ -299,9 +308,29 @@ const DiamondStockTable: React.FC<TableProps> = ({
             diamonds = [];
           }
           setData(diamonds);
-          setCurrentPage(1);
+          
+          // Extract pagination data from response (using type assertion for extended response)
+          const extendedResponse = response as typeof response & {
+            pagination?: { totalRecords?: number; totalPages?: number };
+            totalFilteredRecords?: number;
+          };
+          if (extendedResponse.pagination) {
+            setTotalRecords(extendedResponse.pagination.totalRecords || extendedResponse.totalFilteredRecords || 0);
+            setTotalPages(extendedResponse.pagination.totalPages || 0);
+          } else if (extendedResponse.totalFilteredRecords !== undefined) {
+            setTotalRecords(extendedResponse.totalFilteredRecords);
+            setTotalPages(Math.ceil(extendedResponse.totalFilteredRecords / rowsPerPage));
+          } else if (response.data.pagination) {
+            setTotalRecords(response.data.pagination.totalItems || 0);
+            setTotalPages(response.data.pagination.totalPages || 0);
+          } else {
+            setTotalRecords(diamonds.length);
+            setTotalPages(1);
+          }
         } else {
           setData([]);
+          setTotalRecords(0);
+          setTotalPages(0);
         }
       } catch (err) {
         console.error("Error fetching diamonds:", err);
@@ -330,7 +359,9 @@ const DiamondStockTable: React.FC<TableProps> = ({
     selectedLabs,
     inclusionFilters,
     keySymbolFilters,
-    priceFilters, // Add to dependencies
+    priceFilters,
+    currentPage,
+    rowsPerPage,
   ]);
 
   const handleSort = (key: string) => {
@@ -348,12 +379,11 @@ const DiamondStockTable: React.FC<TableProps> = ({
   const sortedData = useMemo(() => {
     if (data.length === 0) return data;
 
-    // No client-side filtering needed anymore - all filtering is done server-side
-    const filtered = data;
+    // Server-side pagination means we only have current page data
+    // Apply client-side sorting only
+    if (!sortConfig) return data;
 
-    if (!sortConfig) return filtered;
-
-    const sorted = [...filtered].sort((a, b) => {
+    const sorted = [...data].sort((a, b) => {
       const aValue = a[sortConfig.key as keyof DiamondData];
       const bValue = b[sortConfig.key as keyof DiamondData];
 
@@ -373,11 +403,8 @@ const DiamondStockTable: React.FC<TableProps> = ({
     return sorted;
   }, [data, sortConfig]);
 
-  const totalPages = Math.ceil(sortedData.length / rowsPerPage);
-  const paginatedData = sortedData.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage,
-  );
+  // No client-side pagination needed - data is already paginated from server
+  const paginatedData = sortedData;
 
   const formatCurrency = (value: string | number) => {
     const num = parseFloat(String(value));
@@ -715,9 +742,9 @@ const DiamondStockTable: React.FC<TableProps> = ({
             }}
           >
             <div className="text-sm text-gray-700 font-medium">
-              Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
-              {Math.min(currentPage * rowsPerPage, sortedData.length)} of{" "}
-              {sortedData.length} diamonds
+              Showing {totalRecords > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0} to{" "}
+              {Math.min(currentPage * rowsPerPage, totalRecords)} of{" "}
+              {totalRecords} diamonds
             </div>
 
             <div className="flex items-center gap-4">
@@ -729,13 +756,14 @@ const DiamondStockTable: React.FC<TableProps> = ({
                   className="border border-gray-300 rounded-none px-3 py-1.5 text-sm text-gray-800 bg-white cursor-pointer hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#070b3a] focus:border-transparent transition-all"
                   value={rowsPerPage}
                   onChange={(e) => {
-                    setRowsPerPage(Number(e.target.value));
+                    const newRowsPerPage = Number(e.target.value);
+                    setRowsPerPage(newRowsPerPage);
                     setCurrentPage(1);
                   }}
                 >
                   <option value="10">10</option>
                   <option value="20">20</option>
-                  <option value="30">30</option>
+               
                   <option value="50">50</option>
                   <option value="100">100</option>
                 </select>

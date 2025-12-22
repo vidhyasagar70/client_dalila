@@ -2141,6 +2141,134 @@ export const inventoryApi = {
     }
   },
 
+  // Search diamonds with filters for admin/superadmin
+  searchDiamonds: async (filters: {
+    supplier?: string;
+    shapes?: string[];
+    colors?: string[];
+    clarities?: string[];
+    minCarats?: number;
+    maxCarats?: number;
+    page?: number;
+    limit?: number;
+    searchTerm?: string;
+  }) => {
+    try {
+      const queryParams = new URLSearchParams();
+      
+      // Add pagination
+      if (filters.page) queryParams.append("page", filters.page.toString());
+      if (filters.limit) queryParams.append("limit", filters.limit.toString());
+      
+      // Add search term (for stone number search)
+      if (filters.searchTerm) queryParams.append("searchTerm", filters.searchTerm);
+      
+      // Add supplier filter
+      if (filters.supplier) queryParams.append("supplier", filters.supplier);
+
+      // Add shape filters - each shape as separate parameter for OR logic
+      if (filters.shapes && filters.shapes.length > 0) {
+        filters.shapes.forEach((shape) => {
+          queryParams.append('SHAPE', shape);
+        });
+      }
+
+      // Add color filters - each color as separate parameter for OR logic
+      if (filters.colors && filters.colors.length > 0) {
+        filters.colors.forEach((color) => {
+          queryParams.append('COLOR', color);
+        });
+      }
+
+      // Add clarity filters - each clarity as separate parameter for OR logic
+      if (filters.clarities && filters.clarities.length > 0) {
+        filters.clarities.forEach((clarity) => {
+          queryParams.append('CLARITY', clarity);
+        });
+      }
+
+      // Add carat range filters
+      if (filters.minCarats !== undefined) {
+        queryParams.append('CARATS_MIN', filters.minCarats.toString());
+      }
+      if (filters.maxCarats !== undefined) {
+        queryParams.append('CARATS_MAX', filters.maxCarats.toString());
+      }
+
+      const url = `/api/diamonds/admin/search?${queryParams.toString()}`;
+      const response = await apiClient.get<{
+        success: boolean;
+        message: string;
+        data: Array<{
+          _id: string;
+          ARROW_IMAGE: string;
+          BRANCH: string;
+          CARATS: string;
+          CERTI_PDF: string;
+          CLARITY: string;
+          CLARITY_CHARACTERISTICS: string;
+          CN: string;
+          COLOR: string;
+          COMMENTS_1: string;
+          CROWN_ANGLE: string;
+          CROWN_HEIGHT: string;
+          CUT: string;
+          CW: string;
+          DEPTH_PER: string;
+          DISC_PER: string;
+          DNA: string;
+          FLOUR: string;
+          HA: string;
+          HEART_IMAGE: string;
+          KEY_TO_SYMBOLS: string[];
+          LAB: string;
+          LOCATION: string;
+          MEASUREMENTS: string;
+          MP4: string;
+          NET_RATE: string;
+          NET_VALUE: string;
+          PAVILLION_ANGLE: string;
+          PAVILLION_HEIGHT: string;
+          POL: string;
+          RAP_PRICE: string;
+          REAL_IMAGE: string;
+          REPORT_COMMENTS: string;
+          REPORT_DATE: string;
+          REPORT_NO: string;
+          SHAPE: string;
+          SN: string;
+          STAGE: string;
+          STONE_NO: string;
+          SW: string;
+          SYM: string;
+          TABLE_PER: string;
+          TINGE: string;
+          source: string;
+          HandVideo: string;
+          TweezerVideo: string;
+          __v: number;
+          createdAt: string;
+          updatedAt: string;
+        }>;
+        pagination: {
+          currentPage: number;
+          totalPages: number;
+          totalRecords: number;
+          recordsPerPage: number;
+          hasNextPage: boolean;
+          hasPrevPage: boolean;
+        };
+        appliedFilters: Record<string, unknown>;
+        totalFilteredRecords: number;
+      }>(url);
+
+      return response.data;
+    } catch (error) {
+      console.error("Search inventory diamonds error:", error);
+      throw error;
+    }
+  },
+
   // Update supplier visibility settings
   updateSupplierVisibility: async (
     supplierName: string,
@@ -2206,6 +2334,27 @@ export const inventoryApi = {
       return response.data;
     } catch (error) {
       console.error("Apply supplier filters error:", error);
+      throw error;
+    }
+  },
+
+  // Toggle supplier visibility (active/inactive)
+  toggleSupplierVisibility: async (
+    supplierName: string,
+    isVisible: boolean
+  ) => {
+    try {
+      const response = await apiClient.put<{
+        success: boolean;
+        message: string;
+        data?: unknown;
+      }>(
+        `/api/users/admin/supplier-settings/${encodeURIComponent(supplierName)}/`,
+        { isVisible }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Toggle supplier visibility error:", error);
       throw error;
     }
   },

@@ -69,7 +69,7 @@ export default function DiamondStockTableWithFilter() {
         } else {
           setRefreshMessage(response?.message || "Failed to refresh inventory.");
         }
-      } catch (err) {
+      } catch {
         setRefreshMessage("Error refreshing inventory.");
       } finally {
         setRefreshing(false);

@@ -8,6 +8,7 @@ import ClarityFilter from "./ClarityFilter";
 import ColorFilter from "./ColorFilter";
 import InventoryDiamondTable from "./InventoryDiamondTable";
 import { inventoryApi } from "@/lib/api";
+import toast from "react-hot-toast";
 
 interface InventoryDiamond {
   _id: string;
@@ -70,6 +71,15 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
   const [diamondData, setDiamondData] = useState<InventoryDiamond[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [paginationInfo, setPaginationInfo] = useState<{
+    currentPage: number;
+    totalPages: number;
+    totalRecords: number;
+    recordsPerPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  } | undefined>(undefined);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     if (!isOpen) {
@@ -79,38 +89,48 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
     }
   }, [isOpen]);
 
-  const fetchFilteredData = useCallback(async () => {
+  const fetchFilteredData = useCallback(async (page = 1, limit = 10) => {
     try {
       setLoading(true);
       setError(null);
 
-      const params: Record<string, string | number> = {
-        supplier: supplierName,
-        page: 1,
-        limit: 10000,
-      };
-
-      if (selectedShapes.length > 0) {
-        params.shape = selectedShapes.join(',');
-      }
-
-      if (selectedClarities.length > 0) {
-        params.clarity = selectedClarities.join(',');
-      }
-
-      if (selectedColors.length > 0) {
-        params.color = selectedColors.join(',');
-      }
-
+      // Calculate min and max carat from selected ranges
+      let minCarat: number | undefined;
+      let maxCarat: number | undefined;
       if (selectedCaratRanges.length > 0) {
         const mins = selectedCaratRanges.map((r) => parseFloat(r.min));
         const maxs = selectedCaratRanges.map((r) => parseFloat(r.max));
-        params.minCarat = Math.min(...mins);
-        params.maxCarat = Math.max(...maxs);
+        minCarat = Math.min(...mins);
+        maxCarat = Math.max(...maxs);
       }
 
-      const response = await inventoryApi.getAllDiamonds(params);
+      console.log('Fetching with filters:', {
+        supplier: supplierName,
+        shapes: selectedShapes,
+        colors: selectedColors,
+        clarities: selectedClarities,
+        minCarat,
+        maxCarat,
+        page,
+        limit
+      });
+
+      // Use the new searchDiamonds API method
+      const response = await inventoryApi.searchDiamonds({
+        supplier: supplierName,
+        page,
+        limit,
+        shapes: selectedShapes.length > 0 ? selectedShapes : undefined,
+        colors: selectedColors.length > 0 ? selectedColors : undefined,
+        clarities: selectedClarities.length > 0 ? selectedClarities : undefined,
+        minCarats: minCarat,
+        maxCarats: maxCarat,
+      });
+
+      console.log('Filtered response:', response);
+      console.log('Number of diamonds:', response.data?.length || 0);
       setDiamondData(response.data || []);
+      setPaginationInfo(response.pagination || null);
     } catch (err) {
       console.error('Error fetching diamond data:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
@@ -123,9 +143,15 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
   // Fetch diamond data when filters change
   useEffect(() => {
     if (isOpen && activeTab === 'inventory') {
-      fetchFilteredData();
+      fetchFilteredData(1, rowsPerPage);
     }
-  }, [isOpen, activeTab, fetchFilteredData]);
+  }, [isOpen, activeTab, selectedShapes, selectedCaratRanges, selectedClarities, selectedColors, supplierName, rowsPerPage, fetchFilteredData]);
+
+  const handlePageChange = (page: number, newRowsPerPage: number) => {
+    console.log('Page changed to:', page, 'rows per page:', newRowsPerPage);
+    setRowsPerPage(newRowsPerPage);
+    fetchFilteredData(page, newRowsPerPage);
+  };
 
   const clearAllFilters = () => {
     setSelectedShapes([]);
@@ -175,17 +201,17 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
       );
 
       if (response.success) {
-        alert("Filters applied successfully!");
+        toast.success(response.message || "Filters applied successfully!");
         if (onConfigSaved) {
           onConfigSaved();
         }
         onClose();
       } else {
-        alert(response.message || "Failed to apply filters");
+        toast.error(response.message || "Failed to apply filters");
       }
     } catch (err) {
       console.error("Error applying filters:", err);
-      alert(err instanceof Error ? err.message : "Failed to apply filters");
+      toast.error(err instanceof Error ? err.message : "Failed to apply filters");
     } finally {
       setIsApplying(false);
     }
@@ -293,9 +319,16 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
                   data={diamondData}
                   loading={loading}
                   error={error}
-                  pageSize={20}
+                  pageSize={rowsPerPage}
                   viewMode="list"
+                  externalPagination={paginationInfo}
+                  onPageChange={handlePageChange}
                 />
+                {/* Debug info */}
+                <div className="mt-2 text-sm text-gray-600">
+                  Total diamonds loaded: {diamondData.length}
+                  {paginationInfo && ` | Total in database: ${paginationInfo.totalRecords}`}
+                </div>
               </div>
             </>
           ) : (
