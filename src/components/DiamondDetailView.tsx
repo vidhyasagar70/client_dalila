@@ -5,7 +5,6 @@ import Image from "next/image";
 import {
   ArrowLeft,
   Loader2,
-
   X,
   Clock,
   MessageCircle,
@@ -147,8 +146,6 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
       setIsAddingToCart(false);
     }
   };
-
-
 
   const handleAddToHold = async () => {
     try {
@@ -398,13 +395,13 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
             )}
           </div>
 
-          {/* Top Section: Certificate, Image, and Info */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-            {/* LEFT - Media Display (same height as center) */}
-            <div className="lg:col-span-4 flex items-center justify-center">
+          {/* Top Section: Image and Info */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+            {/* LEFT - Media Display (50% width) */}
+            <div className="lg:col-span-6 flex items-center justify-center">
               {/* Render based on selected tab */}
               {selectedMediaTab === 'image' && selectedImage && (
-                <div className="relative overflow-hidden h-[500px] w-full bg-gray-50 flex items-center justify-center">
+                <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
                   <div className="relative w-full h-full flex items-center justify-center">
                     <div className="relative w-full h-full">
                       <Image
@@ -423,85 +420,79 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               )}
 
               {selectedMediaTab === 'video' && videoUrl && (
-                <div className="bg-white overflow-hidden h-[500px] w-full flex items-center justify-center">
-                  <div className="relative bg-gray-50 h-full w-full">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(videoUrl, '_blank');
-                      }}
-                      className="absolute top-4 right-2 z-10 bg-white/80 rounded-full p-1 hover:bg-white shadow cursor-pointer"
-                      title="Download Video"
-                    >
-                      <Download className="w-5 h-7 text-[#050C3A]" />
-                    </button>
-                    <video
-                      src={videoUrl}
-                      autoPlay
-                      loop
-                      muted
-                      className="w-full h-full object-contain"
-                    >
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
+                <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(videoUrl, '_blank');
+                    }}
+                    className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+                    title="Download Video"
+                  >
+                    <Download className="w-5 h-5 text-[#050C3A]" />
+                  </button>
+                  <video
+                    src={videoUrl}
+                    autoPlay
+                    loop
+                    muted
+                    className="w-full h-full object-contain"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
               )}
 
               {selectedMediaTab === 'handvideo' && handVideoUrl && (
-                <div className="bg-white overflow-hidden h-[500px] w-full flex items-center justify-center">
-                  <div className="relative bg-gray-50 h-full w-full">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(handVideoUrl, '_blank');
-                      }}
-                      className="absolute top-4 right-2 z-10 bg-white/80 rounded-full p-1 hover:bg-white shadow cursor-pointer"
-                      title="Download Hand Video"
-                    >
-                      <Download className="w-5 h-7 text-[#050C3A]" />
-                    </button>
-                    <video
-                      src={handVideoUrl}
-                      autoPlay
-                      loop
-                      muted
-                      className="w-full h-full object-contain"
-                    >
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
+                <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(handVideoUrl, '_blank');
+                    }}
+                    className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+                    title="Download Hand Video"
+                  >
+                    <Download className="w-5 h-5 text-[#050C3A]" />
+                  </button>
+                  <video
+                    src={handVideoUrl}
+                    autoPlay
+                    loop
+                    muted
+                    className="w-full h-full object-contain"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
               )}
 
               {selectedMediaTab === 'tweezervideo' && tweezerVideoUrl && (
-                <div className="bg-white overflow-hidden h-[500px] w-full flex items-center justify-center">
-                  <div className="relative bg-gray-50 h-full w-full">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(tweezerVideoUrl, '_blank');
-                      }}
-                      className="absolute top-4 right-2 z-10 bg-white/80 rounded-full p-1 hover:bg-white shadow cursor-pointer"
-                      title="Download Tweezer Video"
-                    >
-                      <Download className="w-5 h-7 text-[#050C3A]" />
-                    </button>
-                    <video
-                      src={tweezerVideoUrl}
-                      autoPlay
-                      loop
-                      muted
-                      className="w-full h-full object-contain"
-                    >
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
+                <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(tweezerVideoUrl, '_blank');
+                    }}
+                    className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+                    title="Download Tweezer Video"
+                  >
+                    <Download className="w-5 h-5 text-[#050C3A]" />
+                  </button>
+                  <video
+                    src={tweezerVideoUrl}
+                    autoPlay
+                    loop
+                    muted
+                    className="w-full h-full object-contain"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
               )}
 
               {selectedMediaTab === 'pdf' && certPdfUrl && (
-                <div className="bg-white overflow-hidden h-[500px] w-full flex items-center justify-center">
+                <div className="overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
                   <iframe
                     src={certPdfUrl}
                     className="w-full h-full"
@@ -516,21 +507,15 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                 (selectedMediaTab === 'handvideo' && !handVideoUrl) ||
                 (selectedMediaTab === 'tweezervideo' && !tweezerVideoUrl) ||
                 (selectedMediaTab === 'pdf' && !certPdfUrl)) && (
-                <div className="bg-white border border-[#e9e2c6] overflow-hidden h-[500px] w-full flex items-center justify-center">
-                  <div className="relative bg-gray-50 h-full w-full flex items-center justify-center">
-                    <span className="text-sm text-gray-400">No Media Available</span>
-                  </div>
+                <div className="overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+                  <span className="text-sm text-gray-400">No Media Available</span>
                 </div>
               )}
             </div>
-            {/* CENTER - Placeholder or additional content */}
-            <div className="lg:col-span-4 flex items-center justify-center">
-              {/* This column can be used for additional content if needed */}
-            </div>
 
-            {/* RIGHT - Diamond Info (4 columns) */}
-            <div className="lg:col-span-4 flex flex-col ">
-              <div className="space-y-4 flex-1 flex flex-col ">
+            {/* RIGHT - Diamond Info (50% width) */}
+            <div className="lg:col-span-6 flex flex-col">
+              <div className="space-y-4 flex-1 flex flex-col">
                 {/* Title Section - show Stone Number instead of shape */}
                 <div className="pt-4 mt-11">
                   <div className="flex justify-between items-start mb-1">
@@ -635,7 +620,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
           </div>
 
           {/* Bottom Tables Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-[95%] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-full mx-auto px-4">
             {/* Left Column - Details */}
             <DetailTable
               title="Details"
@@ -643,13 +628,10 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                 ["Packet No", diamond.STONE_NO || "N/A"],
                 ["Report No", diamond.REPORT_NO || "N/A"],
                 ["Lab", diamond.LAB || "N/A"],
-                // ["Rap.($)", diamond.RAP_PRICE || "N/A"],
-               
-                 ["Rap price", formatCurrency(diamond.RAP_PRICE ?? "N/A")],
+                ["Rap price", formatCurrency(diamond.RAP_PRICE ?? "N/A")],
                 ["Disc %", diamond.DISC_PER ? `${Math.abs(diamond.DISC_PER / 100).toFixed(2)}%` : "N/A"],
                 ["Net Rate", formatCurrency(diamond.NET_RATE ?? "N/A")],
-                 ["Net Value", formatCurrency(diamond.NET_VALUE)],
-                
+                ["Net Value", formatCurrency(diamond.NET_VALUE)],
                 ["Shape", diamond.SHAPE || "N/A"],
                 ["Carat", diamond.CARATS || diamond.SIZE || "N/A"],
                 ["Color", diamond.COLOR || "N/A"],
@@ -675,16 +657,10 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                     "Length",
                     diamond.MEASUREMENTS?.split("x")[0]?.trim() || "N/A",
                   ],
-                  // ["Width", diamond.MEASUREMENTS?.split("x")[1]?.trim() || "N/A"],
-                  // ["Depth", diamond.MEASUREMENTS?.split("x")[2]?.trim() || "N/A"],
-                  // ["Ratio", "-"],
                   ["Crown Angle", diamond.CROWN_ANGLE || "N/A"],
                   ["Crown Height", diamond.CROWN_HEIGHT || "N/A"],
                   ["Pav Angle", diamond.PAVILLION_ANGLE || "N/A"],
                   ["Pav Height", diamond.PAVILLION_HEIGHT || "N/A"],
-                  // ["Girdle", "THN"],
-                  // ["Culet", "NON"],
-                  // ["Laser Ins.", "-"],
                 ]}
               />
 
@@ -696,13 +672,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                   ["Side Natts", diamond.SN || "-"],
                   ["Center White", diamond.CW || "-"],
                   ["Side White", diamond.SW || "-"],
-                  // ["Table open", "TO-O"],
-                  // ["Crown open", "CO-O"],
-                  // ["Pavilion open", "PO-O"],
                   ["Eye Clean", diamond.EY_CLN || "-"],
-                  // ["Herat & Arrow", diamond.HA || diamond.H_AND_A || "-"],
-                  // ["Brilliancy", "EX"],
-                  // ["Type2 Cert", "-"],
                   ["Location", diamond.LOCATION || "-"],
                 ]}
               />

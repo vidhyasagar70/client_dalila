@@ -408,7 +408,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
     return (
       <div className="w-full h-96 flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-[#050c3a] mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-[#FAF6EB] mx-auto mb-4" />
           <p className="text-gray-600">Loading inventory...</p>
         </div>
       </div>
@@ -445,7 +445,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
           {/* Loading Overlay */}
           {(loading || isTransitioning) && (
             <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-20 rounded-lg">
-              <Loader2 className="w-8 h-8 animate-spin text-[#050c3a]" />
+              <Loader2 className="w-12 h-12 animate-spin text-[#FAF6EB] mx-auto mb-4" />
             </div>
           )}
           
@@ -606,7 +606,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
         {/* Loading Overlay */}
         {(loading || isTransitioning) && (
           <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-20">
-            <Loader2 className="w-8 h-8 animate-spin text-[#050c3a]" />
+            <Loader2 className="w-12 h-12 animate-spin text-[#FAF6EB] mx-auto mb-4" />
           </div>
         )}
         
@@ -617,157 +617,89 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
             >
               <tr>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[150px]"
-                  onClick={() => handleSort("STONE_NO")}
+                  className="py-3 px-4 text-left w-[150px]"
                 >
-                  <div className="flex items-center">
-                    Stock ID
-                    <SortIcon columnKey="STONE_NO" />
-                  </div>
+                  Stock ID
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[120px]"
-                  onClick={() => handleSort("source")}
+                  className="py-3 px-4 text-left w-[120px]"
                 >
-                  <div className="flex items-center">
-                    Source
-                    <SortIcon columnKey="source" />
-                  </div>
+                  Source
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[100px]"
-                  onClick={() => handleSort("SHAPE")}
+                  className="py-3 px-4 text-left w-[100px]"
                 >
-                  <div className="flex items-center">
-                    Shape
-                    <SortIcon columnKey="SHAPE" />
-                  </div>
+                  Shape
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[80px]"
-                  onClick={() => handleSort("CARATS")}
+                  className="py-3 px-4 text-left w-[80px]"
                 >
-                  <div className="flex items-center">
-                    Carat
-                    <SortIcon columnKey="CARATS" />
-                  </div>
+                  Carat
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[80px]"
-                  onClick={() => handleSort("COLOR")}
+                  className="py-3 px-4 text-left w-[80px]"
                 >
-                  <div className="flex items-center">
-                    Color
-                    <SortIcon columnKey="COLOR" />
-                  </div>
+                  Color
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[80px]"
-                  onClick={() => handleSort("CLARITY")}
+                  className="py-3 px-4 text-left w-[80px]"
                 >
-                  <div className="flex items-center">
-                    Clarity
-                    <SortIcon columnKey="CLARITY" />
-                  </div>
+                  Clarity
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[80px]"
-                  onClick={() => handleSort("CUT")}
+                  className="py-3 px-4 text-left w-[80px]"
                 >
-                  <div className="flex items-center">
-                    Cut
-                    <SortIcon columnKey="CUT" />
-                  </div>
+                  Cut
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[80px]"
-                  onClick={() => handleSort("POL")}
+                  className="py-3 px-4 text-left w-[80px]"
                 >
-                  <div className="flex items-center">
-                    Polish
-                    <SortIcon columnKey="POL" />
-                  </div>
+                  Polish
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[80px]"
-                  onClick={() => handleSort("SYM")}
+                  className="py-3 px-4 text-left w-[80px]"
                 >
-                  <div className="flex items-center">
-                    Sym
-                    <SortIcon columnKey="SYM" />
-                  </div>
+                  Sym
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[80px]"
-                  onClick={() => handleSort("FLOUR")}
+                  className="py-3 px-4 text-left w-[80px]"
                 >
-                  <div className="flex items-center">
-                    Fluor
-                    <SortIcon columnKey="FLOUR" />
-                  </div>
+                  Fluor
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[80px]"
-                  onClick={() => handleSort("LAB")}
+                  className="py-3 px-4 text-left w-[80px]"
                 >
-                  <div className="flex items-center">
-                    Lab
-                    <SortIcon columnKey="LAB" />
-                  </div>
+                  Lab
                 </th>
                 <th
-                  className="py-3 px-4 text-left cursor-pointer hover:bg-[#070d4a] transition-colors w-[80px]"
-                  onClick={() => handleSort("LOCATION")}
+                  className="py-3 px-4 text-left w-[80px]"
                 >
-                  <div className="flex items-center">
-                    Location
-                    <SortIcon columnKey="LOCATION" />
-                  </div>
+                  Location
                 </th>
                 <th
-                  className="py-3 px-4 text-right cursor-pointer hover:bg-[#070d4a] transition-colors w-[100px]"
-                  onClick={() => handleSort("NET_RATE")}
+                  className="py-3 px-4 text-right w-[100px]"
                 >
-                  <div className="flex items-center justify-end">
-                    $/ct
-                    <SortIcon columnKey="NET_RATE" />
-                  </div>
+                  $/ct
                 </th>
                 <th
-                  className="py-3 px-4 text-right cursor-pointer hover:bg-[#070d4a] transition-colors w-[100px]"
-                  onClick={() => handleSort("DISC_PER")}
+                  className="py-3 px-4 text-right w-[100px]"
                 >
-                  <div className="flex items-center justify-end">
-                    Disc%
-                    <SortIcon columnKey="DISC_PER" />
-                  </div>
+                  Disc%
                 </th>
                 <th
-                  className="py-3 px-4 text-right cursor-pointer hover:bg-[#070d4a] transition-colors w-[120px]"
-                  onClick={() => handleSort("NET_VALUE")}
+                  className="py-3 px-4 text-right w-[120px]"
                 >
-                  <div className="flex items-center justify-end">
-                    Total $
-                    <SortIcon columnKey="NET_VALUE" />
-                  </div>
+                  Total $
                 </th>
                 <th
-                  className="py-3 px-4 text-right cursor-pointer hover:bg-[#070d4a] transition-colors w-[100px]"
-                  onClick={() => handleSort("DEPTH_PER")}
+                  className="py-3 px-4 text-right w-[100px]"
                 >
-                  <div className="flex items-center justify-end">
-                    Depth%
-                    <SortIcon columnKey="DEPTH_PER" />
-                  </div>
+                  Depth%
                 </th>
                 <th
-                  className="py-3 px-4 text-right cursor-pointer hover:bg-[#070d4a] transition-colors w-[100px]"
-                  onClick={() => handleSort("TABLE_PER")}
+                  className="py-3 px-4 text-right w-[100px]"
                 >
-                  <div className="flex items-center justify-end">
-                    Table%
-                    <SortIcon columnKey="TABLE_PER" />
-                  </div>
+                  Table%
                 </th>
               </tr>
             </thead>

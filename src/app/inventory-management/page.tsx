@@ -251,10 +251,8 @@ export default function InventoryManagement() {
          {/* Header */}
       <div className="bg-gray-50 w-full">
         <div className="px-2 sm:px-4 py-3 w-full mt-30">
-          <h1 className={`text-xl font-bold text-gray-900 ${marcellus.className}`}>Inventory Management</h1>
-          <p className={`text-sm text-gray-600 mt-1 ${jost.className}`}>
-            Manage customer hold requests and diamond enquiries
-          </p>
+          <h1 className={`text-xl font-bold text-gray-900 ${marcellus.className}`}>Inventory and Suppliers</h1>
+          
         </div>
       </div>
       {/* Stats Cards */}
@@ -340,13 +338,13 @@ export default function InventoryManagement() {
             <div className="flex items-center gap-1 bg-gray-100 rounded-md p-0.5">
               <button
                 onClick={() => setViewMode('inventory')}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md text-sm transition-colors ${
+                className={`flex items-center gap-1 px-2 py-1 text-sm transition-colors ${
                   viewMode === 'inventory'
                     ? 'bg-[#050c3a] text-white'
                     : 'text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                <List className="w-3.5 h-3.5" />
+                {/* <List className="w-3.5 h-3.5" /> */}
                 <span className="hidden sm:inline">Inventory View</span>
               </button>
               <button
@@ -354,13 +352,13 @@ export default function InventoryManagement() {
                   setViewMode('active');
                   setHasActiveDiamondsBeenViewed(true);
                 }}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md text-sm transition-colors ${
+                className={`flex items-center gap-1 px-2 py-1  text-sm transition-colors ${
                   viewMode === 'active'
                     ? 'bg-[#050c3a] text-white'
                     : 'text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                <Gem className="w-3.5 h-3.5" />
+                {/* <Gem className="w-3.5 h-3.5" /> */}
                 <span className="hidden sm:inline">Active Diamonds</span>
               </button>
             </div>
