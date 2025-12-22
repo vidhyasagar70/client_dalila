@@ -51,6 +51,14 @@ interface PaginationData {
   hasPrevPage: boolean;
 }
 
+interface FilterProps {
+  shapes?: string[];
+  colors?: string[];
+  clarities?: string[];
+  minCarats?: number;
+  maxCarats?: number;
+}
+
 interface InventoryTableProps {
   data?: InventoryDiamond[];
   loading?: boolean;
@@ -61,6 +69,7 @@ interface InventoryTableProps {
   onPageChange?: (page: number, rowsPerPage: number) => void;
   filterSource?: string;
   noPagination?: boolean;
+  filterProps?: FilterProps;
 }
 
 const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
@@ -73,6 +82,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
   onPageChange,
   filterSource,
   noPagination = false,
+  filterProps,
 }) => {
   const router = useRouter();
   const [data, setData] = useState<InventoryDiamond[]>(propData || []);
@@ -188,6 +198,25 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
           url.searchParams.append('sortBy', sortConfig.key);
           url.searchParams.append('sortOrder', sortConfig.direction);
         }
+        
+        // Add filter parameters if provided
+        if (filterProps) {
+          if (filterProps.shapes && filterProps.shapes.length > 0) {
+            filterProps.shapes.forEach(shape => url.searchParams.append('shapes[]', shape));
+          }
+          if (filterProps.colors && filterProps.colors.length > 0) {
+            filterProps.colors.forEach(color => url.searchParams.append('colors[]', color));
+          }
+          if (filterProps.clarities && filterProps.clarities.length > 0) {
+            filterProps.clarities.forEach(clarity => url.searchParams.append('clarities[]', clarity));
+          }
+          if (filterProps.minCarats !== undefined) {
+            url.searchParams.append('minCarats', filterProps.minCarats.toString());
+          }
+          if (filterProps.maxCarats !== undefined) {
+            url.searchParams.append('maxCarats', filterProps.maxCarats.toString());
+          }
+        }
 
         const response = await fetch(url.toString(), {
           method: 'GET',
@@ -233,7 +262,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
     };
 
     fetchInventoryData();
-  }, [currentPage, rowsPerPage, sortConfig, isExternalData]);
+  }, [currentPage, rowsPerPage, sortConfig, isExternalData, filterProps]);
 
   const handleSort = (key: string) => {
     // Disable sorting when using external data
@@ -390,7 +419,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
     return (
       <div className="w-full h-96 flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-red-600 mb-2 text-4xl">⚠️</div>
+          
           <p className="text-red-600 font-medium">Error loading inventory</p>
           <p className="text-gray-600 text-sm mt-2">{error}</p>
         </div>
@@ -752,8 +781,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                   }`}
                 >
                   <td 
-                    className="py-3 px-4 text-blue-600 hover:underline cursor-pointer font-medium"
-                    onClick={() => handleStockClick(row.STONE_NO)}
+                    className="py-3 px-4 text-blue-600 font-medium"
                   >
                     {row.STONE_NO || "N/A"}
                   </td>

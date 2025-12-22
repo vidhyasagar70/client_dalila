@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { X, ArrowLeft, Package, Globe } from "lucide-react";
+import { X, ArrowLeft, Package, Globe, Check } from "lucide-react";
 import ShapeFilter from "./ShapeFilter";
 import CaratFilter from "./CaratFilter";
 import ClarityFilter from "./ClarityFilter";
@@ -157,8 +157,6 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
     }
   }, [isOpen, activeTab, currentPage, rowsPerPage, supplierName, fetchFilteredData]);
 
-
-
   const handlePageChange = (page: number, newRowsPerPage: number) => {
     console.log('Page change requested:', { page, newRowsPerPage });
     if (newRowsPerPage !== rowsPerPage) {
@@ -263,16 +261,20 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
         {/* Top Toggle */}
         <div className="flex border-b border-gray-200">
           <button
-            className="w-1/2 py-3 px-4 text-sm font-medium text-white transition-colors flex items-center justify-center gap-2"
-            style={{ backgroundColor: '#050C3A' }}
+            className={`w-1/2 py-3 px-4 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+              activeTab === 'inventory' ? 'text-white' : 'text-gray-700'
+            }`}
+            style={{ backgroundColor: activeTab === 'inventory' ? '#050C3A' : '#FAF6EB' }}
             onClick={() => setActiveTab('inventory')}
           >
             <Package className="w-4 h-4" />
             Configure Inventory Data
           </button>
           <button
-            className="w-1/2 py-3 px-4 text-sm font-medium text-gray-700 transition-colors flex items-center justify-center gap-2"
-            style={{ backgroundColor: '#FAF6EB' }}
+            className={`w-1/2 py-3 px-4 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+              activeTab === 'api' ? 'text-white' : 'text-gray-700'
+            }`}
+            style={{ backgroundColor: activeTab === 'api' ? '#050C3A' : '#FAF6EB' }}
             onClick={() => setActiveTab('api')}
           >
             <Globe className="w-4 h-4" />
@@ -284,7 +286,7 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
         <div className="flex-1 overflow-y-auto p-6">
           {activeTab === 'inventory' ? (
             <>
-              <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-3 gap-4 mb-3">
                 {/* Shape Filter - Column 1 */}
                 <div>
                   <ShapeFilter
@@ -330,6 +332,18 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
                 </div>
               </div>
 
+              {/* Save Button - Positioned at the right end below filters */}
+              <div className="flex justify-end mb-3">
+                <button
+                  onClick={handleApplyFilters}
+                  disabled={isApplying}
+                  className="bg-[#050c3a] text-white px-12 py-2 rounded-md hover:bg-[#070d4a] transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 mr-5"
+                >
+                  <Check className="w-4 h-4" />
+                  {isApplying ? "Saving..." : "Save"}
+                </button>
+              </div>
+
               {/* Diamond Data Table */}
               <div>
                 <InventoryDiamondTable
@@ -358,19 +372,6 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
             </div>
           )}
         </div>
-
-        {/* Footer - Fixed at bottom */}
-        {activeTab === 'inventory' && (
-          <div className="p-6 border-t border-gray-200 flex justify-end gap-3 flex-shrink-0 bg-gray-50">
-            <button
-              onClick={handleApplyFilters}
-              disabled={isApplying}
-              className="bg-[#050c3a] text-white px-8 py-2.5 rounded-md hover:bg-[#070d4a] transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              {isApplying ? "Applying..." : "Apply Filters"}
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

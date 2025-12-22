@@ -234,9 +234,9 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
                     <th className="text-center py-3 px-4 font-semibold">
                       Total Diamonds
                     </th>
-                    <th className="text-center py-3 px-4 font-semibold">
+                    {/* <th className="text-center py-3 px-4 font-semibold">
                       Active Diamonds
-                    </th>
+                    </th> */}
                     <th className="text-center py-3 px-4 font-semibold">
                       Action
                     </th>
@@ -258,13 +258,13 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
                           supplier.totalDiamonds.toLocaleString()
                         )}
                       </td>
-                      <td className="py-3 px-4 text-center text-gray-800">
+                      {/* <td className="py-3 px-4 text-center text-gray-800">
                         {loadingCounts ? (
                           <span className="text-gray-400">Loading...</span>
                         ) : (
                           (supplier.activeDiamonds || 0).toLocaleString()
                         )}
-                      </td>
+                      </td> */}
                      
                       <td className="py-3 px-4">
                         <div className="flex items-center justify-center gap-3">
