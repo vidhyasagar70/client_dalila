@@ -80,16 +80,19 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
     hasPrevPage: boolean;
   } | undefined>(undefined);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (!isOpen) {
       // Reset filters when modal closes
       clearAllFilters();
       setDiamondData([]);
+      setCurrentPage(1);
+      setPaginationInfo(undefined);
     }
   }, [isOpen]);
 
-  const fetchFilteredData = useCallback(async () => {
+  const fetchFilteredData = useCallback(async (page: number = currentPage) => {
     try {
       setLoading(true);
       setError(null);
@@ -105,19 +108,21 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
       }
 
       console.log('Fetching with filters:', {
-        supplier: supplierName,
+        source: supplierName,
         shapes: selectedShapes,
         colors: selectedColors,
         clarities: selectedClarities,
         minCarat,
-        maxCarat
+        maxCarat,
+        page,
+        limit: rowsPerPage
       });
 
-      // Fetch ALL diamonds at once (no pagination for this modal)
+      // Fetch diamonds with pagination
       const response = await inventoryApi.searchDiamonds({
-        supplier: supplierName,
-        page: 1,
-        limit: 10000, // High limit to get all results
+        source: supplierName,
+        page: page,
+        limit: rowsPerPage,
         shapes: selectedShapes.length > 0 ? selectedShapes : undefined,
         colors: selectedColors.length > 0 ? selectedColors : undefined,
         clarities: selectedClarities.length > 0 ? selectedClarities : undefined,
@@ -136,16 +141,33 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [supplierName, selectedShapes, selectedCaratRanges, selectedClarities, selectedColors]);
+  }, [supplierName, selectedShapes, selectedCaratRanges, selectedClarities, selectedColors, currentPage, rowsPerPage]);
 
-  // Fetch diamond data when filters change
+  // Reset to page 1 when filters change
   useEffect(() => {
     if (isOpen && activeTab === 'inventory') {
-      fetchFilteredData();
+      setCurrentPage(1);
     }
-  }, [isOpen, activeTab, selectedShapes, selectedCaratRanges, selectedClarities, selectedColors, supplierName, fetchFilteredData]);
+  }, [isOpen, activeTab, selectedShapes, selectedCaratRanges, selectedClarities, selectedColors]);
+
+  // Fetch diamond data when page or filters change
+  useEffect(() => {
+    if (isOpen && activeTab === 'inventory') {
+      fetchFilteredData(currentPage);
+    }
+  }, [isOpen, activeTab, currentPage, rowsPerPage, supplierName, fetchFilteredData]);
 
 
+
+  const handlePageChange = (page: number, newRowsPerPage: number) => {
+    console.log('Page change requested:', { page, newRowsPerPage });
+    if (newRowsPerPage !== rowsPerPage) {
+      setRowsPerPage(newRowsPerPage);
+      setCurrentPage(1); // Reset to page 1 when rows per page changes
+    } else {
+      setCurrentPage(page);
+    }
+  };
 
   const clearAllFilters = () => {
     setSelectedShapes([]);
@@ -314,15 +336,18 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
                   loading={loading}
                   error={error}
                   viewMode="list"
-                  noPagination={true}
-                  filterSource="Dharam Web Api"
+                  externalPagination={paginationInfo}
+                  onPageChange={handlePageChange}
+                  pageSize={rowsPerPage}
                 />
-                {/* Diamond count */}
-                {/* <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                  <p className="text-sm font-semibold text-blue-900">
-                    Total Dharam Web Api Diamonds: {diamondData.filter((d) => d.source === "Dharam Web Api").length}
-                  </p>
-                </div> */}
+                {/* Diamond count summary */}
+                {paginationInfo && (
+                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <p className="text-sm font-semibold text-blue-900">
+                      Showing {paginationInfo.totalRecords.toLocaleString()} Dharam Web Api diamonds
+                    </p>
+                  </div>
+                )}
               </div>
             </>
           ) : (

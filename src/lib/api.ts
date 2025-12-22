@@ -2143,7 +2143,7 @@ export const inventoryApi = {
 
   // Search diamonds with filters for admin/superadmin
   searchDiamonds: async (filters: {
-    supplier?: string;
+    source?: string;
     shapes?: string[];
     colors?: string[];
     clarities?: string[];
@@ -2163,8 +2163,8 @@ export const inventoryApi = {
       // Add search term (for stone number search)
       if (filters.searchTerm) queryParams.append("searchTerm", filters.searchTerm);
       
-      // Add supplier filter
-      if (filters.supplier) queryParams.append("supplier", filters.supplier);
+      // Add source filter (e.g., "Dharam Web Api")
+      if (filters.source) queryParams.append("source", filters.source);
 
       // Add shape filters - each shape as separate parameter for OR logic
       if (filters.shapes && filters.shapes.length > 0) {
