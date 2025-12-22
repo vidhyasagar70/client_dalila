@@ -46,7 +46,7 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
   suppliers: initialSuppliers,
   onSupplierUpdate,
 }) => {
-  const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers);
+  const [suppliers, setSuppliers] = useState<Supplier[]>(() => initialSuppliers);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [showConfigModal, setShowConfigModal] = useState(false);
@@ -95,19 +95,23 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
     }
   };
 
-  // Update suppliers when prop changes and fetch real counts
-  React.useEffect(() => {
-    if (initialSuppliers.length > 0) {
-      fetchRealDiamondCounts(initialSuppliers);
-    }
-  }, [initialSuppliers]);
-
-  // Fetch real counts when modal opens
+  // Sync suppliers state with initialSuppliers prop and fetch real counts when modal opens or suppliers prop changes
   React.useEffect(() => {
     if (isOpen && initialSuppliers.length > 0) {
-      fetchRealDiamondCounts(initialSuppliers);
+      // On open, sync local state to prop, but override isVisible with localStorage if present
+      const suppliersWithVisibility = initialSuppliers.map(supplier => {
+        const stored = localStorage.getItem(`supplier_visibility_${supplier.name}`);
+        return {
+          ...supplier,
+          isVisible: stored !== null ? JSON.parse(stored) : supplier.isVisible,
+        };
+      });
+      setSuppliers(suppliersWithVisibility);
+      fetchRealDiamondCounts(suppliersWithVisibility);
     }
   }, [isOpen, initialSuppliers]);
+
+  // (Removed duplicate effect)
 
   const handleOpenConfigModal = (supplierName: string) => {
     setSelectedSupplierForConfig(supplierName);
