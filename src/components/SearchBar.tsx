@@ -30,14 +30,15 @@ export default function SearchBar({
   return (
     <div>
       <div className="flex items-center border border-gray-200 rounded-none overflow-hidden shadow-sm w-fit bg-white">
-        <div className="flex items-center px-3 py-1.5 border-r border-gray-200 bg-gray-50">
+        <div className="flex items-center px-3 py-1.5 border-r border-gray-200 bg-gray-50 min-w-[32px] min-h-[32px] justify-center">
           <Image
             src="/filtersicon/filtersearch.png"
             alt="Search"
             width={16}
             height={16}
-            className="w-4 h-4 opacity-100"
+            className="w-4 h-4 opacity-100 block"
             priority
+            style={{ display: 'block', minWidth: 16, minHeight: 16 }}
           />
         </div>
         <input
