@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { X } from "lucide-react";
+import { X, ArrowLeft, Package, Globe } from "lucide-react";
 import ShapeFilter from "./ShapeFilter";
 import CaratFilter from "./CaratFilter";
 import ClarityFilter from "./ClarityFilter";
@@ -239,50 +239,51 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
     <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-[#050c3a] text-white p-6 flex justify-between items-center flex-shrink-0">
-          <div>
-            <h2 className="text-2xl font-bold">Configure API</h2>
-            <p className="text-sm text-gray-300 mt-1">
-              Configure filters for {supplierName}
-            </p>
+        <div className="bg-white p-6 flex justify-between items-center flex-shrink-0 border-b border-gray-200">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onClose}
+              className="flex items-center gap-1 border border-[#B6B8C6] rounded px-2 py-1 bg-white text-[#373B5C] font-normal text-base shadow-sm hover:bg-gray-50 focus:outline-none"
+              style={{ boxShadow: '0 0 0 1px #E0E1EA', minWidth: 'auto' }}
+            >
+              <ArrowLeft size={18} stroke="#373B5C" strokeWidth={2} />
+              <span style={{fontFamily: 'inherit', fontWeight: 400, fontSize: '15px'}}>Back to List</span>
+            </button>
+            <h2 className="text-xl font-bold text-[#050C3A] ml-1">Configure API</h2>
           </div>
           <button
             onClick={onClose}
-            className="text-white hover:text-gray-300 transition-colors"
+            className="text-[#050C3A] hover:text-gray-400 transition-colors"
+            aria-label="Close"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Top Toggle */}
-        <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-6 pt-4">
-          <div className="flex gap-2">
-            <button
-              className={`px-4 py-2 rounded-t-md font-semibold transition-colors ${activeTab === 'inventory' ? 'bg-white text-[#050c3a] border-b-2 border-[#050c3a]' : 'text-gray-600 hover:text-[#050c3a]'}`}
-              onClick={() => setActiveTab('inventory')}
-            >
-              Configure Inventory Data
-            </button>
-            <button
-              className={`px-4 py-2 rounded-t-md font-semibold transition-colors ${activeTab === 'api' ? 'bg-white text-[#050c3a] border-b-2 border-[#050c3a]' : 'text-gray-600 hover:text-[#050c3a]'}`}
-              onClick={() => setActiveTab('api')}
-            >
-              Configure API Data
-            </button>
-          </div>
+        <div className="flex border-b border-gray-200">
+          <button
+            className="w-1/2 py-3 px-4 text-sm font-medium text-white transition-colors flex items-center justify-center gap-2"
+            style={{ backgroundColor: '#050C3A' }}
+            onClick={() => setActiveTab('inventory')}
+          >
+            <Package className="w-4 h-4" />
+            Configure Inventory Data
+          </button>
+          <button
+            className="w-1/2 py-3 px-4 text-sm font-medium text-gray-700 transition-colors flex items-center justify-center gap-2"
+            style={{ backgroundColor: '#FAF6EB' }}
+            onClick={() => setActiveTab('api')}
+          >
+            <Globe className="w-4 h-4" />
+            Configure API Data
+          </button>
         </div>
-
+        
         {/* Content - Scrollable */}
         <div className="flex-1 overflow-y-auto p-6">
           {activeTab === 'inventory' ? (
             <>
-
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Filter Diamonds
-                </h3>
-              </div>
-
               <div className="grid grid-cols-3 gap-4 mb-6">
                 {/* Shape Filter - Column 1 */}
                 <div>
@@ -342,9 +343,9 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
                 />
                 {/* Diamond count summary */}
                 {paginationInfo && (
-                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                    <p className="text-sm font-semibold text-blue-900">
-                      Showing {paginationInfo.totalRecords.toLocaleString()} Dharam Web Api diamonds
+                  <div className="mt-4 p-3 bg-[#050C3A] border border-blue-200">
+                    <p className="text-sm font-semibold text-white">
+                      Total diamonds {paginationInfo.totalRecords.toLocaleString()} from Dharam Web Api 
                     </p>
                   </div>
                 )}
@@ -361,12 +362,6 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
         {/* Footer - Fixed at bottom */}
         {activeTab === 'inventory' && (
           <div className="p-6 border-t border-gray-200 flex justify-end gap-3 flex-shrink-0 bg-gray-50">
-            <button
-              onClick={onClose}
-              className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors font-medium"
-            >
-              Cancel
-            </button>
             <button
               onClick={handleApplyFilters}
               disabled={isApplying}

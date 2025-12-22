@@ -6,6 +6,25 @@ import Toggle from "./ui/Toggle";
 import { inventoryApi } from "@/lib/api";
 import ConfigureAPIModal from "./ConfigureAPIModal";
 import toast from "react-hot-toast";
+import { Marcellus, Jost ,Maven_Pro } from "next/font/google";
+const marcellus = Marcellus({
+  variable: "--font-marcellus",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const jost = Jost({
+  variable: "--font-jost",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
+const mavenPro = Maven_Pro({
+  variable: "--font-maven-pro",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
 
 interface Supplier {
   name: string;
@@ -43,7 +62,7 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
           try {
             // Fetch total diamonds (all, unfiltered)
             const totalRes = await inventoryApi.searchDiamonds({
-              supplier: supplier.name,
+              source: supplier.name,
               page: 1,
               limit: 1,
             });
@@ -181,16 +200,16 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
     <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="bg-[#050c3a] text-white p-6 flex justify-between items-center">
+        <div className="bg-white border-b border-gray-200 p-6 flex justify-between items-start">
           <div>
-            <h2 className="text-2xl font-bold">My Suppliers</h2>
-            <p className="text-sm text-gray-300 mt-1">
+            <h2 className={`${marcellus.variable} text-2xl font-bold text-[#040d39]`}>My Suppliers</h2>
+            <p className={`${jost.variable} text-sm text-gray-500 mt-1`}>
               Manage customer hold requests and diamond enquiries
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-white hover:text-gray-300 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
@@ -204,7 +223,7 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
             </div>
           ) : (
             <>
-              <table className="w-full">
+              <table className={`w-full ${mavenPro.variable}`}>
                 <thead>
                   <tr className="bg-[#050c3a] text-white">
                     <th className="text-left py-3 px-4 font-semibold">Name</th>
@@ -242,8 +261,9 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
                           (supplier.activeDiamonds || 0).toLocaleString()
                         )}
                       </td>
+                     
                       <td className="py-3 px-4">
-                        <div className="flex items-center justify-center gap-2">
+                        <div className="flex items-center justify-center gap-3">
                           <Toggle
                             checked={supplier.isVisible}
                             onChange={() => handleToggleVisibility(supplier.name, supplier.isVisible)}
@@ -251,10 +271,10 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
                           />
                           <button
                             onClick={() => handleOpenConfigModal(supplier.name)}
-                            className="p-2 rounded-full bg-[#050C3A] text-white hover:bg-[#070d4a] transition-colors"
+                            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
                             title="Configure API"
                           >
-                            <Settings className="w-4 h-4" />
+                            <Settings className="w-5 h-5" />
                           </button>
                         </div>
                       </td>

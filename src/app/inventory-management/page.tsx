@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef, memo, useCallback } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/navigation";
-import { Maven_Pro } from "next/font/google";
+import { Maven_Pro,Marcellus,Jost } from "next/font/google";
 import { Package, Users, Gem, List } from "lucide-react";
 import InventoryDiamondTable from "@/components/InventoryDiamondTable";
 import DiamondStockTable from "@/components/DiamondStockTable";
@@ -10,6 +10,18 @@ import SupplierManagementModal from "@/components/SupplierManagementModal";
 import SearchBar from "@/components/SearchBar";
 import { inventoryApi } from "@/lib/api";
 
+const marcellus = Marcellus({
+  variable: "--font-marcellus",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const jost = Jost({
+  variable: "--font-jost",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
 const mavenPro = Maven_Pro({
   variable: "--font-maven-pro",
   subsets: ["latin"],
@@ -75,10 +87,6 @@ interface InventoryDiamond {
 
 export default function InventoryManagement() {
   const router = useRouter();
-  const [_loading, setLoading] = useState(true);
-  const [_error, setError] = useState<string | null>(null);
-  const [_diamonds, setDiamonds] = useState<InventoryDiamond[]>([]);
-  const [_filteredDiamonds, setFilteredDiamonds] = useState<InventoryDiamond[]>([]);
   const [totalDiamonds, setTotalDiamonds] = useState(0);
   const [activeDiamonds, setActiveDiamonds] = useState(0);
   const [activeSuppliers, setActiveSuppliers] = useState(0);
@@ -87,7 +95,6 @@ export default function InventoryManagement() {
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [viewMode, setViewMode] = useState<"inventory" | "active">("inventory");
-  const [_searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<InventoryDiamond[]>([]);
   const [searchPagination, setSearchPagination] = useState<{
@@ -131,7 +138,7 @@ export default function InventoryManagement() {
   }, [router]);
 
   const handleSearchBar = async (term: string) => {
-    setSearchTerm(term);
+    // setSearchTerm removed (unused)
     
     // If search term is empty, exit search mode and show all inventory
     if (term.trim() === "") {
@@ -184,16 +191,13 @@ export default function InventoryManagement() {
 
   const fetchInventoryData = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      // setLoading and setError removed (unused)
       const response = await inventoryApi.getAllDiamonds({
         page: 1,
         limit: 10000,
       });
 
       if (response.success && response.data) {
-        setDiamonds(response.data);
-        setFilteredDiamonds(response.data);
         setTotalDiamonds(response.pagination.totalRecords);
 
         // Extract unique suppliers from diamond data
@@ -222,21 +226,20 @@ export default function InventoryManagement() {
         setTotalSuppliers(supplierList.length);
         setActiveSuppliers(supplierList.filter((s) => s.isVisible).length);
       } else {
-        setError("Failed to fetch inventory data");
+        // setError removed (unused)
       }
     } catch (err) {
       console.error("Error fetching inventory:", err);
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch inventory",
-      );
+      // setError removed (unused)
     } finally {
-      setLoading(false);
+      // setLoading removed (unused)
     }
   };
 
   const handleSupplierUpdate = () => {
-    // Refresh inventory and supplier data after supplier update
+    // Refresh inventory, supplier data, and active diamonds count after supplier update
     fetchInventoryData();
+    fetchActiveDiamondsCount();
   };
 
   if (!isAuthorized) {
@@ -244,19 +247,18 @@ export default function InventoryManagement() {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${mavenPro.className}`}>
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 w-full">
-        <div className="px-2 sm:px-4 py-6 w-full">
-          <h1 className="text-3xl font-bold text-gray-900">Inventory Management</h1>
-          <p className="text-gray-600 mt-1">
+      <div className="min-h-screen bg-gray-50">
+         {/* Header */}
+      <div className="bg-gray-50 w-full">
+        <div className="px-2 sm:px-4 py-3 w-full mt-30">
+          <h1 className={`text-xl font-bold text-gray-900 ${marcellus.className}`}>Inventory Management</h1>
+          <p className={`text-sm text-gray-600 mt-1 ${jost.className}`}>
             Manage customer hold requests and diamond enquiries
           </p>
         </div>
       </div>
-
       {/* Stats Cards */}
-      <div className="w-full px-1 sm:px-2 md:px-4 py-4">
+      <div className={`w-full px-1 sm:px-2 md:px-4 py-4 ${mavenPro.className}`}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {/* Total Diamonds Card */}
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
@@ -313,7 +315,7 @@ export default function InventoryManagement() {
           </div>
 
           {/* Total Suppliers Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className={`bg-white rounded-lg shadow-sm p-6 border border-gray-200 ${mavenPro.className}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 font-medium flex items-center gap-2">
