@@ -314,16 +314,15 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
                   loading={loading}
                   error={error}
                   viewMode="list"
-                  pageSize={10}
-                  noPagination={false}
+                  noPagination={true}
                   filterSource="Dharam Web Api"
                 />
                 {/* Diamond count */}
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                {/* <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                   <p className="text-sm font-semibold text-blue-900">
                     Total Dharam Web Api Diamonds: {diamondData.filter((d) => d.source === "Dharam Web Api").length}
                   </p>
-                </div>
+                </div> */}
               </div>
             </>
           ) : (
