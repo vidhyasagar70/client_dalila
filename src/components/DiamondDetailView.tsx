@@ -615,9 +615,9 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {/* Single Container with Fixed Width */}
-        <div className="mx-auto border-2 border-gray-300 mt-8" style={{ minWidth: '1200px', maxWidth: '1400px', width: '100%' }}>
+        <div className="mx-auto border border-[#C89E3A] mt-8 mb-[100px]" style={{ minWidth: '1200px', maxWidth: '1400px', width: '100%' }}>
           {/* Top Navigation Bar: Back Button + Media Tabs */}
-          <div className="flex items-center gap-2 px-4 py-2 border-t-2 border-b-2 border-gray-300 bg-white sticky top-0 z-30" style={{minHeight:'48px'}}>
+          <div className="flex items-center gap-2 px-4 py-2 border-t border-b border-[#C89E3A] bg-white sticky top-0 z-30" style={{minHeight:'48px'}}>
             <button
               onClick={onClose}
               className="flex items-center gap-2 text-white transition-colors rounded px-3 py-1 font-medium bg-[#050C3A] hover:bg-[#030822] text-xs"
@@ -629,7 +629,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
             <div className="flex flex-1 gap-1 ml-1">
               <button
                 onClick={() => setSelectedMediaTab('image')}
-                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b transition-colors ${
                   selectedMediaTab === 'image'
                     ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
                     : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -641,7 +641,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               </button>
               <button
                 onClick={() => setSelectedMediaTab('video')}
-                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b transition-colors ${
                   selectedMediaTab === 'video'
                     ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
                     : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -653,7 +653,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               </button>
               <button
                 onClick={() => setSelectedMediaTab('hand')}
-                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b transition-colors ${
                   selectedMediaTab === 'hand'
                     ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
                     : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -665,7 +665,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               </button>
               <button
                 onClick={() => setSelectedMediaTab('tweezer')}
-                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b transition-colors ${
                   selectedMediaTab === 'tweezer'
                     ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
                     : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -677,7 +677,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               </button>
               <button
                 onClick={() => setSelectedMediaTab('certificate')}
-                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b transition-colors ${
                   selectedMediaTab === 'certificate'
                     ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
                     : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -701,20 +701,20 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                 </div>
 
                 {/* Additional Information Section */}
-                <div className="bg-white border border-gray-200 overflow-hidden">
+                <div className="bg-white border border-[#C89E3A] overflow-hidden">
                   <div className="bg-[#050C3A] text-white px-4 py-3">
                     <h3 className="font-semibold text-sm">Additional Information</h3>
                   </div>
                   <div className="p-4 space-y-3">
-                    <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                    <div className="flex justify-between items-center border-b border-[#C89E3A] pb-2">
                       <span className="text-sm text-gray-600">Location</span>
                       <span className="text-sm font-semibold text-gray-900">{diamond.LOCATION || 'N/A'}</span>
                     </div>
-                    <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                    <div className="flex justify-between items-center border-b border-[#C89E3A] pb-2">
                       <span className="text-sm text-gray-600">Shade</span>
                       <span className="text-sm font-semibold text-gray-900">{(diamond as DiamondData & { SHADE?: string }).SHADE || 'NONE'}</span>
                     </div>
-                    <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                    <div className="flex justify-between items-center border-b border-[#C89E3A] pb-2">
                       <span className="text-sm text-gray-600">Culet</span>
                       <span className="text-sm font-semibold text-gray-900">{(diamond as DiamondData & { CULET?: string }).CULET || 'NONE'}</span>
                     </div>
@@ -727,7 +727,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               </div>
 
               {/* Right Column: Details Section */}
-              <div className="flex-1 pl-4" style={{ minWidth: '700px', borderLeft: '2px solid #d1d5db' }}>
+              <div className="flex-1 pl-4" style={{ minWidth: '700px', borderLeft: '1px solid #C89E3A' }}>
                 {/* Title Badge and Description */}
                 <div className="flex items-start justify-between mb-3">
                   <h1 className={`text-2xl font-bold text-gray-900 ${marcellus.className}`}>
@@ -746,7 +746,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                 </div>
 
                 {/* Divider */}
-                <div className="border-t-2 border-gray-300 mb-4" />
+                <div className="border-t border-[#C89E3A] mb-4" />
 
                 {/* Total Price */}
                 <div className="mb-4">
@@ -810,7 +810,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               )}
 
               {/* Divider */}
-              <div className="border-t-2 border-gray-300 mb-4" />
+              <div className="border-t border-[#C89E3A] mb-4" />
 
               {/* Diamond Specifications */}
               <div className="mb-6">
@@ -856,7 +856,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               </div>
 
               {/* Divider */}
-              <div className="border-t-2 border-gray-300 mb-4" />
+              <div className="border-t border-[#C89E3A] mb-4" />
 
               {/* Measurements */}
               <div className="mb-6">
@@ -902,36 +902,24 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               </div>
 
               {/* Divider */}
-              <div className="border-t-2 border-gray-300 mb-4" />
+              <div className="border-t border-[#C89E3A] mb-4" />
 
               {/* Inclusion Details */}
               <div className="mb-6">
                 <h3 className="font-semibold text-lg text-gray-900 mb-3">Inclusion Details</h3>
-                <div className="grid grid-cols-2 gap-x-16 gap-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Crown Inclusion</span>
-                    <span className="font-bold text-gray-900">{diamond.CN || 'N/A'}</span>
+                <div className="grid grid-cols-3 gap-x-8 gap-y-4">
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Crown White</div>
+                    <div className="font-bold text-gray-900">{diamond.CW || 'N/A'}</div>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Table White</span>
-                    <span className="font-bold text-gray-900">{(diamond as DiamondData & { TW?: string }).TW || 'N/A'}</span>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Center Natts</div>
+                    <div className="font-bold text-gray-900">{diamond.CN || 'N/A'}</div>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Table Inclusion</span>
-                    <span className="font-bold text-gray-900">{diamond.SN || 'N/A'}</span>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Comments</div>
+                    <div className="font-bold text-gray-900">{diamond.COMMENTS_1 || 'N/A'}</div>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Side Effect</span>
-                    <span className="font-bold text-gray-900">{diamond.SW || 'N/A'}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Crown White</span>
-                    <span className="font-bold text-gray-900">{diamond.CW || 'N/A'}</span>
-                  </div>
-                  {/* <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Location</span>
-                    <span className="font-bold text-gray-900">{diamond.LOCATION}</span>
-                  </div> */}
                 </div>
               </div>
               </div>
@@ -941,7 +929,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
          
         </div>
          {/* Footer */}
-          <Footer />
+          <Footer  />
       </div>
 
       {/* Enquiry Modal */}
@@ -975,7 +963,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                   type="text"
                   value={diamond.STONE_NO}
                   disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-none bg-gray-50 text-gray-700"
+                  className="w-full px-3 py-2 border border-[#C89E3A] rounded-none bg-gray-50 text-gray-700"
                 />
               </div>
 
@@ -988,7 +976,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                   onChange={(e) => setEnquiryText(e.target.value)}
                   placeholder="Enter your query here..."
                   rows={5}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-[#050C3A] resize-none bg-white text-gray-900"
+                  className="w-full px-3 py-2 border border-[#C89E3A] rounded-none focus:outline-none focus:ring-2 focus:ring-[#050C3A] resize-none bg-white text-gray-900"
                 />
               </div>
             </div>
@@ -1000,7 +988,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                   setIsEnquiryOpen(false);
                   setEnquiryText("");
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-none text-gray-700 hover:bg-gray-100 transition-colors"
+                className="px-4 py-2 border border-[#C89E3A] rounded-none text-gray-700 hover:bg-gray-100 transition-colors"
               >
                 Cancel
               </button>
