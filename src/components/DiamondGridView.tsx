@@ -576,61 +576,105 @@ const DiamondGridView: React.FC<GridViewProps> = ({
         <div className="bg-white shadow-sm flex flex-col rounded-lg">
           {/* Grid Container */}
           <div className="p-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-              {paginatedData.map((diamond) => (
-                <div
-                  key={diamond._id}
-                  className="bg-white rounded-lg hover:shadow-lg transition-all duration-300 overflow-hidden relative border border-[#f9e8cd]"
-                >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {paginatedData.map((diamond) => {
+                const videoUrl = (diamond as DiamondData & { MP4?: string }).MP4 || "";
+                const ratio = diamond.MEASUREMENTS
+                  ? (() => {
+                      const parts = diamond.MEASUREMENTS.split('-');
+                      if (parts.length >= 2) {
+                        const length = parseFloat(parts[0]);
+                        const width = parseFloat(parts[1].split('*')[0]);
+                        return !isNaN(length) && !isNaN(width) ? (length / width).toFixed(2) : 'N/A';
+                      }
+                      return 'N/A';
+                    })()
+                  : 'N/A';
 
-                  {/* Image Container */}
-                  <div className="relative w-full h-40 bg-gray-50 p-3">
-                    {diamond.REAL_IMAGE ? (
-                      <Image
-                        src={diamond.REAL_IMAGE}
-                        alt={diamond.STONE_NO}
-                        fill
-                        className="object-contain p-2"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect fill='%23f3f4f6' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='14'%3ENo Image%3C/text%3E%3C/svg%3E";
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
-                        No Image
+                return (
+                  <div
+                    key={diamond._id}
+                    
+                    className="bg-white rounded-lg hover:shadow-lg transition-all duration-300 overflow-hidden relative border border-gray-200"
+                  >
+                    {/* Video Container - No Padding */}
+                    <div 
+                      className="relative w-full bg-gray-100 overflow-hidden cursor-pointer"
+                      style={{ aspectRatio: '1 / 1' }}
+                      onMouseEnter={(e) => {
+                        const video = e.currentTarget.querySelector('video') as HTMLVideoElement;
+                        if (video) video.play();
+                      }}
+                      onMouseLeave={(e) => {
+                        const video = e.currentTarget.querySelector('video') as HTMLVideoElement;
+                        if (video) {
+                          video.pause();
+                          video.currentTime = 0;
+                        }
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onRowClick) {
+                          onRowClick(diamond);
+                        } else {
+                          setSelectedDiamond(diamond);
+                        }
+                      }}
+                    >
+                      {videoUrl ? (
+                        <video
+                          src={videoUrl}
+                          muted
+                          loop
+                          playsInline
+                          className="w-full h-full object-cover"
+                          style={{ display: 'block' }}
+                        />
+                      ) : diamond.REAL_IMAGE ? (
+                        <Image
+                          src={diamond.REAL_IMAGE}
+                          alt={diamond.STONE_NO}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                          No Media
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Diamond Info */}
+                    <div className="px-3 py-3 space-y-2 bg-white">
+                      {/* Title */}
+                      <div className="text-sm font-semibold text-gray-900 truncate">
+                        {diamond.SHAPE} {diamond.CARATS}ct {diamond.COLOR} {diamond.CLARITY} {diamond.CUT} {diamond.POL} {diamond.SYM}
                       </div>
-                    )}
-                  </div>
 
-                  {/* Diamond Info */}
-                  <div className="px-4 pb-4 pt-2 space-y-1 bg-white">
-                    <div className="text-sm">
-                      <span className="font-semibold text-gray-900">
-                        Shape:{" "}
-                      </span>
-                      <span className="text-gray-700">{diamond.SHAPE}</span>
-                    </div>
-                    <div className="text-sm">
-                      <span className="font-semibold text-gray-900">
-                        Carat:{" "}
-                      </span>
-                      <span className="text-gray-700">{diamond.CARATS}</span>
-                    </div>
-                    <div className="text-sm">
-                      <span className="font-semibold text-gray-900">
-                        Color:{" "}
-                      </span>
-                      <span className="text-gray-700">{diamond.COLOR}</span>
-                    </div>
-                    <div className="text-sm mb-3">
-                      <span className="font-semibold text-gray-900">
-                        Clarity:{" "}
-                      </span>
-                      <span className="text-gray-700">{diamond.CLARITY}</span>
-                    </div>
+                      {/* Stock ID & Lab */}
+                      <div className="text-xs text-gray-600">
+                        <span className="font-medium">{diamond.STONE_NO}</span> • {diamond.LAB}
+                      </div>
 
-                    <div className="flex justify-center">
+                      {/* Measurements Grid */}
+                      <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div>
+                          <div className="text-gray-500">T: {diamond.TABLE_PER}%</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">D: {diamond.DEPTH_PER}%</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">R: {ratio}</div>
+                        </div>
+                      </div>
+
+                      {/* Measurements */}
+                      <div className="text-xs text-gray-600">
+                        <span className="font-medium">Measurements:</span> {diamond.MEASUREMENTS || 'N/A'}
+                      </div>
+
+                      {/* View Button */}
                       {isLoggedIn && (
                         <button
                           onClick={(e) => {
@@ -641,15 +685,15 @@ const DiamondGridView: React.FC<GridViewProps> = ({
                               setSelectedDiamond(diamond);
                             }
                           }}
-                          className="mt-2 px-4 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200 rounded border border-gray-300"
+                          className="w-full mt-2 px-4 py-1.5 text-xs font-medium text-white bg-[#050C3A] hover:bg-[#030822] transition-colors duration-200 rounded"
                         >
                           View Details
                         </button>
                       )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

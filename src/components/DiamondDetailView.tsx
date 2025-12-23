@@ -314,7 +314,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
   );
 
   const EmptyMediaPlaceholder = ({ message }: { message: string }) => (
-    <div className="h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar" style={{ overflow: 'hidden' }}>
+    <div className="w-full h-full bg-gray-50 flex items-center justify-center" style={{ overflow: 'hidden' }}>
       <span className="text-sm text-gray-400">{message}</span>
     </div>
   );
@@ -333,50 +333,48 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
     switch(selectedMediaTab) {
       case 'image':
         if (!selectedImage) {
-          return <EmptyMediaPlaceholder message="No Image Available" />;
+          return <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}><EmptyMediaPlaceholder message="No Image Available" /></div>;
         }
         return (
-          <div className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar" style={{ overflow: 'hidden' }}>
-            <div className="relative w-full h-full flex items-center justify-center hide-scrollbar" style={{ overflow: 'hidden' }}>
-              <div className="relative w-full h-full hide-scrollbar" style={{ overflow: 'hidden' }}>
-                <Image
-                  src={selectedImage}
-                  alt={diamond.STONE_NO}
-                  fill
-                  style={{ objectFit: "contain" }}
-                  priority
-                  loading="eager"
-                  onError={(e) => {
-                    e.currentTarget.src =
-                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f3f4f6' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='16'%3ENo Image%3C/text%3E%3C/svg%3E";
-                  }}
-                />
-              </div>
+          <div className="bg-gray-50" style={{ overflow: 'hidden', padding: '8px' }}>
+            <div className="relative" style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}>
+              <Image
+                src={selectedImage}
+                alt={diamond.STONE_NO}
+                fill
+                style={{ objectFit: "contain" }}
+                priority
+                loading="eager"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f3f4f6' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='16'%3ENo Image%3C/text%3E%3C/svg%3E";
+                }}
+              />
             </div>
           </div>
         );
 
       case 'video': {
         if (!videoUrl) {
-          return <EmptyMediaPlaceholder message="No Video Available" />;
+          return <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}><EmptyMediaPlaceholder message="No Video Available" /></div>;
         }
         if (isDirectVideoUrl(videoUrl)) {
           return (
             <div
-              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
-              style={{ overflow: 'hidden' }}
+              className="bg-gray-50"
+              style={{ overflow: 'hidden', padding: '8px' }}
             >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(videoUrl, '_blank');
-                }}
-                className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
-                title="Download Video"
-              >
-                <Download className="w-5 h-5 text-[#050C3A]" />
-              </button>
-              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+              <div style={{ width: '380px', height: '380px', maxWidth: '100%', position: 'relative', overflow: 'hidden' }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(videoUrl, '_blank');
+                  }}
+                  className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+                  title="Download Video"
+                >
+                  <Download className="w-5 h-5 text-[#050C3A]" />
+                </button>
                 <video
                   src={videoUrl}
                   autoPlay
@@ -384,8 +382,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                   muted
                   playsInline
                   preload="metadata"
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', border: 'none' }}
-                  className="hide-scrollbar"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                 >
                   Your browser does not support the video tag.
                 </video>
@@ -395,18 +392,17 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
         } else if (isViewerLink(videoUrl)) {
           return (
             <div
-              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
-              style={{ overflow: 'hidden' }}
+              className="bg-gray-50"
+              style={{ overflow: 'hidden', padding: '8px' }}
             >
-              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+              <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}>
                 <iframe
                   src={videoUrl}
                   title="Diamond Video Viewer"
                   allow="autoplay; encrypted-media"
                   loading="lazy"
                   scrolling="no"
-                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
-                  className="hide-scrollbar"
+                  style={{ border: 'none', width: '100%', height: '100%', display: 'block' }}
                 />
               </div>
             </div>
@@ -415,18 +411,17 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
           // fallback: try iframe for any other non-direct video link
           return (
             <div
-              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
-              style={{ overflow: 'hidden' }}
+              className="bg-gray-50"
+              style={{ overflow: 'hidden', padding: '8px' }}
             >
-              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+              <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}>
                 <iframe
                   src={videoUrl}
                   title="Diamond Video"
                   allow="autoplay; encrypted-media"
                   loading="lazy"
                   scrolling="no"
-                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
-                  className="hide-scrollbar"
+                  style={{ border: 'none', width: '100%', height: '100%', display: 'block' }}
                 />
               </div>
             </div>
@@ -436,25 +431,25 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
 
       case 'hand': {
         if (!handVideoUrl) {
-          return <EmptyMediaPlaceholder message="No Hand Video Available" />;
+          return <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}><EmptyMediaPlaceholder message="No Hand Video Available" /></div>;
         }
         if (isDirectVideoUrl(handVideoUrl)) {
           return (
             <div
-              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
-              style={{ overflow: 'hidden' }}
+              className="bg-gray-50"
+              style={{ overflow: 'hidden', padding: '8px' }}
             >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(handVideoUrl, '_blank');
-                }}
-                className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
-                title="Download Hand Video"
-              >
-                <Download className="w-5 h-5 text-[#050C3A]" />
-              </button>
-              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+              <div style={{ width: '380px', height: '380px', maxWidth: '100%', position: 'relative', overflow: 'hidden' }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(handVideoUrl, '_blank');
+                  }}
+                  className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+                  title="Download Hand Video"
+                >
+                  <Download className="w-5 h-5 text-[#050C3A]" />
+                </button>
                 <video
                   src={handVideoUrl}
                   autoPlay
@@ -462,8 +457,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                   muted
                   playsInline
                   preload="metadata"
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', border: 'none' }}
-                  className="hide-scrollbar"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                 >
                   Your browser does not support the video tag.
                 </video>
@@ -473,18 +467,17 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
         } else if (isViewerLink(handVideoUrl)) {
           return (
             <div
-              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
-              style={{ overflow: 'hidden' }}
+              className="bg-gray-50"
+              style={{ overflow: 'hidden', padding: '8px' }}
             >
-              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+              <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}>
                 <iframe
                   src={handVideoUrl}
                   title="Hand Video Viewer"
                   allow="autoplay; encrypted-media"
                   loading="lazy"
                   scrolling="no"
-                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
-                  className="hide-scrollbar"
+                  style={{ border: 'none', width: '100%', height: '100%', display: 'block' }}
                 />
               </div>
             </div>
@@ -493,18 +486,17 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
           // fallback: try iframe for any other non-direct video link
           return (
             <div
-              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
-              style={{ overflow: 'hidden' }}
+              className="bg-gray-50"
+              style={{ overflow: 'hidden', padding: '8px' }}
             >
-              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+              <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}>
                 <iframe
                   src={handVideoUrl}
                   title="Hand Video"
                   allow="autoplay; encrypted-media"
                   loading="lazy"
                   scrolling="no"
-                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
-                  className="hide-scrollbar"
+                  style={{ border: 'none', width: '100%', height: '100%', display: 'block' }}
                 />
               </div>
             </div>
@@ -514,25 +506,25 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
 
       case 'tweezer': {
         if (!tweezerVideoUrl) {
-          return <EmptyMediaPlaceholder message="No Tweezer Video Available" />;
+          return <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}><EmptyMediaPlaceholder message="No Tweezer Video Available" /></div>;
         }
         if (isDirectVideoUrl(tweezerVideoUrl)) {
           return (
             <div
-              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
-              style={{ overflow: 'hidden' }}
+              className="bg-gray-50"
+              style={{ overflow: 'hidden', padding: '8px' }}
             >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(tweezerVideoUrl, '_blank');
-                }}
-                className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
-                title="Download Tweezer Video"
-              >
-                <Download className="w-5 h-5 text-[#050C3A]" />
-              </button>
-              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+              <div style={{ width: '380px', height: '380px', maxWidth: '100%', position: 'relative', overflow: 'hidden' }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(tweezerVideoUrl, '_blank');
+                  }}
+                  className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+                  title="Download Tweezer Video"
+                >
+                  <Download className="w-5 h-5 text-[#050C3A]" />
+                </button>
                 <video
                   src={tweezerVideoUrl}
                   autoPlay
@@ -540,8 +532,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                   muted
                   playsInline
                   preload="metadata"
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', border: 'none' }}
-                  className="hide-scrollbar"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                 >
                   Your browser does not support the video tag.
                 </video>
@@ -551,18 +542,17 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
         } else if (isViewerLink(tweezerVideoUrl)) {
           return (
             <div
-              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
-              style={{ overflow: 'hidden' }}
+              className="bg-gray-50"
+              style={{ overflow: 'hidden', padding: '8px' }}
             >
-              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+              <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}>
                 <iframe
                   src={tweezerVideoUrl}
                   title="Tweezer Video Viewer"
                   allow="autoplay; encrypted-media"
                   loading="lazy"
                   scrolling="no"
-                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
-                  className="hide-scrollbar"
+                  style={{ border: 'none', width: '100%', height: '100%', display: 'block' }}
                 />
               </div>
             </div>
@@ -571,18 +561,17 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
           // fallback: try iframe for any other non-direct video link
           return (
             <div
-              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
-              style={{ overflow: 'hidden' }}
+              className="bg-gray-50"
+              style={{ overflow: 'hidden', padding: '8px' }}
             >
-              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+              <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}>
                 <iframe
                   src={tweezerVideoUrl}
                   title="Tweezer Video"
                   allow="autoplay; encrypted-media"
                   loading="lazy"
                   scrolling="no"
-                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
-                  className="hide-scrollbar"
+                  style={{ border: 'none', width: '100%', height: '100%', display: 'block' }}
                 />
               </div>
             </div>
@@ -592,18 +581,20 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
 
       case 'certificate':
         if (!certPdfUrl) {
-          return <EmptyMediaPlaceholder message="No Certificate Available" />;
+          return <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}><EmptyMediaPlaceholder message="No Certificate Available" /></div>;
         }
         return (
-          <div className="h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar" style={{ overflow: 'hidden' }}>
-            <iframe
-              src={certPdfUrl}
-              className="w-full h-full hide-scrollbar"
-              title="Certificate PDF"
-              loading="lazy"
-              scrolling="no"
-              style={{ border: 'none', overflow: 'hidden' }}
-            />
+          <div className="bg-gray-50" style={{ overflow: 'hidden', padding: '8px' }}>
+            <div style={{ width: '380px', height: '380px', maxWidth: '100%', overflow: 'hidden' }}>
+              <iframe
+                src={certPdfUrl}
+                className="w-full h-full"
+                title="Certificate PDF"
+                loading="lazy"
+                scrolling="no"
+                style={{ border: 'none' }}
+              />
+            </div>
           </div>
         );
 
@@ -619,131 +610,157 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
       onClick={onClose}
     >
       <div
-        className="bg-white shadow-xl w-full h-full overflow-y-auto font-maven-pro scrollbar-hide"
+        className="bg-white shadow-xl w-full h-full overflow-y-auto font-maven-pro"
         onClick={(e) => e.stopPropagation()}
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {/* Main Layout: Left (Media) + Right (Details) */}
-        <div className="flex flex-col lg:flex-row h-full">
-          {/* LEFT SIDE - Media Section (40%) */}
-          <div className="lg:w-[40%] w-full border-r border-gray-200 flex flex-col">
-            {/* Top Row: Back Button + Media Tabs (sticky, compact) */}
-            <div className="flex items-center gap-2 px-2 py-1 border-b border-gray-200 bg-white sticky top-0 z-30 mt-8" style={{minHeight:'48px'}}>
+        {/* Single Container with Fixed Width */}
+        <div className="mx-auto" style={{ minWidth: '1200px', maxWidth: '1400px', width: '100%' }}>
+          {/* Top Navigation Bar: Back Button + Media Tabs */}
+          <div className="flex items-center gap-2 px-4 py-2 border-b border-gray-200 bg-white sticky top-0 z-30 mt-8" style={{minHeight:'48px'}}>
+            <button
+              onClick={onClose}
+              className="flex items-center gap-2 text-white transition-colors rounded px-3 py-1 font-medium bg-[#050C3A] hover:bg-[#030822] text-xs"
+              style={{height:'32px'}}
+            >
+              <ArrowLeft size={16} />
+              <span>BACK</span>
+            </button>
+            <div className="flex flex-1 gap-1 ml-1">
               <button
-                onClick={onClose}
-                className="flex items-center gap-2 text-white transition-colors rounded px-3 py-1 font-medium bg-[#050C3A] hover:bg-[#030822] text-xs"
+                onClick={() => setSelectedMediaTab('image')}
+                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                  selectedMediaTab === 'image'
+                    ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
                 style={{height:'32px'}}
               >
-                <ArrowLeft size={16} />
-                <span>BACK</span>
+                <ImageIcon className="w-4 h-4" />
+                <span>Image</span>
               </button>
-              <div className="flex flex-1 gap-1 ml-1">
-                <button
-                  onClick={() => setSelectedMediaTab('image')}
-                  className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
-                    selectedMediaTab === 'image'
-                      ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
-                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                  style={{height:'32px'}}
-                >
-                  <ImageIcon className="w-4 h-4" />
-                  <span>Image</span>
-                </button>
-                <button
-                  onClick={() => setSelectedMediaTab('video')}
-                  className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
-                    selectedMediaTab === 'video'
-                      ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
-                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                  style={{height:'32px'}}
-                >
-                  <Video className="w-4 h-4" />
-                  <span>Video</span>
-                </button>
-                <button
-                  onClick={() => setSelectedMediaTab('hand')}
-                  className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
-                    selectedMediaTab === 'hand'
-                      ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
-                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                  style={{height:'32px'}}
-                >
-                  <Hand className="w-4 h-4" />
-                  <span>Hand</span>
-                </button>
-                <button
-                  onClick={() => setSelectedMediaTab('tweezer')}
-                  className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
-                    selectedMediaTab === 'tweezer'
-                      ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
-                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                  style={{height:'32px'}}
-                >
-                  <Grip className="w-4 h-4" />
-                  <span>Tweezer</span>
-                </button>
-                <button
-                  onClick={() => setSelectedMediaTab('certificate')}
-                  className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
-                    selectedMediaTab === 'certificate'
-                      ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
-                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                  style={{height:'32px'}}
-                >
-                  <FileText className="w-4 h-4" />
-                  <span>Certificate</span>
-                </button>
-              </div>
+              <button
+                onClick={() => setSelectedMediaTab('video')}
+                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                  selectedMediaTab === 'video'
+                    ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+                style={{height:'32px'}}
+              >
+                <Video className="w-4 h-4" />
+                <span>Video</span>
+              </button>
+              <button
+                onClick={() => setSelectedMediaTab('hand')}
+                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                  selectedMediaTab === 'hand'
+                    ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+                style={{height:'32px'}}
+              >
+                <Hand className="w-4 h-4" />
+                <span>Hand</span>
+              </button>
+              <button
+                onClick={() => setSelectedMediaTab('tweezer')}
+                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                  selectedMediaTab === 'tweezer'
+                    ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+                style={{height:'32px'}}
+              >
+                <Grip className="w-4 h-4" />
+                <span>Tweezer</span>
+              </button>
+              <button
+                onClick={() => setSelectedMediaTab('certificate')}
+                className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                  selectedMediaTab === 'certificate'
+                    ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+                style={{height:'32px'}}
+              >
+                <FileText className="w-4 h-4" />
+                <span>Certificate</span>
+              </button>
             </div>
-
-            {/* Media Display Area (reduced padding, more visible) */}
-            <div className="flex-1 px-1 pt-2 pb-1 bg-gray-50 overflow-auto">
-              <div className="w-full h-full flex items-center justify-center">
-                {renderMediaContent()}
-              </div>
-            </div>
-
-            {/* Action Buttons Below Media - removed as per request */}
           </div>
 
-          {/* RIGHT SIDE - Details Section (60%) */}
-          <div className="lg:w-[60%] w-full flex flex-col overflow-auto scrollbar-hide hide-scrollbar" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-            <div className="p-6">
-              {/* Title Badge and Description */}
-              <div className="flex items-start justify-between mt-10">
-                <h1 className={`text-2xl font-bold text-gray-900 ${marcellus.className}`}>
-                  {diamond.SHAPE} {diamond.CARATS}ct {diamond.COLOR} {diamond.CLARITY} {diamond.CUT} {diamond.POL} {diamond.SYM} {diamond.TINGE}
-                </h1>
-                
-              </div>
-
-              {/* Stock ID, Report, Lab */}
-              <div className="text-sm text-gray-600 mb-4">
-                Stock ID: <span className="font-semibold text-gray-900">{diamond.STONE_NO}</span>
-                {' • '}
-                Report #: <span className="font-semibold text-gray-900">{diamond.REPORT_NO}</span>
-                {' • '}
-                Lab: <span className="font-semibold text-gray-900">{diamond.LAB}</span>
-              </div>
-
-              {/* Total Price */}
-              <div className="mb-4">
-                <div className="text-xs text-gray-500 mb-1">Total Price</div>
-                <div className={`text-4xl font-bold text-gray-900 ${marcellus.className}`}>
-                  {formatCurrency(diamond.NET_VALUE)}
+          {/* Content Area: Media + Details Side by Side */}
+          <div className="p-4">
+            <div className="flex gap-4 divide-x   divide-gray-400">
+              {/* Left Column: Media Display */}
+              <div className="flex-shrink-0" style={{ width: '396px' }}>
+                {/* Media Container */}
+                <div className="mb-4">
+                  {renderMediaContent()}
                 </div>
-                <div className="text-sm text-gray-600 mt-1">
-                  Rap Price: {formatCurrency(diamond.RAP_PRICE)} | Disc %: {diamond.DISC_PER ? `${Math.abs(Number(diamond.DISC_PER)).toFixed(2)}%` : 'N/A'}
+
+                {/* Additional Information Section */}
+                <div className="bg-white border border-gray-200  overflow-hidden">
+                  <div className="bg-[#050C3A] text-white px-4 py-3">
+                    <h3 className="font-semibold text-sm">Additional Information</h3>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                      <span className="text-sm text-gray-600">Shape</span>
+                      <span className="text-sm font-semibold text-gray-900">{diamond.SHAPE}</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                      <span className="text-sm text-gray-600">Carat</span>
+                      <span className="text-sm font-semibold text-gray-900">{diamond.CARATS} ct</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-gray-200 pb-2">
+                      <span className="text-sm text-gray-600">Color</span>
+                      <span className="text-sm font-semibold text-gray-900">{diamond.COLOR}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Clarity</span>
+                      <span className="text-sm font-semibold text-gray-900">{diamond.CLARITY}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Add to Cart, Hold, and Enquiry Buttons */}
-              {userRole !== "ADMIN" && userRole !== "SUPER_ADMIN" && (
+              {/* Right Column: Details Section */}
+              <div className="flex-1 pl-4" style={{ minWidth: '700px' }}>
+                {/* Title Badge and Description */}
+                <div className="flex items-start justify-between mb-3">
+                  <h1 className={`text-2xl font-bold text-gray-900 ${marcellus.className}`}>
+                    {diamond.SHAPE} {diamond.CARATS}ct {diamond.COLOR} {diamond.CLARITY} {diamond.CUT} {diamond.POL} {diamond.SYM} {diamond.TINGE}
+                  </h1>
+                  
+                </div>
+
+                {/* Stock ID, Report, Lab */}
+                <div className="text-sm text-gray-600 mb-4">
+                  Stock ID: <span className="font-semibold text-gray-900">{diamond.STONE_NO}</span>
+                  {' • '}
+                  Report #: <span className="font-semibold text-gray-900">{diamond.REPORT_NO}</span>
+                  {' • '}
+                  Lab: <span className="font-semibold text-gray-900">{diamond.LAB}</span>
+                </div>
+
+                {/* Divider */}
+                <div className="border-t-2 border-gray-300 mb-4" />
+
+                {/* Total Price */}
+                <div className="mb-4">
+                  <div className="text-xs text-gray-500 mb-1">Total Price</div>
+                  <div className={`text-4xl font-bold text-gray-900 ${marcellus.className}`}>
+                    {formatCurrency(diamond.NET_VALUE)}
+                  </div>
+                  <div className="text-sm text-gray-600 mt-1">
+                    Rap Price: {formatCurrency(diamond.RAP_PRICE)} | Disc %: {diamond.DISC_PER ? `${Math.abs(Number(diamond.DISC_PER)).toFixed(2)}%` : 'N/A'}
+                  </div>
+                </div>
+
+                {/* Add to Cart, Hold, and Enquiry Buttons */}
+                {userRole !== "ADMIN" && userRole !== "SUPER_ADMIN" && (
                 <div className="flex gap-3 mb-6">
                   <button
                     onClick={handleAddToCart}
@@ -792,10 +809,13 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                 </div>
               )}
 
+              {/* Divider */}
+              <div className="border-t-2 border-gray-300 mb-4" />
+
               {/* Diamond Specifications */}
               <div className="mb-6">
                 <h3 className="font-semibold text-lg text-gray-900 mb-3">Diamond Specifications</h3>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-x-8 gap-y-4">
                   <div>
                     <div className="text-xs text-gray-600 mb-1">Shape</div>
                     <div className="font-bold text-gray-900">{diamond.SHAPE}</div>
@@ -814,24 +834,15 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                   </div>
                   <div>
                     <div className="text-xs text-gray-600 mb-1">Cut</div>
-                    <div className="font-bold text-gray-900 flex items-center gap-1">
-                      {diamond.CUT}
-                      {/* {diamond.CUT === 'EX' && <span className="text-green-500">✓</span>} */}
-                    </div>
+                    <div className="font-bold text-gray-900">{diamond.CUT}</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-600 mb-1">Polish</div>
-                    <div className="font-bold text-gray-900 flex items-center gap-1">
-                      {diamond.POL}
-                      {/* {diamond.POL === 'EX' && <span className="text-green-500">✓</span>} */}
-                    </div>
+                    <div className="font-bold text-gray-900">{diamond.POL}</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-600 mb-1">Symmetry</div>
-                    <div className="font-bold text-gray-900 flex items-center gap-1">
-                      {diamond.SYM}
-                      {/* {diamond.SYM === 'EX' && <span className="text-green-500">✓</span>} */}
-                    </div>
+                    <div className="font-bold text-gray-900">{diamond.SYM}</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-600 mb-1">Fluorescence</div>
@@ -872,83 +883,81 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                 </div>
               </div>
 
-              {/* Measurements (row alignment: label left, value right) */}
+              {/* Divider */}
+              <div className="border-t-2 border-gray-300 mb-4" />
+
+              {/* Measurements */}
               <div className="mb-6">
                 <h3 className="font-semibold text-lg text-gray-900 mb-3">Measurements</h3>
-                <div className="grid grid-cols-2 gap-8">
-                  {/* Column 1 */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Length</span>
-                      <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('-')[0]} mm</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Width</span>
-                      <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('-')[1]?.split('*')[0]} mm</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Depth</span>
-                      <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('*')[1]} mm</span>
-                    </div>
+                <div className="grid grid-cols-2 gap-x-16 gap-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Length</span>
+                    <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('-')[0]} mm</span>
                   </div>
-                  {/* Column 2 */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Crown Angle</span>
-                      <span className="font-bold text-gray-900">{diamond.CROWN_ANGLE}°</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Crown Height</span>
-                      <span className="font-bold text-gray-900">{diamond.CROWN_HEIGHT}%</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Pavilion Angle</span>
-                      <span className="font-bold text-gray-900">{diamond.PAVILLION_ANGLE}°</span>
-                    </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Crown Angle</span>
+                    <span className="font-bold text-gray-900">{diamond.CROWN_ANGLE}°</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Width</span>
+                    <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('-')[1]?.split('*')[0]} mm</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Crown Height</span>
+                    <span className="font-bold text-gray-900">{diamond.CROWN_HEIGHT}%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Depth</span>
+                    <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('*')[1]} mm</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Pavilion Angle</span>
+                    <span className="font-bold text-gray-900">{diamond.PAVILLION_ANGLE}°</span>
                   </div>
                 </div>
               </div>
 
-              {/* Inclusion Details (row alignment: label left, value right, 2 columns) */}
+              {/* Divider */}
+              <div className="border-t-2 border-gray-300 mb-4" />
+
+              {/* Inclusion Details */}
               <div className="mb-6">
                 <h3 className="font-semibold text-lg text-gray-900 mb-3">Inclusion Details</h3>
-                <div className="grid grid-cols-2 gap-8">
-                  {/* Column 1 */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Crown Inclusion</span>
-                      <span className="font-bold text-gray-900">{diamond.CN || 'N/A'}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Table Inclusion</span>
-                      <span className="font-bold text-gray-900">{diamond.SN || 'N/A'}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Crown White</span>
-                      <span className="font-bold text-gray-900">{diamond.CW || 'N/A'}</span>
-                    </div>
+                <div className="grid grid-cols-2 gap-x-16 gap-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Crown Inclusion</span>
+                    <span className="font-bold text-gray-900">{diamond.CN || 'N/A'}</span>
                   </div>
-                  {/* Column 2 */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Table White</span>
-                      <span className="font-bold text-gray-900">{diamond.CW || 'N/A'}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Side Effect</span>
-                      <span className="font-bold text-gray-900">{diamond.SW || 'N/A'}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Location</span>
-                      <span className="font-bold text-gray-900">{diamond.LOCATION}</span>
-                    </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Table White</span>
+                    <span className="font-bold text-gray-900">{(diamond as DiamondData & { TW?: string }).TW || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Table Inclusion</span>
+                    <span className="font-bold text-gray-900">{diamond.SN || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Side Effect</span>
+                    <span className="font-bold text-gray-900">{diamond.SW || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Crown White</span>
+                    <span className="font-bold text-gray-900">{diamond.CW || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Location</span>
+                    <span className="font-bold text-gray-900">{diamond.LOCATION}</span>
                   </div>
                 </div>
               </div>
+              </div>
             </div>
           </div>
+
+         
         </div>
-        <Footer />
+         {/* Footer */}
+          <Footer />
       </div>
 
       {/* Enquiry Modal */}
