@@ -615,9 +615,9 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {/* Single Container with Fixed Width */}
-        <div className="mx-auto" style={{ minWidth: '1200px', maxWidth: '1400px', width: '100%' }}>
+        <div className="mx-auto border-2 border-gray-300 mt-8" style={{ minWidth: '1200px', maxWidth: '1400px', width: '100%' }}>
           {/* Top Navigation Bar: Back Button + Media Tabs */}
-          <div className="flex items-center gap-2 px-4 py-2 border-b border-gray-200 bg-white sticky top-0 z-30 mt-8" style={{minHeight:'48px'}}>
+          <div className="flex items-center gap-2 px-4 py-2 border-t-2 border-b-2 border-gray-300 bg-white sticky top-0 z-30" style={{minHeight:'48px'}}>
             <button
               onClick={onClose}
               className="flex items-center gap-2 text-white transition-colors rounded px-3 py-1 font-medium bg-[#050C3A] hover:bg-[#030822] text-xs"
@@ -692,7 +692,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
 
           {/* Content Area: Media + Details Side by Side */}
           <div className="p-4">
-            <div className="flex gap-4 divide-x   divide-gray-400">
+            <div className="flex gap-4">
               {/* Left Column: Media Display */}
               <div className="flex-shrink-0" style={{ width: '396px' }}>
                 {/* Media Container */}
@@ -701,33 +701,33 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                 </div>
 
                 {/* Additional Information Section */}
-                <div className="bg-white border border-gray-200  overflow-hidden">
+                <div className="bg-white border border-gray-200 overflow-hidden">
                   <div className="bg-[#050C3A] text-white px-4 py-3">
                     <h3 className="font-semibold text-sm">Additional Information</h3>
                   </div>
                   <div className="p-4 space-y-3">
                     <div className="flex justify-between items-center border-b border-gray-200 pb-2">
-                      <span className="text-sm text-gray-600">Shape</span>
-                      <span className="text-sm font-semibold text-gray-900">{diamond.SHAPE}</span>
+                      <span className="text-sm text-gray-600">Location</span>
+                      <span className="text-sm font-semibold text-gray-900">{diamond.LOCATION || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between items-center border-b border-gray-200 pb-2">
-                      <span className="text-sm text-gray-600">Carat</span>
-                      <span className="text-sm font-semibold text-gray-900">{diamond.CARATS} ct</span>
+                      <span className="text-sm text-gray-600">Shade</span>
+                      <span className="text-sm font-semibold text-gray-900">{(diamond as DiamondData & { SHADE?: string }).SHADE || 'NONE'}</span>
                     </div>
                     <div className="flex justify-between items-center border-b border-gray-200 pb-2">
-                      <span className="text-sm text-gray-600">Color</span>
-                      <span className="text-sm font-semibold text-gray-900">{diamond.COLOR}</span>
+                      <span className="text-sm text-gray-600">Culet</span>
+                      <span className="text-sm font-semibold text-gray-900">{(diamond as DiamondData & { CULET?: string }).CULET || 'NONE'}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Clarity</span>
-                      <span className="text-sm font-semibold text-gray-900">{diamond.CLARITY}</span>
+                      <span className="text-sm text-gray-600">Girdle</span>
+                      <span className="text-sm font-semibold text-gray-900">{(diamond as DiamondData & { GIRDLE?: string }).GIRDLE || 'Med'}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Right Column: Details Section */}
-              <div className="flex-1 pl-4" style={{ minWidth: '700px' }}>
+              <div className="flex-1 pl-4" style={{ minWidth: '700px', borderLeft: '2px solid #d1d5db' }}>
                 {/* Title Badge and Description */}
                 <div className="flex items-start justify-between mb-3">
                   <h1 className={`text-2xl font-bold text-gray-900 ${marcellus.className}`}>
