@@ -313,10 +313,20 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
   );
 
   const EmptyMediaPlaceholder = ({ message }: { message: string }) => (
-    <div className="overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+    <div className="h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar" style={{ overflow: 'hidden' }}>
       <span className="text-sm text-gray-400">{message}</span>
     </div>
   );
+
+  // Helper to check if a URL is a direct video file
+  const isDirectVideoUrl = (url: string) => {
+    return /\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(url);
+  };
+
+  // Helper to check if a URL is a viewer link (e.g., diamondview.aspx)
+  const isViewerLink = (url: string) => {
+    return /diamondview\.aspx/i.test(url);
+  };
 
   const renderMediaContent = () => {
     switch(selectedMediaTab) {
@@ -325,9 +335,9 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
           return <EmptyMediaPlaceholder message="No Image Available" />;
         }
         return (
-          <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
-            <div className="relative w-full h-full flex items-center justify-center">
-              <div className="relative w-full h-full">
+          <div className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar" style={{ overflow: 'hidden' }}>
+            <div className="relative w-full h-full flex items-center justify-center hide-scrollbar" style={{ overflow: 'hidden' }}>
+              <div className="relative w-full h-full hide-scrollbar" style={{ overflow: 'hidden' }}>
                 <Image
                   src={selectedImage}
                   alt={diamond.STONE_NO}
@@ -345,107 +355,253 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
           </div>
         );
 
-      case 'video':
+      case 'video': {
         if (!videoUrl) {
           return <EmptyMediaPlaceholder message="No Video Available" />;
         }
-        return (
-          <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(videoUrl, '_blank');
-              }}
-              className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
-              title="Download Video"
+        if (isDirectVideoUrl(videoUrl)) {
+          return (
+            <div
+              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
+              style={{ overflow: 'hidden' }}
             >
-              <Download className="w-5 h-5 text-[#050C3A]" />
-            </button>
-            <video
-              src={videoUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              className="w-full h-full object-contain"
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(videoUrl, '_blank');
+                }}
+                className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+                title="Download Video"
+              >
+                <Download className="w-5 h-5 text-[#050C3A]" />
+              </button>
+              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+                <video
+                  src={videoUrl}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', border: 'none' }}
+                  className="hide-scrollbar"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+          );
+        } else if (isViewerLink(videoUrl)) {
+          return (
+            <div
+              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
+              style={{ overflow: 'hidden' }}
             >
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        );
+              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+                <iframe
+                  src={videoUrl}
+                  title="Diamond Video Viewer"
+                  allow="autoplay; encrypted-media"
+                  loading="lazy"
+                  scrolling="no"
+                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
+                  className="hide-scrollbar"
+                />
+              </div>
+            </div>
+          );
+        } else {
+          // fallback: try iframe for any other non-direct video link
+          return (
+            <div
+              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
+              style={{ overflow: 'hidden' }}
+            >
+              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+                <iframe
+                  src={videoUrl}
+                  title="Diamond Video"
+                  allow="autoplay; encrypted-media"
+                  loading="lazy"
+                  scrolling="no"
+                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
+                  className="hide-scrollbar"
+                />
+              </div>
+            </div>
+          );
+        }
+      }
 
-      case 'hand':
+      case 'hand': {
         if (!handVideoUrl) {
           return <EmptyMediaPlaceholder message="No Hand Video Available" />;
         }
-        return (
-          <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(handVideoUrl, '_blank');
-              }}
-              className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
-              title="Download Hand Video"
+        if (isDirectVideoUrl(handVideoUrl)) {
+          return (
+            <div
+              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
+              style={{ overflow: 'hidden' }}
             >
-              <Download className="w-5 h-5 text-[#050C3A]" />
-            </button>
-            <video
-              src={handVideoUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              className="w-full h-full object-contain"
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(handVideoUrl, '_blank');
+                }}
+                className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+                title="Download Hand Video"
+              >
+                <Download className="w-5 h-5 text-[#050C3A]" />
+              </button>
+              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+                <video
+                  src={handVideoUrl}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', border: 'none' }}
+                  className="hide-scrollbar"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+          );
+        } else if (isViewerLink(handVideoUrl)) {
+          return (
+            <div
+              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
+              style={{ overflow: 'hidden' }}
             >
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        );
+              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+                <iframe
+                  src={handVideoUrl}
+                  title="Hand Video Viewer"
+                  allow="autoplay; encrypted-media"
+                  loading="lazy"
+                  scrolling="no"
+                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
+                  className="hide-scrollbar"
+                />
+              </div>
+            </div>
+          );
+        } else {
+          // fallback: try iframe for any other non-direct video link
+          return (
+            <div
+              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
+              style={{ overflow: 'hidden' }}
+            >
+              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+                <iframe
+                  src={handVideoUrl}
+                  title="Hand Video"
+                  allow="autoplay; encrypted-media"
+                  loading="lazy"
+                  scrolling="no"
+                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
+                  className="hide-scrollbar"
+                />
+              </div>
+            </div>
+          );
+        }
+      }
 
-      case 'tweezer':
+      case 'tweezer': {
         if (!tweezerVideoUrl) {
           return <EmptyMediaPlaceholder message="No Tweezer Video Available" />;
         }
-        return (
-          <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(tweezerVideoUrl, '_blank');
-              }}
-              className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
-              title="Download Tweezer Video"
+        if (isDirectVideoUrl(tweezerVideoUrl)) {
+          return (
+            <div
+              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
+              style={{ overflow: 'hidden' }}
             >
-              <Download className="w-5 h-5 text-[#050C3A]" />
-            </button>
-            <video
-              src={tweezerVideoUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              className="w-full h-full object-contain"
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(tweezerVideoUrl, '_blank');
+                }}
+                className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+                title="Download Tweezer Video"
+              >
+                <Download className="w-5 h-5 text-[#050C3A]" />
+              </button>
+              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+                <video
+                  src={tweezerVideoUrl}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', border: 'none' }}
+                  className="hide-scrollbar"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+          );
+        } else if (isViewerLink(tweezerVideoUrl)) {
+          return (
+            <div
+              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
+              style={{ overflow: 'hidden' }}
             >
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        );
+              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+                <iframe
+                  src={tweezerVideoUrl}
+                  title="Tweezer Video Viewer"
+                  allow="autoplay; encrypted-media"
+                  loading="lazy"
+                  scrolling="no"
+                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
+                  className="hide-scrollbar"
+                />
+              </div>
+            </div>
+          );
+        } else {
+          // fallback: try iframe for any other non-direct video link
+          return (
+            <div
+              className="relative h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar"
+              style={{ overflow: 'hidden' }}
+            >
+              <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-scrollbar">
+                <iframe
+                  src={tweezerVideoUrl}
+                  title="Tweezer Video"
+                  allow="autoplay; encrypted-media"
+                  loading="lazy"
+                  scrolling="no"
+                  style={{ border: 'none', width: '100%', height: '100%', overflow: 'hidden', display: 'block' }}
+                  className="hide-scrollbar"
+                />
+              </div>
+            </div>
+          );
+        }
+      }
 
       case 'certificate':
         if (!certPdfUrl) {
           return <EmptyMediaPlaceholder message="No Certificate Available" />;
         }
         return (
-          <div className="overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+          <div className="h-[550px] w-full bg-gray-50 flex items-center justify-center hide-scrollbar" style={{ overflow: 'hidden' }}>
             <iframe
               src={certPdfUrl}
-              className="w-full h-full"
+              className="w-full h-full hide-scrollbar"
               title="Certificate PDF"
               loading="lazy"
+              scrolling="no"
+              style={{ border: 'none', overflow: 'hidden' }}
             />
           </div>
         );

@@ -68,3 +68,13 @@ body {
   scrollbar-color: #c89e3a #f1f1f1;
 }
 
+/* Hide scrollbars completely for specific elements */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Webkit */
+}
+

@@ -154,6 +154,7 @@ export default function InventoryManagement() {
   } | undefined>(undefined);
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [hasActiveDiamondsBeenViewed, setHasActiveDiamondsBeenViewed] = useState(false);
+  const [currentSearchTerm, setCurrentSearchTerm] = useState("");
 
   useEffect(() => {
     // Check if user is admin or superadmin
@@ -191,11 +192,13 @@ export default function InventoryManagement() {
       setSearchResults([]);
       setSearchPagination(undefined);
       setIsSearching(false);
+      setCurrentSearchTerm("");
       return;
     }
 
     setIsSearching(true);
     setIsSearchMode(true);
+    setCurrentSearchTerm(term);
 
     try {
       let response;
@@ -543,6 +546,7 @@ export default function InventoryManagement() {
               style={{ display: viewMode === 'active' ? 'block' : 'none' }}
             >
               <DiamondStockTable
+                searchTerm={isSearchMode ? currentSearchTerm : ""}
                 selectedShape={activeSelectedShape}
                 selectedColor={activeSelectedColor}
                 selectedMinCarat={activeSelectedCaratRanges[0]?.min || ""}

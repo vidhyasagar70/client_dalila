@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import { Maven_Pro } from "next/font/google";
 import { ChevronUp, ChevronDown, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import type { InclusionFilters } from "./InclusionFilter";
+import type { KeySymbolFilters } from "./KeyToSymbolFilter";
+import type { PriceLocationFilters } from "./Priceandloction";
+import DiamondDetailView from "./DiamondDetailView";
 
 const mavenPro = Maven_Pro({
   variable: "--font-maven-pro",
@@ -50,10 +54,6 @@ interface PaginationData {
   hasNextPage: boolean;
   hasPrevPage: boolean;
 }
-
-import { type InclusionFilters } from "./InclusionFilter";
-import { type KeySymbolFilters } from "./KeyToSymbolFilter";
-import { type PriceLocationFilters } from "./Priceandloction";
 
 interface FilterProps {
   shapes?: string[];
@@ -110,6 +110,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
     key: string;
     direction: "asc" | "desc";
   } | null>(null);
+  const [selectedDiamond, setSelectedDiamond] = useState<InventoryDiamond | null>(null);
   
   // Track if component is being used with external data (from props)
   const isExternalData = propData !== undefined;
@@ -417,9 +418,9 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
     }
   };
 
-  const handleStockClick = (stoneNo: string) => {
-    // Navigate to product detail page
-    router.push(`/sud?stockId=${encodeURIComponent(stoneNo)}`);
+  const handleStockClick = (diamond: InventoryDiamond) => {
+    // Show diamond detail view
+    setSelectedDiamond(diamond);
   };
 
   const renderPaginationButtons = () => {
@@ -494,6 +495,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
   // Grid View Rendering
   if (viewMode === "grid") {
     return (
+      <>
       <div className={`w-full flex flex-col bg-gray-50 p-4 ${mavenPro.className}`}>
         <div className="bg-white shadow-sm rounded-lg p-6 relative">
           {/* Loading Overlay */}
@@ -508,7 +510,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
               <div
                 key={diamond._id}
                 className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => handleStockClick(diamond.STONE_NO)}
+                onClick={() => handleStockClick(diamond)}
               >
                 {/* Diamond Image */}
                 <div className="relative h-48 bg-gray-100">
@@ -648,11 +650,19 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
           )}
         </div>
       </div>
+      {selectedDiamond && (
+        <DiamondDetailView
+          diamond={selectedDiamond as any}
+          onClose={() => setSelectedDiamond(null)}
+        />
+      )}
+      </>
     );
   }
 
   // Table View Rendering (default)
   return (
+    <>
     <div
       className={`w-full flex flex-col bg-gray-50 p-4 ${mavenPro.className}`}
     >
@@ -767,9 +777,10 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                   }`}
                 >
                   <td 
-                    className="py-3 px-4 text-blue-600 font-medium"
+                    className="py-3 px-4 text-blue-600 font-medium cursor-pointer hover:text-blue-800"
+                    onClick={() => handleStockClick(row)}
                   >
-                    {row.STONE_NO || "N/A"}
+                    <span className="underline">{row.STONE_NO || "N/A"}</span>
                   </td>
                   <td className="py-3 px-4 text-gray-800 text-sm">
                     {row.source || "N/A"}
@@ -893,6 +904,13 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
         )}
       </div>
     </div>
+    {selectedDiamond && (
+      <DiamondDetailView
+        diamond={selectedDiamond as any}
+        onClose={() => setSelectedDiamond(null)}
+      />
+    )}
+    </>
   );
 };
 
