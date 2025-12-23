@@ -813,9 +813,20 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
             }}
           >
             <div className="text-sm text-gray-700 font-medium">
-              Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
-              {Math.min(currentPage * rowsPerPage, totalRecords)} of{" "}
-              {totalRecords.toLocaleString()} diamonds
+              {(() => {
+                let start, end, total;
+                if (externalPagination) {
+                  const { currentPage, recordsPerPage, totalRecords } = externalPagination;
+                  start = totalRecords === 0 ? 0 : (currentPage - 1) * recordsPerPage + 1;
+                  end = Math.min(currentPage * recordsPerPage, totalRecords);
+                  total = totalRecords;
+                } else {
+                  start = (currentPage - 1) * rowsPerPage + 1;
+                  end = Math.min(currentPage * rowsPerPage, totalRecords);
+                  total = totalRecords;
+                }
+                return `Showing ${start} to ${end} of ${total.toLocaleString()} diamonds`;
+              })()}
             </div>
 
           <div className="flex items-center gap-4">
