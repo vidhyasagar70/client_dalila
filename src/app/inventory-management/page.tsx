@@ -3,11 +3,21 @@
 import React, { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/navigation";
 import { Maven_Pro,Marcellus,Jost } from "next/font/google";
-import { Package, Users, Gem, List } from "lucide-react";
+import { Package, Users, Gem, List, ChevronUp, ChevronDown } from "lucide-react";
 import InventoryDiamondTable from "@/components/InventoryDiamondTable";
 import DiamondStockTable from "@/components/DiamondStockTable";
+import ShapeFilter from "@/components/ShapeFilter";
+import CaratFilter from "@/components/CaratFilter";
+import ColorFilter from "@/components/ColorFilter";
+import ClarityFilter from "@/components/ClarityFilter";
+import FluorFilter from "@/components/FluorescenceFilter";
 import SupplierManagementModal from "@/components/SupplierManagementModal";
 import SearchBar from "@/components/SearchBar";
+import InclusionFilter, { type InclusionFilters } from "@/components/InclusionFilter";
+import ShadesFilter, { type ShadesFilters } from "@/components/ShadesFilter";
+import KeySymbolFilter, { type KeySymbolFilters } from "@/components/KeyToSymbolFilter";
+import PriceLocationFilter, { type PriceLocationFilters } from "@/components/Priceandloction";
+import MeasurementFilter from "@/components/MeasurementFilter";
 import { inventoryApi } from "@/lib/api";
 
 const marcellus = Marcellus({
@@ -87,6 +97,43 @@ interface InventoryDiamond {
 
 export default function InventoryManagement() {
   const router = useRouter();
+  // Separate filter states for each view
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Inventory View filters
+  const [inventorySelectedShape, setInventorySelectedShape] = useState<string[]>([]);
+  const [inventorySelectedCaratRanges, setInventorySelectedCaratRanges] = useState<{ min: string; max: string }[]>([]);
+  const [inventorySelectedColor, setInventorySelectedColor] = useState<string[]>([]);
+  const [inventorySelectedClarity, setInventorySelectedClarity] = useState<string[]>([]);
+  const [inventorySelectedSpecial, setInventorySelectedSpecial] = useState("");
+  const [inventorySelectedCut, setInventorySelectedCut] = useState("");
+  const [inventorySelectedPolish, setInventorySelectedPolish] = useState("");
+  const [inventorySelectedSymmetry, setInventorySelectedSymmetry] = useState("");
+  const [inventorySelectedFluor, setInventorySelectedFluor] = useState<string[]>([]);
+  // Advanced filters for inventory view
+  const [inventoryInclusions, setInventoryInclusions] = useState<InclusionFilters>({ centerBlack: [], centerWhite: [], sideBlack: [], sideWhite: [] });
+  const [inventoryShades, setInventoryShades] = useState<ShadesFilters>({ shades: [], milky: [], type2Ct: [], brl: [] });
+  const [inventoryKeySymbols, setInventoryKeySymbols] = useState<KeySymbolFilters>({ keyToSymbol: [], eyCln: [], hAndA: [] });
+  const [inventoryPriceLocation, setInventoryPriceLocation] = useState<PriceLocationFilters>({ pricePerCarat: { from: "", to: "" }, discount: { from: "", to: "" }, totalPrice: { from: "", to: "" }, locations: [], labs: [] });
+  const [inventoryMeasurements, setInventoryMeasurements] = useState({ length: { from: "", to: "" }, width: { from: "", to: "" }, depth: { from: "", to: "" }, table: { from: "", to: "" }, depthPercent: { from: "", to: "" }, ratio: { from: "", to: "" }, crAngle: { from: "", to: "" }, pavAngle: { from: "", to: "" }, gridle: { from: "", to: "" }, crHeight: { from: "", to: "" }, pavHeight: { from: "", to: "" } });
+
+  // Active Diamonds View filters
+  const [activeSelectedShape, setActiveSelectedShape] = useState<string[]>([]);
+  const [activeSelectedCaratRanges, setActiveSelectedCaratRanges] = useState<{ min: string; max: string }[]>([]);
+  const [activeSelectedColor, setActiveSelectedColor] = useState<string[]>([]);
+  const [activeSelectedClarity, setActiveSelectedClarity] = useState<string[]>([]);
+  const [activeSelectedSpecial, setActiveSelectedSpecial] = useState("");
+  const [activeSelectedCut, setActiveSelectedCut] = useState("");
+  const [activeSelectedPolish, setActiveSelectedPolish] = useState("");
+  const [activeSelectedSymmetry, setActiveSelectedSymmetry] = useState("");
+  const [activeSelectedFluor, setActiveSelectedFluor] = useState<string[]>([]);
+  // Advanced filters for active diamonds view
+  const [activeInclusions, setActiveInclusions] = useState<InclusionFilters>({ centerBlack: [], centerWhite: [], sideBlack: [], sideWhite: [] });
+  const [activeShades, setActiveShades] = useState<ShadesFilters>({ shades: [], milky: [], type2Ct: [], brl: [] });
+  const [activeKeySymbols, setActiveKeySymbols] = useState<KeySymbolFilters>({ keyToSymbol: [], eyCln: [], hAndA: [] });
+  const [activePriceLocation, setActivePriceLocation] = useState<PriceLocationFilters>({ pricePerCarat: { from: "", to: "" }, discount: { from: "", to: "" }, totalPrice: { from: "", to: "" }, locations: [], labs: [] });
+  const [activeMeasurements, setActiveMeasurements] = useState({ length: { from: "", to: "" }, width: { from: "", to: "" }, depth: { from: "", to: "" }, table: { from: "", to: "" }, depthPercent: { from: "", to: "" }, ratio: { from: "", to: "" }, crAngle: { from: "", to: "" }, pavAngle: { from: "", to: "" }, gridle: { from: "", to: "" }, crHeight: { from: "", to: "" }, pavHeight: { from: "", to: "" } });
+  
   const [totalDiamonds, setTotalDiamonds] = useState(0);
   const [activeDiamonds, setActiveDiamonds] = useState(0);
   const [activeSuppliers, setActiveSuppliers] = useState(0);
@@ -138,8 +185,6 @@ export default function InventoryManagement() {
   }, [router]);
 
   const handleSearchBar = async (term: string) => {
-    // setSearchTerm removed (unused)
-    
     // If search term is empty, exit search mode and show all inventory
     if (term.trim() === "") {
       setIsSearchMode(false);
@@ -149,23 +194,38 @@ export default function InventoryManagement() {
       return;
     }
 
-    // Make API call with search term
     setIsSearching(true);
     setIsSearchMode(true);
-    
-    try {
-      const response = await inventoryApi.searchDiamonds({
-        searchTerm: term,
-        page: 1,
-        limit: 100, // Get more results for search
-      });
 
-      if (response.success && response.data) {
-        setSearchResults(response.data);
-        setSearchPagination(response.pagination);
+    try {
+      let response;
+      if (viewMode === "active") {
+        // Active Diamonds: hit /api/diamonds/search
+        const apiUrl = `https://dalila-inventory-service-dev.caratlogic.com/api/diamonds/search?searchTerm=${encodeURIComponent(term)}&page=1&limit=100`;
+        const res = await fetch(apiUrl);
+        response = await res.json();
+        // Normalize response for compatibility
+        if (response.success && response.data) {
+          setSearchResults(response.data);
+          setSearchPagination(response.pagination);
+        } else {
+          setSearchResults([]);
+          setSearchPagination(undefined);
+        }
       } else {
-        setSearchResults([]);
-        setSearchPagination(undefined);
+        // Inventory: use existing logic
+        response = await inventoryApi.searchDiamonds({
+          searchTerm: term,
+          page: 1,
+          limit: 100,
+        });
+        if (response.success && response.data) {
+          setSearchResults(response.data);
+          setSearchPagination(response.pagination);
+        } else {
+          setSearchResults([]);
+          setSearchPagination(undefined);
+        }
       }
     } catch (err) {
       console.error('Error searching diamonds:', err);
@@ -331,7 +391,7 @@ export default function InventoryManagement() {
           </div>
         </div>
 
-        {/* Control Bar - Table/Grid View, Search, Manage Suppliers */}
+        {/* Control Bar - Table/Grid View, Search, Manage Suppliers, Filter Toggle */}
         <div className="bg-[#FAF6EB] rounded-lg shadow-sm p-1 sm:p-2 border border-gray-200 mt-4 w-full">
           <div className="flex flex-wrap items-center justify-between gap-1 sm:gap-2 min-h-[38px]">
             {/* Left Side - View Toggles */}
@@ -344,7 +404,6 @@ export default function InventoryManagement() {
                     : 'text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {/* <List className="w-3.5 h-3.5" /> */}
                 <span className="hidden sm:inline">Inventory View</span>
               </button>
               <button
@@ -358,17 +417,30 @@ export default function InventoryManagement() {
                     : 'text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {/* <Gem className="w-3.5 h-3.5" /> */}
                 <span className="hidden sm:inline">Active Diamonds</span>
               </button>
             </div>
 
-            {/* Right Side - Search and Manage Suppliers */}
+            {/* Right Side - Search, Filter Toggle, Manage Suppliers */}
             <div className="flex items-center gap-2 flex-1 justify-end">
               {/* Search Bar */}
               <div className="max-w-xs w-full mr-30">
                 <SearchBar onSearch={handleSearchBar} isSearching={isSearching} />
               </div>
+
+              {/* Filter Toggle Button */}
+              <button
+                onClick={() => setShowFilters((prev) => !prev)}
+                className="bg-[#000033] text-white px-3 py-1.5 transition-colors font-medium flex items-center gap-1 text-sm whitespace-nowrap"
+                style={{ minWidth: 90 }}
+              >
+                {showFilters ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+                <span className="hidden sm:inline">Filter</span>
+              </button>
 
               {/* Manage Suppliers Button */}
               <button
@@ -382,6 +454,86 @@ export default function InventoryManagement() {
           </div>
         </div>
 
+        {/* Filters Row - Only show when toggled */}
+        {showFilters && (
+          <div className="w-full flex flex-col gap-2 bg-white rounded-lg shadow-sm p-3 border border-gray-200 mt-2 mb-2">
+            {/* Main filter row */}
+            <div className="flex flex-wrap gap-2">
+              {viewMode === 'inventory' ? (
+                <>
+                  <ShapeFilter selectedShape={inventorySelectedShape} onShapeChange={setInventorySelectedShape} />
+                  <CaratFilter selectedCaratRanges={inventorySelectedCaratRanges} onCaratChange={setInventorySelectedCaratRanges} />
+                  {/* Fluor and Color in same column */}
+                  <div className="flex flex-col">
+                    <FluorFilter selectedFluor={inventorySelectedFluor} onFluorChange={setInventorySelectedFluor} />
+                    <ColorFilter selectedColor={inventorySelectedColor} onColorChange={setInventorySelectedColor} />
+                  </div>
+                  <ClarityFilter
+                    selectedClarity={inventorySelectedClarity}
+                    selectedSpecial={inventorySelectedSpecial}
+                    selectedCut={inventorySelectedCut}
+                    selectedPolish={inventorySelectedPolish}
+                    selectedSymmetry={inventorySelectedSymmetry}
+                    onClarityChange={setInventorySelectedClarity}
+                    onSpecialChange={setInventorySelectedSpecial}
+                    onCutChange={setInventorySelectedCut}
+                    onPolishChange={setInventorySelectedPolish}
+                    onSymmetryChange={setInventorySelectedSymmetry}
+                    hideExtras={false}
+                  />
+                </>
+              ) : (
+                <>
+                  <ShapeFilter selectedShape={activeSelectedShape} onShapeChange={setActiveSelectedShape} />
+                  <CaratFilter selectedCaratRanges={activeSelectedCaratRanges} onCaratChange={setActiveSelectedCaratRanges} />
+                  {/* Fluor and Color in same column */}
+                  <div className="flex flex-col">
+                    <FluorFilter selectedFluor={activeSelectedFluor} onFluorChange={setActiveSelectedFluor} />
+                    <ColorFilter selectedColor={activeSelectedColor} onColorChange={setActiveSelectedColor} />
+                  </div>
+                  <ClarityFilter
+                    selectedClarity={activeSelectedClarity}
+                    selectedSpecial={activeSelectedSpecial}
+                    selectedCut={activeSelectedCut}
+                    selectedPolish={activeSelectedPolish}
+                    selectedSymmetry={activeSelectedSymmetry}
+                    onClarityChange={setActiveSelectedClarity}
+                    onSpecialChange={setActiveSelectedSpecial}
+                    onCutChange={setActiveSelectedCut}
+                    onPolishChange={setActiveSelectedPolish}
+                    onSymmetryChange={setActiveSelectedSymmetry}
+                    hideExtras={false}
+                  />
+                </>
+              )}
+            </div>
+            {/* Advanced filter row */}
+            <div className="grid grid-cols-5 gap-0.5 mt-1">
+              {viewMode === 'inventory' ? (
+                <>
+                  <InclusionFilter inclusions={inventoryInclusions} onInclusionChange={setInventoryInclusions} />
+                  <ShadesFilter filters={inventoryShades} onFiltersChange={setInventoryShades} />
+                  <KeySymbolFilter filters={inventoryKeySymbols} onFiltersChange={setInventoryKeySymbols} />
+                  <div>
+                    <PriceLocationFilter filters={inventoryPriceLocation} onFiltersChange={setInventoryPriceLocation} />
+                  </div>
+                  <MeasurementFilter measurements={inventoryMeasurements} onMeasurementChange={setInventoryMeasurements} />
+                </>
+              ) : (
+                <>
+                  <InclusionFilter inclusions={activeInclusions} onInclusionChange={setActiveInclusions} />
+                  <ShadesFilter filters={activeShades} onFiltersChange={setActiveShades} />
+                  <KeySymbolFilter filters={activeKeySymbols} onFiltersChange={setActiveKeySymbols} />
+                  <div>
+                    <PriceLocationFilter filters={activePriceLocation} onFiltersChange={setActivePriceLocation} />
+                  </div>
+                  <MeasurementFilter measurements={activeMeasurements} onMeasurementChange={setActiveMeasurements} />
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Inventory Table/Active Diamonds */}
         <div className="mt-4 w-full">
           {/* Active Diamonds Table - Only mount after first view */}
@@ -390,10 +542,25 @@ export default function InventoryManagement() {
               key="active-diamonds-container"
               style={{ display: viewMode === 'active' ? 'block' : 'none' }}
             >
-              <ActiveDiamondsTableWrapper />
+              <DiamondStockTable
+                selectedShape={activeSelectedShape}
+                selectedColor={activeSelectedColor}
+                selectedMinCarat={activeSelectedCaratRanges[0]?.min || ""}
+                selectedMaxCarat={activeSelectedCaratRanges[0]?.max || ""}
+                selectedClarity={activeSelectedClarity}
+                selectedFluor={activeSelectedFluor}
+                selectedCut={activeSelectedCut}
+                selectedPolish={activeSelectedPolish}
+                selectedSymmetry={activeSelectedSymmetry}
+                inclusionFilters={activeInclusions}
+                keySymbolFilters={activeKeySymbols}
+                priceFilters={activePriceLocation}
+                selectedLocations={activePriceLocation.locations}
+                selectedLabs={activePriceLocation.labs}
+              />
             </div>
           )}
-          
+
           {/* Inventory Table - Always mounted */}
           <div style={{ display: viewMode === 'inventory' ? 'block' : 'none' }}>
             {isSearchMode ? (
@@ -403,9 +570,43 @@ export default function InventoryManagement() {
                 error={null}
                 viewMode="list"
                 externalPagination={searchPagination}
+                filterProps={{
+                  shapes: inventorySelectedShape,
+                  colors: inventorySelectedColor,
+                  clarities: inventorySelectedClarity,
+                  minCarats: inventorySelectedCaratRanges[0]?.min ? parseFloat(inventorySelectedCaratRanges[0].min) : undefined,
+                  maxCarats: inventorySelectedCaratRanges[0]?.max ? parseFloat(inventorySelectedCaratRanges[0].max) : undefined,
+                  fluors: inventorySelectedFluor,
+                  cut: inventorySelectedCut,
+                  polish: inventorySelectedPolish,
+                  symmetry: inventorySelectedSymmetry,
+                  inclusions: inventoryInclusions,
+                  keySymbols: inventoryKeySymbols,
+                  priceFilters: inventoryPriceLocation,
+                  locations: inventoryPriceLocation.locations,
+                  labs: inventoryPriceLocation.labs,
+                }}
               />
             ) : (
-              <InventoryDiamondTable viewMode="list" />
+              <InventoryDiamondTable
+                viewMode="list"
+                filterProps={{
+                  shapes: inventorySelectedShape,
+                  colors: inventorySelectedColor,
+                  clarities: inventorySelectedClarity,
+                  minCarats: inventorySelectedCaratRanges[0]?.min ? parseFloat(inventorySelectedCaratRanges[0].min) : undefined,
+                  maxCarats: inventorySelectedCaratRanges[0]?.max ? parseFloat(inventorySelectedCaratRanges[0].max) : undefined,
+                  fluors: inventorySelectedFluor,
+                  cut: inventorySelectedCut,
+                  polish: inventorySelectedPolish,
+                  symmetry: inventorySelectedSymmetry,
+                  inclusions: inventoryInclusions,
+                  keySymbols: inventoryKeySymbols,
+                  priceFilters: inventoryPriceLocation,
+                  locations: inventoryPriceLocation.locations,
+                  labs: inventoryPriceLocation.labs,
+                }}
+              />
             )}
           </div>
         </div>

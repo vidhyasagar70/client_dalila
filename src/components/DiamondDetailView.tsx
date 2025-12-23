@@ -9,6 +9,11 @@ import {
   Clock,
   MessageCircle,
   Download,
+  ImageIcon,
+  Video,
+  Hand,
+  FileText,
+  Grip,
 } from "lucide-react";
 import type { DiamondData } from "@/types/Diamondtable";
 import { cartApi, holdApi, queryApi } from "@/lib/api";
@@ -53,7 +58,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
   const [enquiryText, setEnquiryText] = useState("");
   const [isSubmittingEnquiry, setIsSubmittingEnquiry] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [selectedMediaTab, setSelectedMediaTab] = useState<'image' | 'video' | 'hand' | 'handvideo' | 'pdf' | 'tweezervideo'>('image');
+  const [selectedMediaTab, setSelectedMediaTab] = useState<'image' | 'video' | 'hand' | 'tweezer' | 'certificate'>('image');
 
   // Check user role on mount
   useEffect(() => {
@@ -307,6 +312,149 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
     </div>
   );
 
+  const EmptyMediaPlaceholder = ({ message }: { message: string }) => (
+    <div className="overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+      <span className="text-sm text-gray-400">{message}</span>
+    </div>
+  );
+
+  const renderMediaContent = () => {
+    switch(selectedMediaTab) {
+      case 'image':
+        if (!selectedImage) {
+          return <EmptyMediaPlaceholder message="No Image Available" />;
+        }
+        return (
+          <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+            <div className="relative w-full h-full flex items-center justify-center">
+              <div className="relative w-full h-full">
+                <Image
+                  src={selectedImage}
+                  alt={diamond.STONE_NO}
+                  fill
+                  style={{ objectFit: "contain" }}
+                  priority
+                  loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f3f4f6' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='16'%3ENo Image%3C/text%3E%3C/svg%3E";
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'video':
+        if (!videoUrl) {
+          return <EmptyMediaPlaceholder message="No Video Available" />;
+        }
+        return (
+          <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(videoUrl, '_blank');
+              }}
+              className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+              title="Download Video"
+            >
+              <Download className="w-5 h-5 text-[#050C3A]" />
+            </button>
+            <video
+              src={videoUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-contain"
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        );
+
+      case 'hand':
+        if (!handVideoUrl) {
+          return <EmptyMediaPlaceholder message="No Hand Video Available" />;
+        }
+        return (
+          <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(handVideoUrl, '_blank');
+              }}
+              className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+              title="Download Hand Video"
+            >
+              <Download className="w-5 h-5 text-[#050C3A]" />
+            </button>
+            <video
+              src={handVideoUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-contain"
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        );
+
+      case 'tweezer':
+        if (!tweezerVideoUrl) {
+          return <EmptyMediaPlaceholder message="No Tweezer Video Available" />;
+        }
+        return (
+          <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(tweezerVideoUrl, '_blank');
+              }}
+              className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
+              title="Download Tweezer Video"
+            >
+              <Download className="w-5 h-5 text-[#050C3A]" />
+            </button>
+            <video
+              src={tweezerVideoUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-contain"
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        );
+
+      case 'certificate':
+        if (!certPdfUrl) {
+          return <EmptyMediaPlaceholder message="No Certificate Available" />;
+        }
+        return (
+          <div className="overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
+            <iframe
+              src={certPdfUrl}
+              className="w-full h-full"
+              title="Certificate PDF"
+              loading="lazy"
+            />
+          </div>
+        );
+
+      default:
+        return <EmptyMediaPlaceholder message="Select a media type" />;
+    }
+  };
+
   return (
     <div
       className={`fixed left-0 right-0 bottom-0 top-[88px] w-full flex items-center justify-center z-40 bg-black/50 ${mavenPro.variable} ${marcellus.variable} ${jost.variable}`}
@@ -321,203 +469,93 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
         }}
       >
 
-        {/* Header with Back Button and Title */}
-        <div className="bg-[#050C3A] text-white px-6 py-4 flex items-center gap-4 sticky top-0 z-50 mt-8">
+        {/* Header with Back Button and Media Tabs in Same Row */}
+        <div className="bg-white px-6 py-4 flex items-center gap-4 sticky top-0 z-50 mt-8">
           <button
             onClick={onClose}
-            className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors border-2 border-white rounded px-3 py-1.5 hover:bg-white/10"
+            className="flex items-center gap-2 text-white transition-colors border border-gray-300 rounded px-4 py-2 font-medium"
+            style={{ background: '#050C3A' }}
           >
             <ArrowLeft size={20} />
-            <span>Back</span>
+            <span>BACK</span>
           </button>
+
+          {/* Media Tab Navigation - In Same Row */}
+          <div className="flex flex-wrap gap-3 flex-1">
+            <button
+              onClick={() => setSelectedMediaTab('image')}
+              className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 border rounded ${
+                selectedMediaTab === 'image'
+                  ? 'bg-white border-gray-300 text-gray-900'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <ImageIcon className="w-4 h-4" />
+              <span>Image</span>
+            </button>
+            <button
+              onClick={() => setSelectedMediaTab('video')}
+              className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 border rounded ${
+                selectedMediaTab === 'video'
+                  ? 'bg-white border-gray-300 text-gray-900'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Video className="w-4 h-4" />
+              <span>Video</span>
+            </button>
+            <button
+              onClick={() => setSelectedMediaTab('hand')}
+              className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 border rounded ${
+                selectedMediaTab === 'hand'
+                  ? 'bg-white border-gray-300 text-gray-900'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Hand className="w-4 h-4" />
+              <span>Hand</span>
+            </button>
+            <button
+              onClick={() => setSelectedMediaTab('tweezer')}
+              className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 border rounded ${
+                selectedMediaTab === 'tweezer'
+                  ? 'bg-white border-gray-300 text-gray-900'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Grip className="w-4 h-4" />
+              <span>Tweezer</span>
+            </button>
+            <button
+              onClick={() => setSelectedMediaTab('certificate')}
+              className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 border rounded ${
+                selectedMediaTab === 'certificate'
+                  ? 'bg-white border-gray-300 text-gray-900'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <FileText className="w-4 h-4" />
+              <span>Certificate</span>
+            </button>
+          </div>
         </div>
 
         <div className="p-6 pb-20">
-          {/* Media Tab Navigation */}
-          <div className="mb-4 flex gap-2 justify-center">
-            <button
-              onClick={() => setSelectedMediaTab('image')}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
-                selectedMediaTab === 'image'
-                  ? 'bg-[#050C3A] text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              Image
-            </button>
-            {videoUrl && (
-              <button
-                onClick={() => setSelectedMediaTab('video')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  selectedMediaTab === 'video'
-                    ? 'bg-[#050C3A] text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Video
-              </button>
-            )}
-            {handVideoUrl && (
-              <button
-                onClick={() => setSelectedMediaTab('handvideo')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  selectedMediaTab === 'handvideo'
-                    ? 'bg-[#050C3A] text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Hand
-              </button>
-            )}
-            {tweezerVideoUrl && (
-              <button
-                onClick={() => setSelectedMediaTab('tweezervideo')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  selectedMediaTab === 'tweezervideo'
-                    ? 'bg-[#050C3A] text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Tweezer Video
-              </button>
-            )}
-            {certPdfUrl && (
-              <button
-                onClick={() => setSelectedMediaTab('pdf')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  selectedMediaTab === 'pdf'
-                    ? 'bg-[#050C3A] text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                PDF
-              </button>
-            )}
-          </div>
-
           {/* Top Section: Image and Info */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
-            {/* LEFT - Media Display (50% width) */}
-            <div className="lg:col-span-6 flex items-center justify-center">
-              {/* Render based on selected tab */}
-              {selectedMediaTab === 'image' && selectedImage && (
-                <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={selectedImage}
-                        alt={diamond.STONE_NO}
-                        fill
-                        style={{ objectFit: "contain" }}
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f3f4f6' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='16'%3ENo Image%3C/text%3E%3C/svg%3E";
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {selectedMediaTab === 'video' && videoUrl && (
-                <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(videoUrl, '_blank');
-                    }}
-                    className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
-                    title="Download Video"
-                  >
-                    <Download className="w-5 h-5 text-[#050C3A]" />
-                  </button>
-                  <video
-                    src={videoUrl}
-                    autoPlay
-                    loop
-                    muted
-                    className="w-full h-full object-contain"
-                  >
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              )}
-
-              {selectedMediaTab === 'handvideo' && handVideoUrl && (
-                <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(handVideoUrl, '_blank');
-                    }}
-                    className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
-                    title="Download Hand Video"
-                  >
-                    <Download className="w-5 h-5 text-[#050C3A]" />
-                  </button>
-                  <video
-                    src={handVideoUrl}
-                    autoPlay
-                    loop
-                    muted
-                    className="w-full h-full object-contain"
-                  >
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              )}
-
-              {selectedMediaTab === 'tweezervideo' && tweezerVideoUrl && (
-                <div className="relative overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(tweezerVideoUrl, '_blank');
-                    }}
-                    className="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-white shadow cursor-pointer"
-                    title="Download Tweezer Video"
-                  >
-                    <Download className="w-5 h-5 text-[#050C3A]" />
-                  </button>
-                  <video
-                    src={tweezerVideoUrl}
-                    autoPlay
-                    loop
-                    muted
-                    className="w-full h-full object-contain"
-                  >
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              )}
-
-              {selectedMediaTab === 'pdf' && certPdfUrl && (
-                <div className="overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
-                  <iframe
-                    src={certPdfUrl}
-                    className="w-full h-full"
-                    title="Certificate PDF"
-                  />
-                </div>
-              )}
-
-              {/* No media available fallback */}
-              {((selectedMediaTab === 'image' && !selectedImage) ||
-                (selectedMediaTab === 'video' && !videoUrl) ||
-                (selectedMediaTab === 'handvideo' && !handVideoUrl) ||
-                (selectedMediaTab === 'tweezervideo' && !tweezerVideoUrl) ||
-                (selectedMediaTab === 'pdf' && !certPdfUrl)) && (
-                <div className="overflow-hidden h-[550px] w-full bg-gray-50 flex items-center justify-center">
-                  <span className="text-sm text-gray-400">No Media Available</span>
-                </div>
-              )}
+            {/* LEFT - Media Display with Tabs (50% width) */}
+            <div className="lg:col-span-6">
+              {/* Media Display Area */}
+              <div className="flex items-center justify-center">
+                {renderMediaContent()}
+              </div>
             </div>
 
             {/* RIGHT - Diamond Info (50% width) */}
             <div className="lg:col-span-6 flex flex-col">
               <div className="space-y-4 flex-1 flex flex-col">
                 {/* Title Section - show Stone Number instead of shape */}
-                <div className="pt-4 mt-11">
+                <div className="pt-4">
                   <div className="flex justify-between items-start mb-1">
                     <h1 className={`text-3xl font-bold text-gray-900 ${marcellus.className}`}>
                       {diamond.STONE_NO}

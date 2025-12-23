@@ -51,12 +51,26 @@ interface PaginationData {
   hasPrevPage: boolean;
 }
 
+import { type InclusionFilters } from "./InclusionFilter";
+import { type KeySymbolFilters } from "./KeyToSymbolFilter";
+import { type PriceLocationFilters } from "./Priceandloction";
+
 interface FilterProps {
   shapes?: string[];
   colors?: string[];
   clarities?: string[];
   minCarats?: number;
   maxCarats?: number;
+  fluors?: string[];
+  cut?: string;
+  polish?: string;
+  symmetry?: string;
+  inclusions?: InclusionFilters;
+  keySymbols?: KeySymbolFilters;
+  priceFilters?: PriceLocationFilters;
+  locations?: string[];
+  labs?: string[];
+  // Add more as needed (e.g., measurements, shadesFilters)
 }
 
 interface InventoryTableProps {
@@ -199,22 +213,62 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
           url.searchParams.append('sortOrder', sortConfig.direction);
         }
         
-        // Add filter parameters if provided
+        // Add filter parameters if provided - using correct query param names for admin/search endpoint
         if (filterProps) {
           if (filterProps.shapes && filterProps.shapes.length > 0) {
-            filterProps.shapes.forEach(shape => url.searchParams.append('shapes[]', shape));
+            filterProps.shapes.forEach(shape => url.searchParams.append('SHAPE', shape));
           }
           if (filterProps.colors && filterProps.colors.length > 0) {
-            filterProps.colors.forEach(color => url.searchParams.append('colors[]', color));
+            filterProps.colors.forEach(color => url.searchParams.append('COLOR', color));
           }
           if (filterProps.clarities && filterProps.clarities.length > 0) {
-            filterProps.clarities.forEach(clarity => url.searchParams.append('clarities[]', clarity));
+            filterProps.clarities.forEach(clarity => url.searchParams.append('CLARITY', clarity));
+          }
+          if (filterProps.fluors && filterProps.fluors.length > 0) {
+            filterProps.fluors.forEach(fluor => url.searchParams.append('FLOUR', fluor));
           }
           if (filterProps.minCarats !== undefined) {
-            url.searchParams.append('minCarats', filterProps.minCarats.toString());
+            url.searchParams.append('CARATS_MIN', filterProps.minCarats.toString());
           }
           if (filterProps.maxCarats !== undefined) {
-            url.searchParams.append('maxCarats', filterProps.maxCarats.toString());
+            url.searchParams.append('CARATS_MAX', filterProps.maxCarats.toString());
+          }
+          if (filterProps.cut) {
+            url.searchParams.append('CUT', filterProps.cut);
+          }
+          if (filterProps.polish) {
+            url.searchParams.append('POL', filterProps.polish);
+          }
+          if (filterProps.symmetry) {
+            url.searchParams.append('SYM', filterProps.symmetry);
+          }
+          if (filterProps.locations && filterProps.locations.length > 0) {
+            filterProps.locations.forEach(loc => url.searchParams.append('LOCATION', loc));
+          }
+          if (filterProps.labs && filterProps.labs.length > 0) {
+            filterProps.labs.forEach(lab => url.searchParams.append('LAB', lab));
+          }
+          if (filterProps.inclusions) {
+            const { centerBlack, centerWhite, sideBlack, sideWhite } = filterProps.inclusions;
+            if (centerBlack && centerBlack.length > 0) centerBlack.forEach(val => url.searchParams.append('CN', val));
+            if (centerWhite && centerWhite.length > 0) centerWhite.forEach(val => url.searchParams.append('CW', val));
+            if (sideBlack && sideBlack.length > 0) sideBlack.forEach(val => url.searchParams.append('SN', val));
+            if (sideWhite && sideWhite.length > 0) sideWhite.forEach(val => url.searchParams.append('SW', val));
+          }
+          if (filterProps.keySymbols) {
+            const { keyToSymbol, eyCln, hAndA } = filterProps.keySymbols;
+            if (keyToSymbol && keyToSymbol.length > 0) keyToSymbol.forEach(val => url.searchParams.append('KEY_TO_SYMBOLS', val));
+            if (eyCln && eyCln.length > 0) eyCln.forEach(val => url.searchParams.append('EY_CLN', val));
+            if (hAndA && hAndA.length > 0) hAndA.forEach(val => url.searchParams.append('H_AND_A', val));
+          }
+          if (filterProps.priceFilters) {
+            const { pricePerCarat, discount, totalPrice } = filterProps.priceFilters;
+            if (pricePerCarat?.from) url.searchParams.append('NET_RATE_MIN', pricePerCarat.from);
+            if (pricePerCarat?.to) url.searchParams.append('NET_RATE_MAX', pricePerCarat.to);
+            if (discount?.from) url.searchParams.append('DISC_PER_MIN', discount.from);
+            if (discount?.to) url.searchParams.append('DISC_PER_MAX', discount.to);
+            if (totalPrice?.from) url.searchParams.append('NET_VALUE_MIN', totalPrice.from);
+            if (totalPrice?.to) url.searchParams.append('NET_VALUE_MAX', totalPrice.to);
           }
         }
 

@@ -65,6 +65,9 @@ const DiamondStockTable: React.FC<TableProps> = ({
   const [selectAll, setSelectAll] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  // Track previous fetch parameters to prevent duplicate fetches
+  const prevFetchParamsRef = useRef<string>("");
+
   // Check if user is logged in
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -99,18 +102,40 @@ const DiamondStockTable: React.FC<TableProps> = ({
     };
   }, []);
 
-  const hasFetchedRef = useRef(false);
-
   useEffect(() => {
-    // Prevent multiple fetches - only fetch once when component mounts
-    if (hasFetchedRef.current) {
-      return;
-    }
-
     const fetchDiamonds = async () => {
       try {
         setLoading(true);
         setError(null);
+
+        // Create a unique key for current fetch parameters
+        const fetchParamsKey = JSON.stringify({
+          searchTerm,
+          selectedShape,
+          selectedColor,
+          selectedMinCarat,
+          selectedMaxCarat,
+          selectedFluor,
+          selectedClarity,
+          selectedCut,
+          selectedPolish,
+          selectedSymmetry,
+          selectedLocations,
+          selectedLabs,
+          inclusionFilters,
+          keySymbolFilters,
+          priceFilters,
+          currentPage,
+          rowsPerPage,
+        });
+
+        // Prevent duplicate fetches with same parameters
+        if (prevFetchParamsRef.current === fetchParamsKey) {
+          setLoading(false);
+          return;
+        }
+
+        prevFetchParamsRef.current = fetchParamsKey;
 
         const hasSearchTerm = searchTerm && searchTerm.trim();
         const hasShapeFilter =
@@ -347,7 +372,6 @@ const DiamondStockTable: React.FC<TableProps> = ({
         setData([]);
       } finally {
         setLoading(false);
-        hasFetchedRef.current = true;
       }
     };
 
