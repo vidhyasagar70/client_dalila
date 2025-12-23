@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/navigation";
 import { Maven_Pro,Marcellus,Jost } from "next/font/google";
-import { Package, Users, Gem, List, ChevronUp, ChevronDown } from "lucide-react";
+import { Package, Users, ChevronUp, ChevronDown } from "lucide-react";
 import InventoryDiamondTable from "@/components/InventoryDiamondTable";
 import DiamondStockTable from "@/components/DiamondStockTable";
 import ShapeFilter from "@/components/ShapeFilter";
@@ -26,12 +26,6 @@ const marcellus = Marcellus({
   weight: "400",
 });
 
-const jost = Jost({
-  variable: "--font-jost",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
 const mavenPro = Maven_Pro({
   variable: "--font-maven-pro",
   subsets: ["latin"],

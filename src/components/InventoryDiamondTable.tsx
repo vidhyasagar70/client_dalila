@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Maven_Pro } from "next/font/google";
 import { ChevronUp, ChevronDown, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
@@ -98,7 +97,6 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
   noPagination = false,
   filterProps,
 }) => {
-  const router = useRouter();
   const [data, setData] = useState<InventoryDiamond[]>(propData || []);
   const [loading, setLoading] = useState(propLoading ?? false);
   const [error, setError] = useState<string | null>(propError || null);
@@ -319,24 +317,6 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
     fetchInventoryData();
   }, [currentPage, rowsPerPage, sortConfig, isExternalData, filterProps]);
 
-  const handleSort = (key: string) => {
-    // Disable sorting when using external data
-    if (isExternalData) {
-      return;
-    }
-    
-    let direction: "asc" | "desc" = "asc";
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === "asc"
-    ) {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-    setCurrentPage(1); // Reset to first page when sorting
-  };
-
   // Optionally filter by source if filterSource is provided
   let paginatedData: InventoryDiamond[];
   let totalRecords: number;
@@ -375,22 +355,6 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
   const formatPercentage = (value: string | number) => {
     const num = parseFloat(String(value));
     return isNaN(num) ? "N/A" : `${num.toFixed(2)}%`;
-  };
-
-  const SortIcon = ({ columnKey }: { columnKey: string }) => {
-    if (!sortConfig || sortConfig.key !== columnKey) {
-      return (
-        <div className="ml-1 inline-flex flex-col">
-          <ChevronUp className="w-3 h-3 text-gray-400" />
-          <ChevronDown className="w-3 h-3 text-gray-400 -mt-1" />
-        </div>
-      );
-    }
-    return sortConfig.direction === "asc" ? (
-      <ChevronUp className="ml-1 w-4 h-4 inline" />
-    ) : (
-      <ChevronDown className="ml-1 w-4 h-4 inline" />
-    );
   };
 
   const goToPage = (page: number) => {
@@ -652,7 +616,16 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
       </div>
       {selectedDiamond && (
         <DiamondDetailView
-          diamond={selectedDiamond as any}
+          diamond={{
+            ...selectedDiamond,
+            CARATS: parseFloat(selectedDiamond.CARATS) || 0,
+            RAP_PRICE: parseFloat(selectedDiamond.RAP_PRICE) || 0,
+            DISC_PER: parseFloat(selectedDiamond.DISC_PER) || 0,
+            NET_VALUE: parseFloat(selectedDiamond.NET_VALUE) || 0,
+            TABLE_PER: selectedDiamond.TABLE_PER ? parseFloat(selectedDiamond.TABLE_PER) : undefined,
+            DEPTH_PER: selectedDiamond.DEPTH_PER ? parseFloat(selectedDiamond.DEPTH_PER) : undefined,
+            STAGE: 'inventory',
+          }}
           onClose={() => setSelectedDiamond(null)}
         />
       )}
@@ -906,7 +879,16 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
     </div>
     {selectedDiamond && (
       <DiamondDetailView
-        diamond={selectedDiamond as any}
+        diamond={{
+          ...selectedDiamond,
+          CARATS: parseFloat(selectedDiamond.CARATS) || 0,
+          RAP_PRICE: parseFloat(selectedDiamond.RAP_PRICE) || 0,
+          DISC_PER: parseFloat(selectedDiamond.DISC_PER) || 0,
+          NET_VALUE: parseFloat(selectedDiamond.NET_VALUE) || 0,
+          TABLE_PER: selectedDiamond.TABLE_PER ? parseFloat(selectedDiamond.TABLE_PER) : undefined,
+          DEPTH_PER: selectedDiamond.DEPTH_PER ? parseFloat(selectedDiamond.DEPTH_PER) : undefined,
+          STAGE: 'inventory',
+        }}
         onClose={() => setSelectedDiamond(null)}
       />
     )}
