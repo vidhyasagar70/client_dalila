@@ -14,6 +14,7 @@ import {
   Hand,
   FileText,
   Grip,
+  ShoppingCart,
 } from "lucide-react";
 import type { DiamondData } from "@/types/Diamondtable";
 import { cartApi, holdApi, queryApi } from "@/lib/api";
@@ -612,6 +613,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
   };
 
   return (
+
     <div
       className={`fixed left-0 right-0 bottom-0 top-[88px] w-full flex items-center justify-center z-40 bg-black/50 ${mavenPro.variable} ${marcellus.variable} ${jost.variable}`}
       onClick={onClose}
@@ -619,261 +621,334 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
       <div
         className="bg-white shadow-xl w-full h-full overflow-y-auto font-maven-pro scrollbar-hide"
         onClick={(e) => e.stopPropagation()}
-        style={{
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
+        {/* Main Layout: Left (Media) + Right (Details) */}
+        <div className="flex flex-col lg:flex-row h-full">
+          {/* LEFT SIDE - Media Section (40%) */}
+          <div className="lg:w-[40%] w-full border-r border-gray-200 flex flex-col">
+            {/* Top Row: Back Button + Media Tabs (sticky, compact) */}
+            <div className="flex items-center gap-2 px-2 py-1 border-b border-gray-200 bg-white sticky top-0 z-30 mt-8" style={{minHeight:'48px'}}>
+              <button
+                onClick={onClose}
+                className="flex items-center gap-2 text-white transition-colors rounded px-3 py-1 font-medium bg-[#050C3A] hover:bg-[#030822] text-xs"
+                style={{height:'32px'}}
+              >
+                <ArrowLeft size={16} />
+                <span>BACK</span>
+              </button>
+              <div className="flex flex-1 gap-1 ml-1">
+                <button
+                  onClick={() => setSelectedMediaTab('image')}
+                  className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                    selectedMediaTab === 'image'
+                      ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                  style={{height:'32px'}}
+                >
+                  <ImageIcon className="w-4 h-4" />
+                  <span>Image</span>
+                </button>
+                <button
+                  onClick={() => setSelectedMediaTab('video')}
+                  className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                    selectedMediaTab === 'video'
+                      ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                  style={{height:'32px'}}
+                >
+                  <Video className="w-4 h-4" />
+                  <span>Video</span>
+                </button>
+                <button
+                  onClick={() => setSelectedMediaTab('hand')}
+                  className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                    selectedMediaTab === 'hand'
+                      ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                  style={{height:'32px'}}
+                >
+                  <Hand className="w-4 h-4" />
+                  <span>Hand</span>
+                </button>
+                <button
+                  onClick={() => setSelectedMediaTab('tweezer')}
+                  className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                    selectedMediaTab === 'tweezer'
+                      ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                  style={{height:'32px'}}
+                >
+                  <Grip className="w-4 h-4" />
+                  <span>Tweezer</span>
+                </button>
+                <button
+                  onClick={() => setSelectedMediaTab('certificate')}
+                  className={`px-2 py-1 text-xs font-medium flex items-center justify-center gap-1 border-b-2 transition-colors ${
+                    selectedMediaTab === 'certificate'
+                      ? 'border-[#050C3A] text-[#050C3A] bg-gray-50'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                  style={{height:'32px'}}
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Certificate</span>
+                </button>
+              </div>
+            </div>
 
-        {/* Header with Back Button and Media Tabs in Same Row */}
-        <div className="bg-white px-6 py-4 flex items-center gap-4 sticky top-0 z-50 mt-8">
-          <button
-            onClick={onClose}
-            className="flex items-center gap-2 text-white transition-colors border border-gray-300 rounded px-4 py-2 font-medium"
-            style={{ background: '#050C3A' }}
-          >
-            <ArrowLeft size={20} />
-            <span>BACK</span>
-          </button>
-
-          {/* Media Tab Navigation - In Same Row */}
-          <div className="flex flex-wrap gap-3 flex-1">
-            <button
-              onClick={() => setSelectedMediaTab('image')}
-              className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 border rounded ${
-                selectedMediaTab === 'image'
-                  ? 'bg-white border-gray-300 text-gray-900'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <ImageIcon className="w-4 h-4" />
-              <span>Image</span>
-            </button>
-            <button
-              onClick={() => setSelectedMediaTab('video')}
-              className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 border rounded ${
-                selectedMediaTab === 'video'
-                  ? 'bg-white border-gray-300 text-gray-900'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <Video className="w-4 h-4" />
-              <span>Video</span>
-            </button>
-            <button
-              onClick={() => setSelectedMediaTab('hand')}
-              className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 border rounded ${
-                selectedMediaTab === 'hand'
-                  ? 'bg-white border-gray-300 text-gray-900'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <Hand className="w-4 h-4" />
-              <span>Hand</span>
-            </button>
-            <button
-              onClick={() => setSelectedMediaTab('tweezer')}
-              className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 border rounded ${
-                selectedMediaTab === 'tweezer'
-                  ? 'bg-white border-gray-300 text-gray-900'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <Grip className="w-4 h-4" />
-              <span>Tweezer</span>
-            </button>
-            <button
-              onClick={() => setSelectedMediaTab('certificate')}
-              className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 border rounded ${
-                selectedMediaTab === 'certificate'
-                  ? 'bg-white border-gray-300 text-gray-900'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <FileText className="w-4 h-4" />
-              <span>Certificate</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="p-6 pb-20">
-          {/* Top Section: Image and Info */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
-            {/* LEFT - Media Display with Tabs (50% width) */}
-            <div className="lg:col-span-6">
-              {/* Media Display Area */}
-              <div className="flex items-center justify-center">
+            {/* Media Display Area (reduced padding, more visible) */}
+            <div className="flex-1 px-1 pt-2 pb-1 bg-gray-50 overflow-auto">
+              <div className="w-full h-full flex items-center justify-center">
                 {renderMediaContent()}
               </div>
             </div>
 
-            {/* RIGHT - Diamond Info (50% width) */}
-            <div className="lg:col-span-6 flex flex-col">
-              <div className="space-y-4 flex-1 flex flex-col">
-                {/* Title Section - show Stone Number instead of shape */}
-                <div className="pt-4">
-                  <div className="flex justify-between items-start mb-1">
-                    <h1 className={`text-3xl font-bold text-gray-900 ${marcellus.className}`}>
-                      {diamond.STONE_NO}
-                    </h1>
+            {/* Action Buttons Below Media - removed as per request */}
+          </div>
+
+          {/* RIGHT SIDE - Details Section (60%) */}
+          <div className="lg:w-[60%] w-full flex flex-col overflow-auto scrollbar-hide hide-scrollbar" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+            <div className="p-6">
+              {/* Title Badge and Description */}
+              <div className="flex items-start justify-between mt-10">
+                <h1 className={`text-2xl font-bold text-gray-900 ${marcellus.className}`}>
+                  {diamond.SHAPE} {diamond.CARATS}ct {diamond.COLOR} {diamond.CLARITY} {diamond.CUT} {diamond.POL} {diamond.SYM} {diamond.TINGE}
+                </h1>
+                
+              </div>
+
+              {/* Stock ID, Report, Lab */}
+              <div className="text-sm text-gray-600 mb-4">
+                Stock ID: <span className="font-semibold text-gray-900">{diamond.STONE_NO}</span>
+                {' • '}
+                Report #: <span className="font-semibold text-gray-900">{diamond.REPORT_NO}</span>
+                {' • '}
+                Lab: <span className="font-semibold text-gray-900">{diamond.LAB}</span>
+              </div>
+
+              {/* Total Price */}
+              <div className="mb-4">
+                <div className="text-xs text-gray-500 mb-1">Total Price</div>
+                <div className={`text-4xl font-bold text-gray-900 ${marcellus.className}`}>
+                  {formatCurrency(diamond.NET_VALUE)}
+                </div>
+                <div className="text-sm text-gray-600 mt-1">
+                  Rap Price: {formatCurrency(diamond.RAP_PRICE)} | Disc %: {diamond.DISC_PER ? `${Math.abs(Number(diamond.DISC_PER)).toFixed(2)}%` : 'N/A'}
+                </div>
+              </div>
+
+              {/* Add to Cart, Hold, and Enquiry Buttons */}
+              {userRole !== "ADMIN" && userRole !== "SUPER_ADMIN" && (
+                <div className="flex gap-3 mb-6">
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={isAddingToCart}
+                    className="flex-1 text-white py-3 rounded font-semibold transition-colors text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ background: '#050C3A' }}
+                  >
+                    {isAddingToCart ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Adding...
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="w-4 h-4" />
+                        Add to Cart
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleAddToHold}
+                    disabled={isAddingToHold}
+                    className="flex-1 text-white py-3 rounded font-semibold transition-colors text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ background: '#050C3A' }}
+                  >
+                    {isAddingToHold ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Holding...
+                      </>
+                    ) : (
+                      <>
+                        <Clock className="w-4 h-4" />
+                        Hold
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setIsEnquiryOpen(true)}
+                    className="flex-1 text-white py-3 rounded font-semibold transition-colors text-sm flex items-center justify-center gap-2"
+                    style={{ background: '#050C3A' }}
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Enquiry
+                  </button>
+                </div>
+              )}
+
+              {/* Diamond Specifications */}
+              <div className="mb-6">
+                <h3 className="font-semibold text-lg text-gray-900 mb-3">Diamond Specifications</h3>
+                <div className="grid grid-cols-4 gap-4">
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Shape</div>
+                    <div className="font-bold text-gray-900">{diamond.SHAPE}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Carat</div>
+                    <div className="font-bold text-gray-900">{diamond.CARATS} ct</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Color</div>
+                    <div className="font-bold text-gray-900">{diamond.COLOR}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Clarity</div>
+                    <div className="font-bold text-gray-900">{diamond.CLARITY}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Cut</div>
+                    <div className="font-bold text-gray-900 flex items-center gap-1">
+                      {diamond.CUT}
+                      {/* {diamond.CUT === 'EX' && <span className="text-green-500">✓</span>} */}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Polish</div>
+                    <div className="font-bold text-gray-900 flex items-center gap-1">
+                      {diamond.POL}
+                      {/* {diamond.POL === 'EX' && <span className="text-green-500">✓</span>} */}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Symmetry</div>
+                    <div className="font-bold text-gray-900 flex items-center gap-1">
+                      {diamond.SYM}
+                      {/* {diamond.SYM === 'EX' && <span className="text-green-500">✓</span>} */}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Fluorescence</div>
+                    <div className="font-bold text-gray-900">{diamond.FLOUR}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Table %</div>
+                    <div className="font-bold text-gray-900">{diamond.TABLE_PER}%</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Depth %</div>
+                    <div className="font-bold text-gray-900">{diamond.DEPTH_PER}%</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Ratio</div>
+                    <div className="font-bold text-gray-900">0.99</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Girdle</div>
+                    <div className="font-bold text-gray-900">Med</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Crown Angle</div>
+                    <div className="font-bold text-gray-900">{diamond.CROWN_ANGLE}°</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Crown Height</div>
+                    <div className="font-bold text-gray-900">{diamond.CROWN_HEIGHT}%</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Pavilion Angle</div>
+                    <div className="font-bold text-gray-900">{diamond.PAVILLION_ANGLE}°</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Pavilion Depth</div>
+                    <div className="font-bold text-gray-900">{diamond.PAVILLION_HEIGHT}%</div>
                   </div>
                 </div>
+              </div>
 
-                {/* Price Section */}
-                <div className="py-2 border-b border-gray-200">
-                  <div className={`flex items-baseline gap-2 ${marcellus.className}`}>
-                    <span className="text-3xl font-bold text-gray-900">
-                      {formatCurrency(diamond.NET_VALUE)}
-                    </span>
-                    
+              {/* Measurements (row alignment: label left, value right) */}
+              <div className="mb-6">
+                <h3 className="font-semibold text-lg text-gray-900 mb-3">Measurements</h3>
+                <div className="grid grid-cols-2 gap-8">
+                  {/* Column 1 */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Length</span>
+                      <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('-')[0]} mm</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Width</span>
+                      <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('-')[1]?.split('*')[0]} mm</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Depth</span>
+                      <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('*')[1]} mm</span>
+                    </div>
+                  </div>
+                  {/* Column 2 */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Crown Angle</span>
+                      <span className="font-bold text-gray-900">{diamond.CROWN_ANGLE}°</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Crown Height</span>
+                      <span className="font-bold text-gray-900">{diamond.CROWN_HEIGHT}%</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Pavilion Angle</span>
+                      <span className="font-bold text-gray-900">{diamond.PAVILLION_ANGLE}°</span>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Basic Information */}
-                <div className="bg-gray-50 p-4 rounded-none flex-1 flex flex-col">
-                 
-                  <div className="grid grid-cols-2 gap-3 flex-1">
-                    <InfoItem
-                      label="Shape"
-                      value={diamond.SHAPE}
-                      description=""
-                    />
-                    <InfoItem
-                      label="Carat"
-                      value={String(diamond.CARATS || diamond.SIZE)}
-                      description=""
-                    />
-                    <InfoItem
-                      label="Color"
-                      value={diamond.COLOR}
-                      description=""
-                    />
-                    <InfoItem
-                      label="Clarity"
-                      value={diamond.CLARITY}
-                      description=""
-                    />
+              {/* Inclusion Details (row alignment: label left, value right, 2 columns) */}
+              <div className="mb-6">
+                <h3 className="font-semibold text-lg text-gray-900 mb-3">Inclusion Details</h3>
+                <div className="grid grid-cols-2 gap-8">
+                  {/* Column 1 */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Crown Inclusion</span>
+                      <span className="font-bold text-gray-900">{diamond.CN || 'N/A'}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Table Inclusion</span>
+                      <span className="font-bold text-gray-900">{diamond.SN || 'N/A'}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Crown White</span>
+                      <span className="font-bold text-gray-900">{diamond.CW || 'N/A'}</span>
+                    </div>
                   </div>
-                  <div className="border-t border-[#e9e2c6] pt-2 mt-2"></div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="space-y-3 mt-auto">
-                  {/* All buttons - Only for non-admin users */}
-                  {userRole !== "ADMIN" && userRole !== "SUPER_ADMIN" && (
-                    <>
-                      {/* Add to Cart */}
-                      <button
-                        onClick={handleAddToCart}
-                        disabled={isAddingToCart}
-                        className="w-full bg-[#050C3A] text-white py-2.5 rounded-none font-semibold hover:bg-[#030822] transition-colors text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isAddingToCart ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            Adding...
-                          </>
-                        ) : (
-                          "ADD TO CART"
-                        )}
-                      </button>
-
-                      {/* Hold Item and Enquiry */}
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          onClick={handleAddToHold}
-                          disabled={isAddingToHold}
-                          className="bg-[#050C3A] text-white py-2.5 rounded-none font-semibold hover:bg-[#030822] transition-colors text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isAddingToHold ? (
-                            <>
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                              Adding...
-                            </>
-                          ) : (
-                            <>
-                              <Clock className="w-4 h-4" />
-                              Hold Item
-                            </>
-                          )}
-                        </button>
-
-                        <button
-                          onClick={() => setIsEnquiryOpen(true)}
-                          className="bg-[#050C3A] text-white py-2.5 rounded font-semibold hover:bg-[#030822] transition-colors text-sm flex items-center justify-center gap-2"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                          Enquiry
-                        </button>
-                      </div>
-                    </>
-                  )}
+                  {/* Column 2 */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Table White</span>
+                      <span className="font-bold text-gray-900">{diamond.CW || 'N/A'}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Side Effect</span>
+                      <span className="font-bold text-gray-900">{diamond.SW || 'N/A'}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Location</span>
+                      <span className="font-bold text-gray-900">{diamond.LOCATION}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Bottom Tables Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-full mx-auto px-4">
-            {/* Left Column - Details */}
-            <DetailTable
-              title="Details"
-              data={[
-                ["Packet No", diamond.STONE_NO || "N/A"],
-                ["Report No", diamond.REPORT_NO || "N/A"],
-                ["Lab", diamond.LAB || "N/A"],
-                ["Rap price", formatCurrency(diamond.RAP_PRICE ?? "N/A")],
-                ["Disc %", diamond.DISC_PER ? `${Math.abs(diamond.DISC_PER / 100).toFixed(2)}%` : "N/A"],
-                ["Net Rate", formatCurrency(diamond.NET_RATE ?? "N/A")],
-                ["Net Value", formatCurrency(diamond.NET_VALUE)],
-                ["Shape", diamond.SHAPE || "N/A"],
-                ["Carat", diamond.CARATS || diamond.SIZE || "N/A"],
-                ["Color", diamond.COLOR || "N/A"],
-                ["Clarity", diamond.CLARITY || "N/A"],
-                ["Shade", diamond.TINGE || "N/A"],
-                ["Cut", diamond.CUT || "N/A"],
-                ["Polish", diamond.POL || "N/A"],
-                ["Symmetry", diamond.SYM || "N/A"],
-                ["Fluorescence", diamond.FLOUR || "N/A"],
-              ]}
-              certiPdfUrl={diamond.CERTI_PDF}
-            />
-
-            {/* Right Column - Measurements and Inclusion Details stacked */}
-            <div className="space-y-6">
-              {/* Measurements */}
-              <DetailTable
-                title="Measurements"
-                data={[
-                  ["Table%", diamond.TABLE_PER || "N/A"],
-                  ["Depth%", diamond.DEPTH_PER || "N/A"],
-                  [
-                    "Length",
-                    diamond.MEASUREMENTS?.split("x")[0]?.trim() || "N/A",
-                  ],
-                  ["Crown Angle", diamond.CROWN_ANGLE || "N/A"],
-                  ["Crown Height", diamond.CROWN_HEIGHT || "N/A"],
-                  ["Pav Angle", diamond.PAVILLION_ANGLE || "N/A"],
-                  ["Pav Height", diamond.PAVILLION_HEIGHT || "N/A"],
-                ]}
-              />
-
-              {/* Inclusion Details */}
-              <DetailTable
-                title="Inclusion Details"
-                data={[
-                  ["Center Natts", diamond.CN || "-"],
-                  ["Side Natts", diamond.SN || "-"],
-                  ["Center White", diamond.CW || "-"],
-                  ["Side White", diamond.SW || "-"],
-                  ["Eye Clean", diamond.EY_CLN || "-"],
-                  ["Location", diamond.LOCATION || "-"],
-                ]}
-              />
-            </div>
-          </div>
         </div>
-        <Footer/>
+        <Footer />
       </div>
 
       {/* Enquiry Modal */}
