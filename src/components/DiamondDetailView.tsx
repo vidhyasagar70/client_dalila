@@ -815,7 +815,7 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
               {/* Diamond Specifications */}
               <div className="mb-6">
                 <h3 className="font-semibold text-lg text-gray-900 mb-3">Diamond Specifications</h3>
-                <div className="grid grid-cols-4 gap-x-8 gap-y-4">
+                <div className="grid grid-cols-3 gap-x-8 gap-y-4">
                   <div>
                     <div className="text-xs text-gray-600 mb-1">Shape</div>
                     <div className="font-bold text-gray-900">{diamond.SHAPE}</div>
@@ -849,20 +849,30 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                     <div className="font-bold text-gray-900">{diamond.FLOUR}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-600 mb-1">Table %</div>
-                    <div className="font-bold text-gray-900">{diamond.TABLE_PER}%</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-600 mb-1">Depth %</div>
-                    <div className="font-bold text-gray-900">{diamond.DEPTH_PER}%</div>
-                  </div>
-                  <div>
                     <div className="text-xs text-gray-600 mb-1">Ratio</div>
-                    <div className="font-bold text-gray-900">0.99</div>
+                    <div className="font-bold text-gray-900">{diamond.MEASUREMENTS ? (parseFloat(diamond.MEASUREMENTS.split('-')[0]) / parseFloat(diamond.MEASUREMENTS.split('-')[1]?.split('*')[0])).toFixed(2) : '0.99'}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="border-t-2 border-gray-300 mb-4" />
+
+              {/* Measurements */}
+              <div className="mb-6">
+                <h3 className="font-semibold text-lg text-gray-900 mb-3">Measurements</h3>
+                <div className="grid grid-cols-3 gap-x-8 gap-y-4">
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Length</div>
+                    <div className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('-')[0]} mm</div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-600 mb-1">Girdle</div>
-                    <div className="font-bold text-gray-900">Med</div>
+                    <div className="text-xs text-gray-600 mb-1">Width</div>
+                    <div className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('-')[1]?.split('*')[0]} mm</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Depth</div>
+                    <div className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('*')[1]} mm</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-600 mb-1">Crown Angle</div>
@@ -877,42 +887,16 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                     <div className="font-bold text-gray-900">{diamond.PAVILLION_ANGLE}°</div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-600 mb-1">Pavilion Depth</div>
+                    <div className="text-xs text-gray-600 mb-1">Table</div>
+                    <div className="font-bold text-gray-900">{diamond.TABLE_PER}%</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Depth %</div>
+                    <div className="font-bold text-gray-900">{diamond.DEPTH_PER}%</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Pavilion Height</div>
                     <div className="font-bold text-gray-900">{diamond.PAVILLION_HEIGHT}%</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className="border-t-2 border-gray-300 mb-4" />
-
-              {/* Measurements */}
-              <div className="mb-6">
-                <h3 className="font-semibold text-lg text-gray-900 mb-3">Measurements</h3>
-                <div className="grid grid-cols-2 gap-x-16 gap-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Length</span>
-                    <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('-')[0]} mm</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Crown Angle</span>
-                    <span className="font-bold text-gray-900">{diamond.CROWN_ANGLE}°</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Width</span>
-                    <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('-')[1]?.split('*')[0]} mm</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Crown Height</span>
-                    <span className="font-bold text-gray-900">{diamond.CROWN_HEIGHT}%</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Depth</span>
-                    <span className="font-bold text-gray-900">{diamond.MEASUREMENTS?.split('*')[1]} mm</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Pavilion Angle</span>
-                    <span className="font-bold text-gray-900">{diamond.PAVILLION_ANGLE}°</span>
                   </div>
                 </div>
               </div>
@@ -944,10 +928,10 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                     <span className="text-gray-600">Crown White</span>
                     <span className="font-bold text-gray-900">{diamond.CW || 'N/A'}</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
+                  {/* <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Location</span>
                     <span className="font-bold text-gray-900">{diamond.LOCATION}</span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               </div>
