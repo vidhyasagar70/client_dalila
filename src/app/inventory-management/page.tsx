@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, memo } from "react";
 import { useRouter } from "next/navigation";
-import { Maven_Pro,Marcellus,Jost } from "next/font/google";
+import { Maven_Pro,Marcellus } from "next/font/google";
 import { Package, Users, ChevronUp, ChevronDown } from "lucide-react";
 import InventoryDiamondTable from "@/components/InventoryDiamondTable";
 import DiamondStockTable from "@/components/DiamondStockTable";
@@ -129,7 +129,7 @@ export default function InventoryManagement() {
   const [activeDiamonds, setActiveDiamonds] = useState(0);
   const [activeSuppliers, setActiveSuppliers] = useState(0);
   const [totalSuppliers, setTotalSuppliers] = useState(0);
-  const [suppliers, setSuppliers] = useState<Array<{ name: string; totalDiamonds: number; isVisible: boolean }>>([]);
+  const [suppliers] = useState<Array<{ name: string; totalDiamonds: number; isVisible: boolean }>>([]);
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [viewMode, setViewMode] = useState<"inventory" | "active">("inventory");

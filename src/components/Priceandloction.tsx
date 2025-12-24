@@ -44,8 +44,8 @@ const LAB_OPTIONS = [
 // Note: Price filtering is now done server-side via API
 // This function is kept for backward compatibility
 export const matchesPriceFilters = (
-  diamond: Diamond,
-  filters: PriceLocationFilters,
+  _diamond: Diamond,
+  _filters: PriceLocationFilters,
 ): boolean => {
   return true; // All filtering done server-side
 };

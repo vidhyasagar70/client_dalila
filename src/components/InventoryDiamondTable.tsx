@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Maven_Pro } from "next/font/google";
-import { ChevronUp, ChevronDown, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import type { InclusionFilters } from "./InclusionFilter";
 import type { KeySymbolFilters } from "./KeyToSymbolFilter";
@@ -138,7 +138,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
   const [rowsPerPage, setRowsPerPage] = useState(pageSize);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [sortConfig, setSortConfig] = useState<{
+  const [sortConfig] = useState<{
     key: string;
     direction: "asc" | "desc";
   } | null>(null);

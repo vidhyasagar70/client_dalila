@@ -84,7 +84,7 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
 
   // For Check button and dropdown
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  const [filterData, setFilterData] = useState<any>(null);
+  const [filterData, setFilterData] = useState<Record<string, string[]> | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   // Handle Check button click
   const handleCheckFilters = async () => {
@@ -395,7 +395,7 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
                                 ? value.join(", ")
                                 : typeof value === "object" && value !== null
                                   ? Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(", ")
-                                  : value?.toString()}
+                                  : String(value)}
                             </span>
                           </div>
                         ))}

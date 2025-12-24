@@ -30,7 +30,7 @@ const mavenPro = Maven_Pro({
 interface SupplierManagementModalProps {
   isOpen: boolean;
   onClose: () => void;
-  suppliers?: any[];
+  suppliers?: Array<{ name: string; totalDiamonds: number; isVisible: boolean }>;
   onSupplierUpdate?: () => void;
 }
 
@@ -45,7 +45,6 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [loadingCounts, setLoadingCounts] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
   // Fetch total diamonds count
   const fetchTotalDiamonds = async () => {
@@ -106,10 +105,8 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
           localStorage.setItem(`supplier_${SUPPLIER_NAME}_visible`, String(data.isVisible));
         }
       }
-      setInitialLoadComplete(true);
     } catch (error) {
       console.error("Error fetching supplier status:", error);
-      setInitialLoadComplete(true);
     }
   };
 
