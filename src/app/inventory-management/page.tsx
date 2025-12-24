@@ -14,7 +14,6 @@ import FluorFilter from "@/components/FluorescenceFilter";
 import SupplierManagementModal from "@/components/SupplierManagementModal";
 import SearchBar from "@/components/SearchBar";
 import InclusionFilter, { type InclusionFilters } from "@/components/InclusionFilter";
-import ShadesFilter, { type ShadesFilters } from "@/components/ShadesFilter";
 import KeySymbolFilter, { type KeySymbolFilters } from "@/components/KeyToSymbolFilter";
 import PriceLocationFilter, { type PriceLocationFilters } from "@/components/Priceandloction";
 import MeasurementFilter from "@/components/MeasurementFilter";
@@ -106,8 +105,7 @@ export default function InventoryManagement() {
   const [inventorySelectedFluor, setInventorySelectedFluor] = useState<string[]>([]);
   // Advanced filters for inventory view
   const [inventoryInclusions, setInventoryInclusions] = useState<InclusionFilters>({ centerBlack: [], centerWhite: [], sideBlack: [], sideWhite: [] });
-  const [inventoryShades, setInventoryShades] = useState<ShadesFilters>({ shades: [], milky: [], type2Ct: [], brl: [] });
-  const [inventoryKeySymbols, setInventoryKeySymbols] = useState<KeySymbolFilters>({ keyToSymbol: [], eyCln: [], hAndA: [] });
+  const [inventoryKeySymbols, setInventoryKeySymbols] = useState<KeySymbolFilters>({ keyToSymbol: [] });
   const [inventoryPriceLocation, setInventoryPriceLocation] = useState<PriceLocationFilters>({ pricePerCarat: { from: "", to: "" }, discount: { from: "", to: "" }, totalPrice: { from: "", to: "" }, locations: [], labs: [] });
   const [inventoryMeasurements, setInventoryMeasurements] = useState({ length: { from: "", to: "" }, width: { from: "", to: "" }, depth: { from: "", to: "" }, table: { from: "", to: "" }, depthPercent: { from: "", to: "" }, ratio: { from: "", to: "" }, crAngle: { from: "", to: "" }, pavAngle: { from: "", to: "" }, gridle: { from: "", to: "" }, crHeight: { from: "", to: "" }, pavHeight: { from: "", to: "" } });
 
@@ -123,8 +121,7 @@ export default function InventoryManagement() {
   const [activeSelectedFluor, setActiveSelectedFluor] = useState<string[]>([]);
   // Advanced filters for active diamonds view
   const [activeInclusions, setActiveInclusions] = useState<InclusionFilters>({ centerBlack: [], centerWhite: [], sideBlack: [], sideWhite: [] });
-  const [activeShades, setActiveShades] = useState<ShadesFilters>({ shades: [], milky: [], type2Ct: [], brl: [] });
-  const [activeKeySymbols, setActiveKeySymbols] = useState<KeySymbolFilters>({ keyToSymbol: [], eyCln: [], hAndA: [] });
+  const [activeKeySymbols, setActiveKeySymbols] = useState<KeySymbolFilters>({ keyToSymbol: [] });
   const [activePriceLocation, setActivePriceLocation] = useState<PriceLocationFilters>({ pricePerCarat: { from: "", to: "" }, discount: { from: "", to: "" }, totalPrice: { from: "", to: "" }, locations: [], labs: [] });
   const [activeMeasurements, setActiveMeasurements] = useState({ length: { from: "", to: "" }, width: { from: "", to: "" }, depth: { from: "", to: "" }, table: { from: "", to: "" }, depthPercent: { from: "", to: "" }, ratio: { from: "", to: "" }, crAngle: { from: "", to: "" }, pavAngle: { from: "", to: "" }, gridle: { from: "", to: "" }, crHeight: { from: "", to: "" }, pavHeight: { from: "", to: "" } });
   
@@ -137,6 +134,7 @@ export default function InventoryManagement() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [viewMode, setViewMode] = useState<"inventory" | "active">("inventory");
   const [isSearching, setIsSearching] = useState(false);
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [searchResults, setSearchResults] = useState<InventoryDiamond[]>([]);
   const [searchPagination, setSearchPagination] = useState<{
     currentPage: number;
@@ -176,8 +174,34 @@ export default function InventoryManagement() {
     if (checkAuthorization()) {
       fetchInventoryData();
       fetchActiveDiamondsCount();
+      fetchSupplierCounts();
     }
   }, [router]);
+
+  // Listen for supplier status changes
+  useEffect(() => {
+    const handleSupplierStatusChange = (event: CustomEvent) => {
+      const { isVisible } = event.detail;
+      // Update supplier counts based on toggle status
+      if (isVisible) {
+        setActiveSuppliers(1);
+        setTotalSuppliers(1);
+      } else {
+        setActiveSuppliers(0);
+        setTotalSuppliers(1);
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('supplierStatusChanged', handleSupplierStatusChange as EventListener);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('supplierStatusChanged', handleSupplierStatusChange as EventListener);
+      }
+    };
+  }, []);
 
   const handleSearchBar = async (term: string) => {
     // If search term is empty, exit search mode and show all inventory
@@ -246,50 +270,81 @@ export default function InventoryManagement() {
     }
   };
 
+  const fetchSupplierCounts = async () => {
+    try {
+      // Check localStorage for supplier visibility status
+      const supplierName = "Dharam Web Api";
+      const storedStatus = localStorage.getItem(`supplier_${supplierName}_visible`);
+      
+      // Set total suppliers to 1 (we have one supplier)
+      setTotalSuppliers(1);
+      
+      if (storedStatus !== null) {
+        // Use localStorage value if available
+        const isVisible = storedStatus === 'true';
+        setActiveSuppliers(isVisible ? 1 : 0);
+      } else {
+        // Fetch from API if not in localStorage
+        const response = await fetch(
+          `https://dalila-inventory-service-dev.caratlogic.com/api/users/admin/supplier-settings/${encodeURIComponent(supplierName)}`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const isVisible = data.isVisible || false;
+          setActiveSuppliers(isVisible ? 1 : 0);
+          // Store in localStorage for future use
+          localStorage.setItem(`supplier_${supplierName}_visible`, String(isVisible));
+        } else {
+          // Default to 0 active suppliers if API call fails
+          setActiveSuppliers(0);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching supplier counts:', err);
+      // Default values on error
+      setTotalSuppliers(1);
+      setActiveSuppliers(0);
+    }
+  };
+
   const fetchInventoryData = async () => {
     try {
-      // setLoading and setError removed (unused)
-      const response = await inventoryApi.getAllDiamonds({
-        page: 1,
-        limit: 10000,
+      setIsLoadingStats(true);
+      // Fetch diamonds from the correct API endpoint with a safe limit
+      const response = await fetch('https://dalila-inventory-service-dev.caratlogic.com/api/diamonds/admin/search?page=1&limit=10', {
+        method: 'GET',
+        credentials: 'include', // Include cookies for admin authentication
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
-      if (response.success && response.data) {
-        setTotalDiamonds(response.pagination.totalRecords);
+      if (!response.ok) {
+        console.error(`Failed to fetch inventory data: ${response.status}`);
+        return;
+      }
 
-        // Extract unique suppliers from diamond data
-        const supplierMap = new Map<string, { count: number; isVisible: boolean }>();
-        response.data.forEach((diamond) => {
-          if (diamond.source) {
-            const existing = supplierMap.get(diamond.source);
-            if (existing) {
-              existing.count++;
-            } else {
-              // Check if we have stored visibility state in localStorage
-              const storedVisibility = localStorage.getItem(`supplier_visibility_${diamond.source}`);
-              const isVisible = storedVisibility ? JSON.parse(storedVisibility) : false;
-              supplierMap.set(diamond.source, { count: 1, isVisible });
-            }
-          }
-        });
+      const data = await response.json();
+      console.log('Fetched inventory data:', data);
 
-        const supplierList = Array.from(supplierMap.entries()).map(([name, data]) => ({
-          name,
-          totalDiamonds: data.count,
-          isVisible: data.isVisible,
-        }));
-
-        setSuppliers(supplierList);
-        setTotalSuppliers(supplierList.length);
-        setActiveSuppliers(supplierList.filter((s) => s.isVisible).length);
+      if (data.success && data.pagination && typeof data.pagination.totalRecords === 'number') {
+        setTotalDiamonds(data.pagination.totalRecords);
+        console.log('Total diamonds set to:', data.pagination.totalRecords);
       } else {
-        // setError removed (unused)
+        console.warn('Invalid response format:', data);
       }
     } catch (err) {
       console.error("Error fetching inventory:", err);
-      // setError removed (unused)
     } finally {
-      // setLoading removed (unused)
+      setIsLoadingStats(false);
     }
   };
 
@@ -297,6 +352,7 @@ export default function InventoryManagement() {
     // Refresh inventory, supplier data, and active diamonds count after supplier update
     fetchInventoryData();
     fetchActiveDiamondsCount();
+    fetchSupplierCounts();
   };
 
   if (!isAuthorized) {
@@ -314,6 +370,11 @@ export default function InventoryManagement() {
       </div>
       {/* Stats Cards */}
       <div className={`w-full px-1 sm:px-2 md:px-4 py-4 ${mavenPro.className}`}>
+        {isLoadingStats ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-2 border-[#050c3a]"></div>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {/* Total Diamonds Card */}
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
@@ -324,7 +385,7 @@ export default function InventoryManagement() {
                   Total Diamonds
                 </p>
                 <p className="text-3xl font-bold text-gray-900 mt-2">
-                  {totalDiamonds < 10 ? `0${totalDiamonds}` : totalDiamonds}
+                  {totalDiamonds}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   All stocks (currently available)
@@ -360,7 +421,7 @@ export default function InventoryManagement() {
                   Active Suppliers
                 </p>
                 <p className="text-3xl font-bold text-gray-900 mt-2">
-                  {activeSuppliers < 10 ? `0${activeSuppliers}` : activeSuppliers}
+                  {typeof activeSuppliers === 'number' && activeSuppliers > 0 ? (activeSuppliers < 10 ? `0${activeSuppliers}` : activeSuppliers) : '00'}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   Not try to follow dealer assets
@@ -378,7 +439,7 @@ export default function InventoryManagement() {
                   Total Suppliers
                 </p>
                 <p className="text-3xl font-bold text-gray-900 mt-2">
-                  {totalSuppliers < 10 ? `0${totalSuppliers}` : totalSuppliers}
+                  {typeof totalSuppliers === 'number' && totalSuppliers > 0 ? (totalSuppliers < 10 ? `0${totalSuppliers}` : totalSuppliers) : '00'}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   Onboarding successfully
@@ -387,8 +448,10 @@ export default function InventoryManagement() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Control Bar - Table/Grid View, Search, Manage Suppliers, Filter Toggle */}
+        {!isLoadingStats && (
         <div className="bg-[#FAF6EB] rounded-lg shadow-sm p-1 sm:p-2 border border-gray-200 mt-4 w-full">
           <div className="flex flex-wrap items-center justify-between gap-1 sm:gap-2 min-h-[38px]">
             {/* Left Side - View Toggles */}
@@ -450,9 +513,10 @@ export default function InventoryManagement() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Filters Row - Only show when toggled */}
-        {showFilters && (
+        {showFilters && !isLoadingStats && (
           <div className="w-full flex flex-col gap-2 bg-white rounded-lg shadow-sm p-3 border border-gray-200 mt-2 mb-2">
             {/* Main filter row */}
             <div className="flex flex-wrap gap-2">
@@ -505,11 +569,10 @@ export default function InventoryManagement() {
               )}
             </div>
             {/* Advanced filter row */}
-            <div className="grid grid-cols-5 gap-0.5 mt-1">
+            <div className="grid grid-cols-4 gap-0.5 mt-1">
               {viewMode === 'inventory' ? (
                 <>
                   <InclusionFilter inclusions={inventoryInclusions} onInclusionChange={setInventoryInclusions} />
-                  <ShadesFilter filters={inventoryShades} onFiltersChange={setInventoryShades} />
                   <KeySymbolFilter filters={inventoryKeySymbols} onFiltersChange={setInventoryKeySymbols} />
                   <div>
                     <PriceLocationFilter filters={inventoryPriceLocation} onFiltersChange={setInventoryPriceLocation} />
@@ -519,7 +582,6 @@ export default function InventoryManagement() {
               ) : (
                 <>
                   <InclusionFilter inclusions={activeInclusions} onInclusionChange={setActiveInclusions} />
-                  <ShadesFilter filters={activeShades} onFiltersChange={setActiveShades} />
                   <KeySymbolFilter filters={activeKeySymbols} onFiltersChange={setActiveKeySymbols} />
                   <div>
                     <PriceLocationFilter filters={activePriceLocation} onFiltersChange={setActivePriceLocation} />
@@ -532,6 +594,7 @@ export default function InventoryManagement() {
         )}
 
         {/* Inventory Table/Active Diamonds */}
+        {!isLoadingStats && (
         <div className="mt-4 w-full">
           {/* Active Diamonds Table - Only mount after first view */}
           {hasActiveDiamondsBeenViewed && (
@@ -555,6 +618,17 @@ export default function InventoryManagement() {
                 priceFilters={activePriceLocation}
                 selectedLocations={activePriceLocation.locations}
                 selectedLabs={activePriceLocation.labs}
+                measurementFilters={{
+                  length: activeMeasurements.length,
+                  width: activeMeasurements.width,
+                  depth: activeMeasurements.depth,
+                  table: activeMeasurements.table,
+                  depthPercent: activeMeasurements.depthPercent,
+                  pavAngle: activeMeasurements.pavAngle,
+                  pavHeight: activeMeasurements.pavHeight,
+                  crAngle: activeMeasurements.crAngle,
+                  crHeight: activeMeasurements.crHeight,
+                }}
               />
             </div>
           )}
@@ -583,6 +657,17 @@ export default function InventoryManagement() {
                   priceFilters: inventoryPriceLocation,
                   locations: inventoryPriceLocation.locations,
                   labs: inventoryPriceLocation.labs,
+                  measurements: {
+                    length: inventoryMeasurements.length,
+                    width: inventoryMeasurements.width,
+                    depth: inventoryMeasurements.depth,
+                    table: inventoryMeasurements.table,
+                    depthPercent: inventoryMeasurements.depthPercent,
+                    pavAngle: inventoryMeasurements.pavAngle,
+                    pavHeight: inventoryMeasurements.pavHeight,
+                    crAngle: inventoryMeasurements.crAngle,
+                    crHeight: inventoryMeasurements.crHeight,
+                  },
                 }}
               />
             ) : (
@@ -603,11 +688,23 @@ export default function InventoryManagement() {
                   priceFilters: inventoryPriceLocation,
                   locations: inventoryPriceLocation.locations,
                   labs: inventoryPriceLocation.labs,
+                  measurements: {
+                    length: inventoryMeasurements.length,
+                    width: inventoryMeasurements.width,
+                    depth: inventoryMeasurements.depth,
+                    table: inventoryMeasurements.table,
+                    depthPercent: inventoryMeasurements.depthPercent,
+                    pavAngle: inventoryMeasurements.pavAngle,
+                    pavHeight: inventoryMeasurements.pavHeight,
+                    crAngle: inventoryMeasurements.crAngle,
+                    crHeight: inventoryMeasurements.crHeight,
+                  },
                 }}
               />
             )}
           </div>
         </div>
+        )}
       </div>
 
       {/* Supplier Management Modal */}

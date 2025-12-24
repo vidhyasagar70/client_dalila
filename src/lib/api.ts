@@ -495,14 +495,30 @@ export const diamondApi = {
     SN?: string;
     SW?: string;
     keyToSymbols?: string;
-    eyCln?: string;
-    hAndA?: string;
     netRateMin?: number;
     netRateMax?: number;
     netValueMin?: number;
     netValueMax?: number;
     discPerMin?: number;
     discPerMax?: number;
+    tablePerMin?: number;
+    tablePerMax?: number;
+    pavillionAngleMin?: number;
+    pavillionAngleMax?: number;
+    pavillionHeightMin?: number;
+    pavillionHeightMax?: number;
+    depthPerMin?: number;
+    depthPerMax?: number;
+    crownAngleMin?: number;
+    crownAngleMax?: number;
+    crownHeightMin?: number;
+    crownHeightMax?: number;
+    lengthMin?: number;
+    lengthMax?: number;
+    widthMin?: number;
+    widthMax?: number;
+    depthMin?: number;
+    depthMax?: number;
   }) => {
     const queryParams = new URLSearchParams();
 
@@ -588,15 +604,6 @@ export const diamondApi = {
       addMultipleParams("KEY_TO_SYMBOLS", filters.keyToSymbols);
     }
 
-    // Handle EY_CLN - Server-side filtering
-    if (filters.eyCln) {
-      addMultipleParams("EY_CLN", filters.eyCln);
-    }
-
-    // Handle H_AND_A - Server-side filtering
-    if (filters.hAndA) {
-      addMultipleParams("H_AND_A", filters.hAndA);
-    }
 
     // Handle CARAT RANGE
     if (filters.minCarats !== undefined) {
@@ -635,6 +642,71 @@ export const diamondApi = {
     }
     if (filters.discPerMax !== undefined) {
       queryParams.append("DISC_PER_MAX", filters.discPerMax.toString());
+    }
+
+    // Handle MEASUREMENT FILTERS
+    // Length
+    if (filters.lengthMin !== undefined) {
+      queryParams.append("LENGTH_MIN", filters.lengthMin.toString());
+    }
+    if (filters.lengthMax !== undefined) {
+      queryParams.append("LENGTH_MAX", filters.lengthMax.toString());
+    }
+    // Width
+    if (filters.widthMin !== undefined) {
+      queryParams.append("WIDTH_MIN", filters.widthMin.toString());
+    }
+    if (filters.widthMax !== undefined) {
+      queryParams.append("WIDTH_MAX", filters.widthMax.toString());
+    }
+    // Depth
+    if (filters.depthMin !== undefined) {
+      queryParams.append("DEPTH_MIN", filters.depthMin.toString());
+    }
+    if (filters.depthMax !== undefined) {
+      queryParams.append("DEPTH_MAX", filters.depthMax.toString());
+    }
+    // Table %
+    if (filters.tablePerMin !== undefined) {
+      queryParams.append("TABLE_PER_MIN", filters.tablePerMin.toString());
+    }
+    if (filters.tablePerMax !== undefined) {
+      queryParams.append("TABLE_PER_MAX", filters.tablePerMax.toString());
+    }
+    // Pavillion Angle
+    if (filters.pavillionAngleMin !== undefined) {
+      queryParams.append("PAVILLION_ANGLE_MIN", filters.pavillionAngleMin.toString());
+    }
+    if (filters.pavillionAngleMax !== undefined) {
+      queryParams.append("PAVILLION_ANGLE_MAX", filters.pavillionAngleMax.toString());
+    }
+    // Pavillion Height
+    if (filters.pavillionHeightMin !== undefined) {
+      queryParams.append("PAVILLION_HEIGHT_MIN", filters.pavillionHeightMin.toString());
+    }
+    if (filters.pavillionHeightMax !== undefined) {
+      queryParams.append("PAVILLION_HEIGHT_MAX", filters.pavillionHeightMax.toString());
+    }
+    // Depth %
+    if (filters.depthPerMin !== undefined) {
+      queryParams.append("DEPTH_PER_MIN", filters.depthPerMin.toString());
+    }
+    if (filters.depthPerMax !== undefined) {
+      queryParams.append("DEPTH_PER_MAX", filters.depthPerMax.toString());
+    }
+    // Crown Angle
+    if (filters.crownAngleMin !== undefined) {
+      queryParams.append("CROWN_ANGLE_MIN", filters.crownAngleMin.toString());
+    }
+    if (filters.crownAngleMax !== undefined) {
+      queryParams.append("CROWN_ANGLE_MAX", filters.crownAngleMax.toString());
+    }
+    // Crown Height
+    if (filters.crownHeightMin !== undefined) {
+      queryParams.append("CROWN_HEIGHT_MIN", filters.crownHeightMin.toString());
+    }
+    if (filters.crownHeightMax !== undefined) {
+      queryParams.append("CROWN_HEIGHT_MAX", filters.crownHeightMax.toString());
     }
 
     // Handle SEARCH TERM
@@ -2275,10 +2347,14 @@ export const inventoryApi = {
     isVisible: boolean,
   ) => {
     try {
+      const encodedSupplierName = encodeURIComponent(supplierName);
+      if (!encodedSupplierName) {
+        throw new Error("Supplier name is required");
+      }
       const response = await apiClient.put<{
         success: boolean;
         message: string;
-      }>(`/api/users/admin/supplier-settings/${encodeURIComponent(supplierName)}/`, {
+      }>(`/api/users/admin/supplier-settings/${encodedSupplierName}`, {
         isVisible,
       });
       return response.data;
@@ -2323,17 +2399,50 @@ export const inventoryApi = {
     }
   ) => {
     try {
+      const encodedSupplierName = encodeURIComponent(supplierName);
+      if (!encodedSupplierName) {
+        throw new Error("Supplier name is required");
+      }
       const response = await apiClient.put<{
         success: boolean;
         message: string;
         data?: unknown;
       }>(
-        `/api/users/admin/supplier-settings/${encodeURIComponent(supplierName)}/filters`,
+        `/api/users/admin/supplier-settings/${encodedSupplierName}/filters`,
         filters
       );
       return response.data;
     } catch (error) {
       console.error("Apply supplier filters error:", error);
+      throw error;
+    }
+  },
+
+  // Get applied filters for supplier
+  getSupplierFilters: async (supplierName: string) => {
+    try {
+      const encodedSupplierName = encodeURIComponent(supplierName);
+      if (!encodedSupplierName) {
+        throw new Error("Supplier name is required");
+      }
+      const response = await apiClient.get<{
+        success: boolean;
+        message: string;
+        data: {
+          isFilterEnabled: boolean;
+          shapes?: string[];
+          colors?: string[];
+          carats?: {
+            min: number;
+            max: number;
+          };
+          cuts?: string[];
+          clarities?: string[];
+        };
+      }>(`/api/users/admin/supplier-settings/${encodedSupplierName}/filters`);
+      return response.data;
+    } catch (error) {
+      console.error("Get supplier filters error:", error);
       throw error;
     }
   },
@@ -2344,12 +2453,16 @@ export const inventoryApi = {
     isVisible: boolean
   ) => {
     try {
+      const encodedSupplierName = encodeURIComponent(supplierName);
+      if (!encodedSupplierName) {
+        throw new Error("Supplier name is required");
+      }
       const response = await apiClient.put<{
         success: boolean;
         message: string;
         data?: unknown;
       }>(
-        `/api/users/admin/supplier-settings/${encodeURIComponent(supplierName)}/`,
+        `/api/users/admin/supplier-settings/${encodedSupplierName}`,
         { isVisible }
       );
       return response.data;

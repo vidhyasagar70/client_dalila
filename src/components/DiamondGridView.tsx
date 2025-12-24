@@ -108,9 +108,7 @@ const DiamondGridView: React.FC<GridViewProps> = ({
         // Check for Key Symbol filters
         const hasKeySymbolFilter =
           keySymbolFilters &&
-          (keySymbolFilters.keyToSymbol.length > 0 ||
-            keySymbolFilters.eyCln.length > 0 ||
-            keySymbolFilters.hAndA.length > 0);
+          keySymbolFilters.keyToSymbol.length > 0;
 
         const hasAnyFilter =
           hasShapeFilter ||
@@ -163,8 +161,6 @@ const DiamondGridView: React.FC<GridViewProps> = ({
           }
           if (hasKeySymbolFilter && keySymbolFilters) {
             if (keySymbolFilters.keyToSymbol.length > 0) filters.keyToSymbols = keySymbolFilters.keyToSymbol.join(",");
-            if (keySymbolFilters.eyCln.length > 0) filters.eyCln = keySymbolFilters.eyCln.join(",");
-            if (keySymbolFilters.hAndA.length > 0) filters.hAndA = keySymbolFilters.hAndA.join(",");
           }
           if (hasPriceFilter && priceFilters) {
             if (priceFilters.pricePerCarat.from && priceFilters.pricePerCarat.from.trim()) filters.netRateMin = parseFloat(priceFilters.pricePerCarat.from);
@@ -279,8 +275,6 @@ const DiamondGridView: React.FC<GridViewProps> = ({
             (Array.isArray(selectedLabs) && selectedLabs.length > 0) ||
             (keySymbolFilters?.keyToSymbol &&
               keySymbolFilters.keyToSymbol.length > 0) ||
-            (keySymbolFilters?.eyCln && keySymbolFilters.eyCln.length > 0) ||
-            (keySymbolFilters?.hAndA && keySymbolFilters.hAndA.length > 0) ||
             (inclusionFilters?.centerBlack &&
               inclusionFilters.centerBlack.length > 0) ||
             (inclusionFilters?.centerWhite &&
@@ -312,8 +306,6 @@ const DiamondGridView: React.FC<GridViewProps> = ({
             (Array.isArray(selectedLabs) && selectedLabs.length > 0) ||
             (keySymbolFilters?.keyToSymbol &&
               keySymbolFilters.keyToSymbol.length > 0) ||
-            (keySymbolFilters?.eyCln && keySymbolFilters.eyCln.length > 0) ||
-            (keySymbolFilters?.hAndA && keySymbolFilters.hAndA.length > 0) ||
             (inclusionFilters?.centerBlack &&
               inclusionFilters.centerBlack.length > 0) ||
             (inclusionFilters?.centerWhite &&
@@ -362,12 +354,6 @@ const DiamondGridView: React.FC<GridViewProps> = ({
                 keySymbolFilters.keyToSymbol.length > 0 && (
                   <p>Key Symbols: {keySymbolFilters.keyToSymbol.join(", ")}</p>
                 )}
-              {keySymbolFilters?.eyCln && keySymbolFilters.eyCln.length > 0 && (
-                <p>Eye Clean: {keySymbolFilters.eyCln.join(", ")}</p>
-              )}
-              {keySymbolFilters?.hAndA && keySymbolFilters.hAndA.length > 0 && (
-                <p>H&A: {keySymbolFilters.hAndA.join(", ")}</p>
-              )}
               {inclusionFilters?.centerBlack &&
                 inclusionFilters.centerBlack.length > 0 && (
                   <p>
@@ -436,8 +422,6 @@ const DiamondGridView: React.FC<GridViewProps> = ({
           (Array.isArray(selectedLabs) && selectedLabs.length > 0) ||
           (keySymbolFilters?.keyToSymbol &&
             keySymbolFilters.keyToSymbol.length > 0) ||
-          (keySymbolFilters?.eyCln && keySymbolFilters.eyCln.length > 0) ||
-          (keySymbolFilters?.hAndA && keySymbolFilters.hAndA.length > 0) ||
           (inclusionFilters?.centerBlack &&
             inclusionFilters.centerBlack.length > 0) ||
           (inclusionFilters?.centerWhite &&
@@ -511,16 +495,6 @@ const DiamondGridView: React.FC<GridViewProps> = ({
                   Key Symbols: {keySymbolFilters.keyToSymbol.join(", ")}
                 </span>
               )}
-            {keySymbolFilters?.eyCln && keySymbolFilters.eyCln.length > 0 && (
-              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
-                Eye Clean: {keySymbolFilters.eyCln.join(", ")}
-              </span>
-            )}
-            {keySymbolFilters?.hAndA && keySymbolFilters.hAndA.length > 0 && (
-              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
-                H&A: {keySymbolFilters.hAndA.join(", ")}
-              </span>
-            )}
             {inclusionFilters?.centerBlack &&
               inclusionFilters.centerBlack.length > 0 && (
                 <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">

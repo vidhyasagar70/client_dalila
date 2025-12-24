@@ -12,13 +12,11 @@ const mavenPro = Maven_Pro({
 const MEASUREMENT_FIELDS = [
   { label: "Length", key: "length" },
   { label: "Width", key: "width" },
-  { label: "Depth", key: "depth" },
+  
   { label: "Table %", key: "table" },
   { label: "Depth %", key: "depthPercent" },
-  { label: "Ratio", key: "ratio" },
   { label: "Cr.Angle", key: "crAngle" },
   { label: "Pav.Angle", key: "pavAngle" },
-  { label: "Gridle %", key: "gridle" },
   { label: "Cr.Height", key: "crHeight" },
   { label: "Pav.Height", key: "pavHeight" },
 ];
@@ -101,7 +99,7 @@ export default function MeasurementFilter({
                 min="0"
                 value={
                   measurements[field.key as keyof MeasurementFilters]?.from ||
-                  "0.50"
+                  ""
                 }
                 onChange={(e) =>
                   handleChange(
@@ -110,6 +108,7 @@ export default function MeasurementFilter({
                     e.target.value,
                   )
                 }
+                placeholder="Min"
                 className="w-20 px-2 py-1 text-center text-xs text-gray-900 rounded-none border border-[#f9e8cd] outline-none focus:border-[#d4b896]"
                 style={{ fontFamily: "inherit", color: "#111827" }}
               />
@@ -123,7 +122,7 @@ export default function MeasurementFilter({
                 min="0"
                 value={
                   measurements[field.key as keyof MeasurementFilters]?.to ||
-                  "0.50"
+                  ""
                 }
                 onChange={(e) =>
                   handleChange(
@@ -132,6 +131,7 @@ export default function MeasurementFilter({
                     e.target.value,
                   )
                 }
+                placeholder="Max"
                 className="w-20 px-2 py-1 text-center text-xs text-gray-900 rounded-none border border-[#f9e8cd] outline-none focus:border-[#d4b896]"
                 style={{ fontFamily: "inherit", color: "#111827" }}
               />

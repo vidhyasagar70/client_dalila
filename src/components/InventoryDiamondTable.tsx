@@ -40,9 +40,31 @@ interface InventoryDiamond {
   REPORT_NO: string;
   REAL_IMAGE: string;
   MP4: string;
-  CERTI_PDF: string;
-  createdAt: string;
-  updatedAt: string;
+  REPORT_COMMENTS?: string;
+  REPORT_DATE?: string;
+  CROWN_ANGLE?: string;
+  CROWN_HEIGHT?: string;
+  PAVILLION_ANGLE?: string;
+  PAVILLION_HEIGHT?: string;
+  CN?: string;
+  CW?: string;
+  SN?: string;
+  SW?: string;
+  TINGE?: string;
+  LENGTH?: string;
+  WIDTH?: string;
+  DEPTH?: string;
+  GIRDLE?: string;
+  GIRDLE_PER?: string;
+  STAR?: string;
+  RATIO?: string;
+  KEY_TO_SYMBOLS?: string | string[];
+  ARROW_IMAGE?: string;
+  HEART_IMAGE?: string;
+  DNA?: string;
+  HA?: string;
+  BRANCH?: string;
+  STAGE?: string;
 }
 
 interface PaginationData {
@@ -52,6 +74,18 @@ interface PaginationData {
   recordsPerPage: number;
   hasNextPage: boolean;
   hasPrevPage: boolean;
+}
+
+interface MeasurementFilters {
+  length?: { from: string; to: string };
+  width?: { from: string; to: string };
+  depth?: { from: string; to: string };
+  table?: { from: string; to: string };
+  depthPercent?: { from: string; to: string };
+  pavAngle?: { from: string; to: string };
+  pavHeight?: { from: string; to: string };
+  crAngle?: { from: string; to: string };
+  crHeight?: { from: string; to: string };
 }
 
 interface FilterProps {
@@ -69,7 +103,7 @@ interface FilterProps {
   priceFilters?: PriceLocationFilters;
   locations?: string[];
   labs?: string[];
-  // Add more as needed (e.g., measurements, shadesFilters)
+  measurements?: MeasurementFilters;
 }
 
 interface InventoryTableProps {
@@ -255,10 +289,8 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
             if (sideWhite && sideWhite.length > 0) sideWhite.forEach(val => url.searchParams.append('SW', val));
           }
           if (filterProps.keySymbols) {
-            const { keyToSymbol, eyCln, hAndA } = filterProps.keySymbols;
+            const { keyToSymbol } = filterProps.keySymbols;
             if (keyToSymbol && keyToSymbol.length > 0) keyToSymbol.forEach(val => url.searchParams.append('KEY_TO_SYMBOLS', val));
-            if (eyCln && eyCln.length > 0) eyCln.forEach(val => url.searchParams.append('EY_CLN', val));
-            if (hAndA && hAndA.length > 0) hAndA.forEach(val => url.searchParams.append('H_AND_A', val));
           }
           if (filterProps.priceFilters) {
             const { pricePerCarat, discount, totalPrice } = filterProps.priceFilters;
@@ -268,6 +300,27 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
             if (discount?.to) url.searchParams.append('DISC_PER_MAX', discount.to);
             if (totalPrice?.from) url.searchParams.append('NET_VALUE_MIN', totalPrice.from);
             if (totalPrice?.to) url.searchParams.append('NET_VALUE_MAX', totalPrice.to);
+          }
+          if (filterProps.measurements) {
+            const { length, width, depth, table, depthPercent, pavAngle, pavHeight, crAngle, crHeight } = filterProps.measurements;
+            if (length?.from) url.searchParams.append('LENGTH_MIN', length.from);
+            if (length?.to) url.searchParams.append('LENGTH_MAX', length.to);
+            if (width?.from) url.searchParams.append('WIDTH_MIN', width.from);
+            if (width?.to) url.searchParams.append('WIDTH_MAX', width.to);
+            if (depth?.from) url.searchParams.append('DEPTH_MIN', depth.from);
+            if (depth?.to) url.searchParams.append('DEPTH_MAX', depth.to);
+            if (table?.from) url.searchParams.append('TABLE_PER_MIN', table.from);
+            if (table?.to) url.searchParams.append('TABLE_PER_MAX', table.to);
+            if (depthPercent?.from) url.searchParams.append('DEPTH_PER_MIN', depthPercent.from);
+            if (depthPercent?.to) url.searchParams.append('DEPTH_PER_MAX', depthPercent.to);
+            if (pavAngle?.from) url.searchParams.append('PAVILLION_ANGLE_MIN', pavAngle.from);
+            if (pavAngle?.to) url.searchParams.append('PAVILLION_ANGLE_MAX', pavAngle.to);
+            if (pavHeight?.from) url.searchParams.append('PAVILLION_HEIGHT_MIN', pavHeight.from);
+            if (pavHeight?.to) url.searchParams.append('PAVILLION_HEIGHT_MAX', pavHeight.to);
+            if (crAngle?.from) url.searchParams.append('CROWN_ANGLE_MIN', crAngle.from);
+            if (crAngle?.to) url.searchParams.append('CROWN_ANGLE_MAX', crAngle.to);
+            if (crHeight?.from) url.searchParams.append('CROWN_HEIGHT_MIN', crHeight.from);
+            if (crHeight?.to) url.searchParams.append('CROWN_HEIGHT_MAX', crHeight.to);
           }
         }
 
@@ -504,6 +557,14 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                       <span className="font-medium text-gray-900">{diamond.source || "N/A"}</span>
                     </div>
                     <div className="flex justify-between">
+                      <span className="text-gray-600">Location:</span>
+                      <span className="font-medium text-gray-900">{diamond.LOCATION || "N/A"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Stage:</span>
+                      <span className="font-medium text-gray-900">{diamond.STAGE || "N/A"}</span>
+                    </div>
+                    <div className="flex justify-between">
                       <span className="text-gray-600">Shape:</span>
                       <span className="font-medium text-gray-900">{diamond.SHAPE || "N/A"}</span>
                     </div>
@@ -525,15 +586,21 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                     </div>
                     <div className="border-t border-gray-200 pt-2 mt-2">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">$/ct:</span>
-                        <span className="font-semibold text-gray-900">{formatCurrency(diamond.NET_RATE)}</span>
+                        <span className="text-gray-600">Rap Price:</span>
+                        <span className="font-semibold text-gray-900">{formatCurrency(diamond.RAP_PRICE || "0")}</span>
                       </div>
-                      {/* <div className="flex justify-between">
-                        <span className="text-gray-600">Total:</span>
-                        <span className="font-semibold text-green-600">
-                          {diamond.NET_VALUE !== "NA" ? formatCurrency(diamond.NET_VALUE) : "N/A"}
-                        </span>
-                      </div> */}
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Disc%:</span>
+                        <span className="font-semibold text-red-600">{formatPercentage(diamond.DISC_PER || "0")}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Net Rate:</span>
+                        <span className="font-semibold text-gray-900">{formatCurrency(diamond.NET_RATE || "0")}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Net Value:</span>
+                        <span className="font-semibold text-gray-900">{formatCurrency(diamond.NET_VALUE || "0")}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -622,9 +689,17 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
             RAP_PRICE: parseFloat(selectedDiamond.RAP_PRICE) || 0,
             DISC_PER: parseFloat(selectedDiamond.DISC_PER) || 0,
             NET_VALUE: parseFloat(selectedDiamond.NET_VALUE) || 0,
+            NET_RATE: selectedDiamond.NET_RATE,
             TABLE_PER: selectedDiamond.TABLE_PER ? parseFloat(selectedDiamond.TABLE_PER) : undefined,
             DEPTH_PER: selectedDiamond.DEPTH_PER ? parseFloat(selectedDiamond.DEPTH_PER) : undefined,
-            STAGE: 'inventory',
+            CROWN_ANGLE: selectedDiamond.CROWN_ANGLE ? parseFloat(selectedDiamond.CROWN_ANGLE) : undefined,
+            CROWN_HEIGHT: selectedDiamond.CROWN_HEIGHT ? parseFloat(selectedDiamond.CROWN_HEIGHT) : undefined,
+            PAVILLION_ANGLE: selectedDiamond.PAVILLION_ANGLE ? parseFloat(selectedDiamond.PAVILLION_ANGLE) : undefined,
+            PAVILLION_HEIGHT: selectedDiamond.PAVILLION_HEIGHT ? parseFloat(selectedDiamond.PAVILLION_HEIGHT) : undefined,
+            KEY_TO_SYMBOLS: Array.isArray(selectedDiamond.KEY_TO_SYMBOLS) 
+              ? selectedDiamond.KEY_TO_SYMBOLS.join(", ") 
+              : selectedDiamond.KEY_TO_SYMBOLS,
+            STAGE: selectedDiamond.STAGE || 'inventory',
           }}
           onClose={() => setSelectedDiamond(null)}
         />
@@ -653,91 +728,49 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
               className={`bg-[#050c3a] text-white sticky top-0 z-10 ${mavenPro.className}`}
             >
               <tr>
-                <th
-                  className="py-3 px-4 text-left w-[150px]"
-                >
-                  Stock ID
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[120px]"
-                >
-                  Source
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[100px]"
-                >
-                  Shape
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[80px]"
-                >
-                  Carat
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[80px]"
-                >
-                  Color
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[80px]"
-                >
-                  Clarity
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[80px]"
-                >
-                  Cut
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[80px]"
-                >
-                  Polish
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[80px]"
-                >
-                  Sym
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[80px]"
-                >
-                  Fluor
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[80px]"
-                >
-                  Lab
-                </th>
-                <th
-                  className="py-3 px-4 text-left w-[80px]"
-                >
-                  Location
-                </th>
-                <th
-                  className="py-3 px-4 text-right w-[100px]"
-                >
-                  $/ct
-                </th>
-                <th
-                  className="py-3 px-4 text-right w-[100px]"
-                >
-                  Disc%
-                </th>
-                <th
-                  className="py-3 px-4 text-right w-[120px]"
-                >
-                  Total $
-                </th>
-                <th
-                  className="py-3 px-4 text-right w-[100px]"
-                >
-                  Depth%
-                </th>
-                <th
-                  className="py-3 px-4 text-right w-[100px]"
-                >
-                  Table%
-                </th>
+                <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Stock ID</th>
+                <th className="w-28 px-2 py-3 text-left text-[14px] font-medium">Source</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Location</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Stage</th>
+                <th className="w-25 px-2 py-3 text-left text-[14px] font-medium">Shape</th>
+                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Carat</th>
+                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Color</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Clarity</th>
+                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Cut</th>
+                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Polish</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Symmetry</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Fluor</th>
+                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Lab</th>
+                <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Rap Price</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Disc%</th>
+                <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Net Rate</th>
+                <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Net Value</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Depth%</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Table%</th>
+                <th className="w-30 px-2 py-3 text-left text-[14px] font-medium">Measure</th>
+                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Length</th>
+                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Width</th>
+                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Depth</th>
+                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Ratio</th>
+                <th className="w-35 px-2 py-3 text-left text-[14px] font-medium">Key Symbols</th>
+                <th className="w-60 px-2 py-3 text-left text-[14px] font-medium">Report Comments</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Crn Angle</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Crn Height</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Pav Angle</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Pav Height</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">CN</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">CW</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">SN</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">SW</th>
+                <th className="w-30 px-2 py-3 text-left text-[14px] font-medium">Report No</th>
+                <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Report Date</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Tinge</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Girdle</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Girdle %</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Star</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">H&A</th>
+                <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Branch</th>
+                <th className="w-30 px-2 py-3 text-left text-[14px] font-medium">DNA</th>
               </tr>
             </thead>
 
@@ -745,59 +778,82 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
               {paginatedData.map((row, idx) => (
                 <tr
                   key={row._id}
-                  className={`border-b border-gray-200 hover:bg-gray-50 transition-colors ${
-                    idx % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
+                  style={{
+                    background:
+                      idx % 2 === 1
+                        ? "linear-gradient(to right, #faf6eb 0%, #faf6eb 100%)"
+                        : "white",
+                  }}
+                  className="transition-opacity"
                 >
                   <td 
-                    className="py-3 px-4 text-blue-600 font-medium cursor-pointer hover:text-blue-800"
+                    className="px-2 py-1 text-[14px] text-gray-700 font-medium truncate cursor-pointer hover:text-blue-600 hover:underline"
                     onClick={() => handleStockClick(row)}
                   >
-                    <span className="underline">{row.STONE_NO || "N/A"}</span>
+                    {row.STONE_NO || "N/A"}
                   </td>
-                  <td className="py-3 px-4 text-gray-800 text-sm">
-                    {row.source || "N/A"}
+                  <td className="px-2 py-1 text-[14px] text-gray-700 text-sm truncate">{row.source || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.LOCATION || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.STAGE || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.SHAPE || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.CARATS || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.COLOR || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.CLARITY || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.CUT || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.POL || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.SYM || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.FLOUR || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.LAB || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{formatCurrency(row.RAP_PRICE || 0)}</td>
+                  <td className="px-2 py-1 text-[14px] font-semibold text-red-600">{formatPercentage(row.DISC_PER || 0)}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{formatCurrency(row.NET_RATE || 0)}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700 font-medium">{formatCurrency(row.NET_VALUE || 0)}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.DEPTH_PER || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.TABLE_PER || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.MEASUREMENTS || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.LENGTH || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.WIDTH || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.DEPTH || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.RATIO || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
+                    {Array.isArray(row.KEY_TO_SYMBOLS) 
+                      ? row.KEY_TO_SYMBOLS.join(", ") || "N/A"
+                      : row.KEY_TO_SYMBOLS || "N/A"}
                   </td>
-                  <td className="py-3 px-4 text-gray-800">
-                    {row.SHAPE || "N/A"}
+                  <td className="px-2 py-1 text-[14px] text-gray-700 max-w-[240px]" title={row.REPORT_COMMENTS}>
+                    <div className="truncate">{row.REPORT_COMMENTS || "N/A"}</div>
                   </td>
-                  <td className="py-3 px-4 text-gray-800">
-                    {row.CARATS || "N/A"}
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.CROWN_ANGLE || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.CROWN_HEIGHT || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.PAVILLION_ANGLE || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.PAVILLION_HEIGHT || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.CN || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.CW || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.SN || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.SW || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700" style={{maxWidth: '220px', whiteSpace: 'normal', wordBreak: 'break-all'}}>
+                    {row.REPORT_NO || "N/A"}
                   </td>
-                  <td className="py-3 px-4 text-gray-800">
-                    {row.COLOR || "N/A"}
+                  <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
+                    {row.REPORT_DATE ? new Date(row.REPORT_DATE).toLocaleDateString() : "N/A"}
                   </td>
-                  <td className="py-3 px-4 text-gray-800">
-                    {row.CLARITY || "N/A"}
-                  </td>
-                  <td className="py-3 px-4 text-gray-800">
-                    {row.CUT || "N/A"}
-                  </td>
-                  <td className="py-3 px-4 text-gray-800">{row.POL || "N/A"}</td>
-                  <td className="py-3 px-4 text-gray-800">{row.SYM || "N/A"}</td>
-                  <td className="py-3 px-4 text-gray-800">
-                    {row.FLOUR || "N/A"}
-                  </td>
-                  <td className="py-3 px-4 text-gray-800">{row.LAB || "N/A"}</td>
-                  <td className="py-3 px-4 text-gray-800">
-                    {row.LOCATION || "N/A"}
-                  </td>
-                  <td className="py-3 px-4 text-right text-gray-800">
-                    {formatCurrency(row.NET_RATE)}
-                  </td>
-                  <td className="py-3 px-4 text-right text-gray-800">
-                    {formatPercentage(row.DISC_PER)}
-                  </td>
-                  <td className="py-3 px-4 text-right text-gray-800">
-                    {row.NET_VALUE !== "NA"
-                      ? formatCurrency(row.NET_VALUE)
-                      : "N/A"}
-                  </td>
-                  <td className="py-3 px-4 text-right text-gray-800">
-                    {formatPercentage(row.DEPTH_PER)}
-                  </td>
-                  <td className="py-3 px-4 text-right text-gray-800">
-                    {formatPercentage(row.TABLE_PER)}
+                  <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.TINGE || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.GIRDLE || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.GIRDLE_PER || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.STAR || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.HA || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.BRANCH || "N/A"}</td>
+                  <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
+                    {row.DNA ? (
+                      <a 
+                        href={row.DNA} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Link
+                      </a>
+                    ) : "N/A"}
                   </td>
                 </tr>
               ))}
@@ -896,9 +952,17 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
           RAP_PRICE: parseFloat(selectedDiamond.RAP_PRICE) || 0,
           DISC_PER: parseFloat(selectedDiamond.DISC_PER) || 0,
           NET_VALUE: parseFloat(selectedDiamond.NET_VALUE) || 0,
+          NET_RATE: selectedDiamond.NET_RATE,
           TABLE_PER: selectedDiamond.TABLE_PER ? parseFloat(selectedDiamond.TABLE_PER) : undefined,
           DEPTH_PER: selectedDiamond.DEPTH_PER ? parseFloat(selectedDiamond.DEPTH_PER) : undefined,
-          STAGE: 'inventory',
+          CROWN_ANGLE: selectedDiamond.CROWN_ANGLE ? parseFloat(selectedDiamond.CROWN_ANGLE) : undefined,
+          CROWN_HEIGHT: selectedDiamond.CROWN_HEIGHT ? parseFloat(selectedDiamond.CROWN_HEIGHT) : undefined,
+          PAVILLION_ANGLE: selectedDiamond.PAVILLION_ANGLE ? parseFloat(selectedDiamond.PAVILLION_ANGLE) : undefined,
+          PAVILLION_HEIGHT: selectedDiamond.PAVILLION_HEIGHT ? parseFloat(selectedDiamond.PAVILLION_HEIGHT) : undefined,
+          KEY_TO_SYMBOLS: Array.isArray(selectedDiamond.KEY_TO_SYMBOLS) 
+            ? selectedDiamond.KEY_TO_SYMBOLS.join(", ") 
+            : selectedDiamond.KEY_TO_SYMBOLS,
+          STAGE: selectedDiamond.STAGE || 'inventory',
         }}
         onClose={() => setSelectedDiamond(null)}
       />

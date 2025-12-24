@@ -49,6 +49,12 @@ export interface DiamondData {
 }
 
 export interface FilterParams {
+    lengthMin?: number;
+    lengthMax?: number;
+    widthMin?: number;
+    widthMax?: number;
+    depthMin?: number;
+    depthMax?: number;
   shape?: string;
   color?: string;
   limit?: number;
@@ -69,8 +75,6 @@ export interface FilterParams {
   SN?: string;
   SW?: string;
   keyToSymbols?: string;
-  eyCln?: string;
-  hAndA?: string;
 
   netRateMin?: number;
   netRateMax?: number;
@@ -78,6 +82,19 @@ export interface FilterParams {
   netValueMax?: number;
   discPerMin?: number;
   discPerMax?: number;
+  
+  tablePerMin?: number;
+  tablePerMax?: number;
+  pavillionAngleMin?: number;
+  pavillionAngleMax?: number;
+  pavillionHeightMin?: number;
+  pavillionHeightMax?: number;
+  depthPerMin?: number;
+  depthPerMax?: number;
+  crownAngleMin?: number;
+  crownAngleMax?: number;
+  crownHeightMin?: number;
+  crownHeightMax?: number;
 }
 
 // For DiamondStockTable component
@@ -105,12 +122,21 @@ export interface TableProps {
     discount: { from: string; to: string };
     totalPrice: { from: string; to: string };
   };
+  measurementFilters?: {
+    length: { from: string; to: string };
+    width: { from: string; to: string };
+    depth: { from: string; to: string };
+    table: { from: string; to: string };
+    depthPercent: { from: string; to: string };
+    crAngle: { from: string; to: string };
+    pavAngle: { from: string; to: string };
+    crHeight: { from: string; to: string };
+    pavHeight: { from: string; to: string };
+  };
   clearSelectionTrigger?: number;
 }
 export interface KeySymbolFilters {
   keyToSymbol: string[];
-  eyCln: string[];
-  hAndA: string[];
 }
 
 // For DiamondGridView component
@@ -132,8 +158,6 @@ export interface GridViewProps {
   selectedLabs?: string[];
   keySymbolFilters?: {
     keyToSymbol: string[];
-    eyCln: string[];
-    hAndA: string[];
   };
   inclusionFilters?: {
     centerBlack: string[];
@@ -161,4 +185,16 @@ export interface CartApiResponse {
   data?: {
     [key: string]: unknown;
   };
+}
+
+export interface MeasurementFilters {
+  length: { from: string; to: string };
+  width: { from: string; to: string };
+  depth: { from: string; to: string };
+  table: { from: string; to: string };
+  depthPercent: { from: string; to: string };
+  crAngle: { from: string; to: string };
+  pavAngle: { from: string; to: string };
+  crHeight: { from: string; to: string };
+  pavHeight: { from: string; to: string };
 }

@@ -13,7 +13,6 @@ import FluorFilter from "./FluorescenceFilter";
 import InclusionFilter, { type InclusionFilters } from "./InclusionFilter";
 import MeasurementFilter from "./MeasurementFilter";
 import KeySymbolFilter, { type KeySymbolFilters } from "./KeyToSymbolFilter";
-import ShadesFilter, { type ShadesFilters } from "./ShadesFilter";
 import PriceLocationFilter, {
   type PriceLocationFilters,
 } from "./Priceandloction";
@@ -112,17 +111,8 @@ export default function DiamondStockTableWithFilter() {
     sideWhite: [],
   });
 
-  const [shadesFilters, setShadesFilters] = useState<ShadesFilters>({
-    shades: [],
-    milky: [],
-    type2Ct: [],
-    brl: [],
-  });
-
   const [keySymbolFilters, setKeySymbolFilters] = useState<KeySymbolFilters>({
     keyToSymbol: [],
-    eyCln: [],
-    hAndA: [],
   });
 
   const [priceLocationFilters, setPriceLocationFilters] =
@@ -233,20 +223,12 @@ export default function DiamondStockTableWithFilter() {
     setSelectedCaratRanges([]);
     setKeySymbolFilters({
       keyToSymbol: [],
-      eyCln: [],
-      hAndA: [],
     });
     setInclusions({
       centerBlack: [],
       centerWhite: [],
       sideBlack: [],
       sideWhite: [],
-    });
-    setShadesFilters({
-      shades: [],
-      milky: [],
-      type2Ct: [],
-      brl: [],
     });
     setPriceLocationFilters({
       pricePerCarat: { from: "", to: "" },
@@ -423,14 +405,10 @@ export default function DiamondStockTableWithFilter() {
 
       {/* Advanced Filters Section */}
       {showFilters && (
-        <div className="grid grid-cols-5 gap-0.5 mt-1">
+        <div className="grid grid-cols-4 gap-0.5 mt-1">
           <InclusionFilter
             inclusions={inclusions}
             onInclusionChange={setInclusions}
-          />
-          <ShadesFilter
-            filters={shadesFilters}
-            onFiltersChange={setShadesFilters}
           />
           <KeySymbolFilter
             filters={keySymbolFilters}
@@ -468,6 +446,17 @@ export default function DiamondStockTableWithFilter() {
           selectedLabs={priceLocationFilters.labs}
           keySymbolFilters={keySymbolFilters}
           inclusionFilters={inclusions}
+          measurementFilters={{
+            length: measurements.length,
+            width: measurements.width,
+            depth: measurements.depth,
+            table: measurements.table,
+            depthPercent: measurements.depthPercent,
+            pavAngle: measurements.pavAngle,
+            pavHeight: measurements.pavHeight,
+            crAngle: measurements.crAngle,
+            crHeight: measurements.crHeight,
+          }}
           pageSize={10}
           clearSelectionTrigger={clearSelectionTrigger}
         />

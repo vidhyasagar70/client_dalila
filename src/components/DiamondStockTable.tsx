@@ -41,6 +41,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
   keySymbolFilters,
   inclusionFilters,
   priceFilters, // Add price filters prop
+  measurementFilters, // Add measurement filters prop
   onSelectionChange,
   clearSelectionTrigger,
 }) => {
@@ -125,6 +126,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
           inclusionFilters,
           keySymbolFilters,
           priceFilters,
+          measurementFilters,
           currentPage,
           rowsPerPage,
         });
@@ -180,9 +182,47 @@ const DiamondStockTable: React.FC<TableProps> = ({
         // Check for Key Symbol filters
         const hasKeySymbolFilter =
           keySymbolFilters &&
-          (keySymbolFilters.keyToSymbol.length > 0 ||
-            keySymbolFilters.eyCln.length > 0 ||
-            keySymbolFilters.hAndA.length > 0);
+          keySymbolFilters.keyToSymbol.length > 0;
+
+        // Check for Measurement filters
+        const hasMeasurementFilter =
+          measurementFilters &&
+          ((measurementFilters.length?.from &&
+            measurementFilters.length.from.trim()) ||
+            (measurementFilters.length?.to &&
+              measurementFilters.length.to.trim()) ||
+            (measurementFilters.width?.from &&
+              measurementFilters.width.from.trim()) ||
+            (measurementFilters.width?.to &&
+              measurementFilters.width.to.trim()) ||
+            (measurementFilters.depth?.from &&
+              measurementFilters.depth.from.trim()) ||
+            (measurementFilters.depth?.to &&
+              measurementFilters.depth.to.trim()) ||
+            (measurementFilters.table?.from &&
+              measurementFilters.table.from.trim()) ||
+            (measurementFilters.table?.to &&
+              measurementFilters.table.to.trim()) ||
+            (measurementFilters.depthPercent?.from &&
+              measurementFilters.depthPercent.from.trim()) ||
+            (measurementFilters.depthPercent?.to &&
+              measurementFilters.depthPercent.to.trim()) ||
+            (measurementFilters.pavAngle?.from &&
+              measurementFilters.pavAngle.from.trim()) ||
+            (measurementFilters.pavAngle?.to &&
+              measurementFilters.pavAngle.to.trim()) ||
+            (measurementFilters.pavHeight?.from &&
+              measurementFilters.pavHeight.from.trim()) ||
+            (measurementFilters.pavHeight?.to &&
+              measurementFilters.pavHeight.to.trim()) ||
+            (measurementFilters.crAngle?.from &&
+              measurementFilters.crAngle.from.trim()) ||
+            (measurementFilters.crAngle?.to &&
+              measurementFilters.crAngle.to.trim()) ||
+            (measurementFilters.crHeight?.from &&
+              measurementFilters.crHeight.from.trim()) ||
+            (measurementFilters.crHeight?.to &&
+              measurementFilters.crHeight.to.trim()));
 
         const hasAnyFilter =
           hasShapeFilter ||
@@ -198,7 +238,8 @@ const DiamondStockTable: React.FC<TableProps> = ({
           hasLabFilter ||
           hasInclusionFilter ||
           hasKeySymbolFilter ||
-          hasPriceFilter; // Add price filter check
+          hasPriceFilter ||
+          hasMeasurementFilter; // Add measurement filter check
 
         let response;
         if (hasAnyFilter) {
@@ -267,12 +308,6 @@ const DiamondStockTable: React.FC<TableProps> = ({
             if (keySymbolFilters.keyToSymbol.length > 0) {
               filters.keyToSymbols = keySymbolFilters.keyToSymbol.join(",");
             }
-            if (keySymbolFilters.eyCln.length > 0) {
-              filters.eyCln = keySymbolFilters.eyCln.join(",");
-            }
-            if (keySymbolFilters.hAndA.length > 0) {
-              filters.hAndA = keySymbolFilters.hAndA.join(",");
-            }
           }
 
           // Add Price filters to API call
@@ -314,6 +349,135 @@ const DiamondStockTable: React.FC<TableProps> = ({
               priceFilters.totalPrice.to.trim()
             ) {
               filters.netValueMax = parseFloat(priceFilters.totalPrice.to);
+            }
+          }
+
+          // Add Measurement filters to API call
+          if (hasMeasurementFilter && measurementFilters) {
+            // Length
+            if (
+              measurementFilters.length?.from &&
+              measurementFilters.length.from.trim()
+            ) {
+              filters.lengthMin = parseFloat(measurementFilters.length.from);
+            }
+            if (
+              measurementFilters.length?.to &&
+              measurementFilters.length.to.trim()
+            ) {
+              filters.lengthMax = parseFloat(measurementFilters.length.to);
+            }
+
+            // Width
+            if (
+              measurementFilters.width?.from &&
+              measurementFilters.width.from.trim()
+            ) {
+              filters.widthMin = parseFloat(measurementFilters.width.from);
+            }
+            if (
+              measurementFilters.width?.to &&
+              measurementFilters.width.to.trim()
+            ) {
+              filters.widthMax = parseFloat(measurementFilters.width.to);
+            }
+
+            // Depth
+            if (
+              measurementFilters.depth?.from &&
+              measurementFilters.depth.from.trim()
+            ) {
+              filters.depthMin = parseFloat(measurementFilters.depth.from);
+            }
+            if (
+              measurementFilters.depth?.to &&
+              measurementFilters.depth.to.trim()
+            ) {
+              filters.depthMax = parseFloat(measurementFilters.depth.to);
+            }
+
+            // Table %
+            if (
+              measurementFilters.table?.from &&
+              measurementFilters.table.from.trim()
+            ) {
+              filters.tablePerMin = parseFloat(measurementFilters.table.from);
+            }
+            if (
+              measurementFilters.table?.to &&
+              measurementFilters.table.to.trim()
+            ) {
+              filters.tablePerMax = parseFloat(measurementFilters.table.to);
+            }
+
+            // Depth %
+            if (
+              measurementFilters.depthPercent?.from &&
+              measurementFilters.depthPercent.from.trim()
+            ) {
+              filters.depthPerMin = parseFloat(measurementFilters.depthPercent.from);
+            }
+            if (
+              measurementFilters.depthPercent?.to &&
+              measurementFilters.depthPercent.to.trim()
+            ) {
+              filters.depthPerMax = parseFloat(measurementFilters.depthPercent.to);
+            }
+
+            // Pavilion Angle
+            if (
+              measurementFilters.pavAngle?.from &&
+              measurementFilters.pavAngle.from.trim()
+            ) {
+              filters.pavillionAngleMin = parseFloat(measurementFilters.pavAngle.from);
+            }
+            if (
+              measurementFilters.pavAngle?.to &&
+              measurementFilters.pavAngle.to.trim()
+            ) {
+              filters.pavillionAngleMax = parseFloat(measurementFilters.pavAngle.to);
+            }
+
+            // Pavilion Height
+            if (
+              measurementFilters.pavHeight?.from &&
+              measurementFilters.pavHeight.from.trim()
+            ) {
+              filters.pavillionHeightMin = parseFloat(measurementFilters.pavHeight.from);
+            }
+            if (
+              measurementFilters.pavHeight?.to &&
+              measurementFilters.pavHeight.to.trim()
+            ) {
+              filters.pavillionHeightMax = parseFloat(measurementFilters.pavHeight.to);
+            }
+
+            // Crown Angle
+            if (
+              measurementFilters.crAngle?.from &&
+              measurementFilters.crAngle.from.trim()
+            ) {
+              filters.crownAngleMin = parseFloat(measurementFilters.crAngle.from);
+            }
+            if (
+              measurementFilters.crAngle?.to &&
+              measurementFilters.crAngle.to.trim()
+            ) {
+              filters.crownAngleMax = parseFloat(measurementFilters.crAngle.to);
+            }
+
+            // Crown Height
+            if (
+              measurementFilters.crHeight?.from &&
+              measurementFilters.crHeight.from.trim()
+            ) {
+              filters.crownHeightMin = parseFloat(measurementFilters.crHeight.from);
+            }
+            if (
+              measurementFilters.crHeight?.to &&
+              measurementFilters.crHeight.to.trim()
+            ) {
+              filters.crownHeightMax = parseFloat(measurementFilters.crHeight.to);
             }
           }
 
@@ -392,6 +556,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
     inclusionFilters,
     keySymbolFilters,
     priceFilters,
+    measurementFilters,
     currentPage,
     rowsPerPage,
   ]);
@@ -540,8 +705,6 @@ const DiamondStockTable: React.FC<TableProps> = ({
             (Array.isArray(selectedLabs) && selectedLabs.length > 0) ||
             (keySymbolFilters?.keyToSymbol &&
               keySymbolFilters.keyToSymbol.length > 0) ||
-            (keySymbolFilters?.eyCln && keySymbolFilters.eyCln.length > 0) ||
-            (keySymbolFilters?.hAndA && keySymbolFilters.hAndA.length > 0) ||
             priceFilters?.pricePerCarat?.from ||
             priceFilters?.pricePerCarat?.to ||
             priceFilters?.discount?.from ||
@@ -646,8 +809,8 @@ const DiamondStockTable: React.FC<TableProps> = ({
                   <th className="w-60 px-2 py-3 text-left text-[14px] font-medium">Comments</th>
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Depth%</th>
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Table%</th>
-                  <th className="w-28 px-2 py-3 text-left text-[14px] font-medium">Measure</th>
-                  <th className="w-32 px-2 py-3 text-left text-[14px] font-medium">Key Symbols</th>
+                  <th className="w-30 px-2 py-3 text-left text-[14px] font-medium">Measure</th>
+                  <th className="w-35 px-2 py-3 text-left text-[14px] font-medium">Key Symbols</th>
                   <th className="w-60 px-2 py-3 text-left text-[14px] font-medium">Report Comments</th>
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Crn Angle</th>
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Crn Height</th>
@@ -657,7 +820,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">CW</th>
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">SN</th>
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">SW</th>
-                  <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Report No</th>
+                  <th className="w-30 px-2 py-3 text-left text-[14px] font-medium">Report No</th>
                   <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Report Date</th>
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Tinge</th>
                 </tr>
@@ -758,7 +921,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
                     <td className="px-2 py-1 text-[14px] text-gray-700">{row.CW || "N/A"}</td>
                     <td className="px-2 py-1 text-[14px] text-gray-700">{row.SN || "N/A"}</td>
                     <td className="px-2 py-1 text-[14px] text-gray-700">{row.SW || "N/A"}</td>
-                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.REPORT_NO}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700" style={{maxWidth: '220px', whiteSpace: 'normal', wordBreak: 'break-all'}}>{row.REPORT_NO}</td>
                     <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.REPORT_DATE ? new Date(row.REPORT_DATE).toLocaleDateString() : "N/A"}</td>
                     <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.TINGE || "N/A"}</td>
                   </tr>

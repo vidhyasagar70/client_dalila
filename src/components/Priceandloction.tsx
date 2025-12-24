@@ -177,8 +177,8 @@ export default function PriceLocationFilter({
                   handlePriceChange("pricePerCarat", "from", e.target.value)
                 }
                 placeholder="0"
-                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none"
-                style={{ appearance: "textfield", fontFamily: "inherit" }}
+                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none text-black"
+                style={{ appearance: "textfield", fontFamily: "inherit", color: "#000000" }}
               />
               <div
                 className="flex flex-col border-l"
@@ -214,8 +214,8 @@ export default function PriceLocationFilter({
                   handlePriceChange("pricePerCarat", "to", e.target.value)
                 }
                 placeholder="TO"
-                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none"
-                style={{ appearance: "textfield", fontFamily: "inherit" }}
+                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none text-black"
+                style={{ appearance: "textfield", fontFamily: "inherit", color: "#000000" }}
               />
               <div
                 className="flex flex-col border-l"
@@ -259,8 +259,8 @@ export default function PriceLocationFilter({
                   handlePriceChange("discount", "from", e.target.value)
                 }
                 placeholder="0"
-                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none"
-                style={{ appearance: "textfield", fontFamily: "inherit" }}
+                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none text-black"
+                style={{ appearance: "textfield", fontFamily: "inherit", color: "#000000" }}
               />
               <div
                 className="flex flex-col border-l"
@@ -296,8 +296,8 @@ export default function PriceLocationFilter({
                   handlePriceChange("discount", "to", e.target.value)
                 }
                 placeholder="TO"
-                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none"
-                style={{ appearance: "textfield", fontFamily: "inherit" }}
+                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none text-black"
+                style={{ appearance: "textfield", fontFamily: "inherit", color: "#000000" }}
               />
               <div
                 className="flex flex-col border-l"
@@ -341,8 +341,8 @@ export default function PriceLocationFilter({
                   handlePriceChange("totalPrice", "from", e.target.value)
                 }
                 placeholder="0"
-                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none"
-                style={{ appearance: "textfield", fontFamily: "inherit" }}
+                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none text-black"
+                style={{ appearance: "textfield", fontFamily: "inherit", color: "#000000" }}
               />
               <div
                 className="flex flex-col border-l"
@@ -378,8 +378,8 @@ export default function PriceLocationFilter({
                   handlePriceChange("totalPrice", "to", e.target.value)
                 }
                 placeholder="TO"
-                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none"
-                style={{ appearance: "textfield", fontFamily: "inherit" }}
+                className="w-14 px-1.5 py-0.5 text-center text-xs outline-none text-black"
+                style={{ appearance: "textfield", fontFamily: "inherit", color: "#000000" }}
               />
               <div
                 className="flex flex-col border-l"

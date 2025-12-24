@@ -82,6 +82,41 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // For Check button and dropdown
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [filterData, setFilterData] = useState<any>(null);
+  const [isChecking, setIsChecking] = useState(false);
+  // Handle Check button click
+  const handleCheckFilters = async () => {
+    setIsChecking(true);
+    setShowFilterDropdown(false);
+    setFilterData(null);
+    try {
+      const response = await fetch(
+        `https://dalila-inventory-service-dev.caratlogic.com/api/users/admin/supplier-settings/Dharam%20Web%20Api/filters`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) throw new Error("Failed to fetch filter data");
+      const data = await response.json();
+      if (data.success && data.data) {
+        setFilterData(data.data);
+        setShowFilterDropdown(true);
+      } else {
+        toast.error(data.message || "No filter data found");
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to fetch filter data");
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
   useEffect(() => {
     if (!isOpen) {
       // Reset filters when modal closes
@@ -333,7 +368,42 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
               </div>
 
               {/* Save Button - Positioned at the right end below filters */}
-              <div className="flex justify-end mb-3">
+              <div className="flex justify-end mb-3 gap-2">
+                {/* Check Button */}
+                <div className="relative">
+                  <button
+                    onClick={handleCheckFilters}
+                    disabled={isChecking}
+                    className="bg-[#050C3A] text-white px-6 py-2 rounded-md hover:bg-[#070d4a] transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    <Check className="w-4 h-4" />
+                    {isChecking ? "Loading..." : "Applied Filters"}
+                  </button>
+                  {/* Dropdown for filter data */}
+                  {showFilterDropdown && filterData && (
+                    <div className="absolute right-0 mt-2 w-80 bg-[#FAF6EB] text-gray-900 border border-gray-300 rounded shadow-lg z-50 p-4 text-sm">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold text-gray-900">Applied Filters</span>
+                        <button onClick={() => setShowFilterDropdown(false)} className="text-gray-600 hover:text-gray-900"><X className="w-4 h-4" /></button>
+                      </div>
+                      <div className="space-y-1">
+                        {Object.entries(filterData).map(([key, value]) => (
+                          <div key={key} className="flex gap-2 text-gray-800">
+                            <span className="font-medium capitalize min-w-[80px]">{key}:</span>
+                            <span>
+                              {Array.isArray(value)
+                                ? value.join(", ")
+                                : typeof value === "object" && value !== null
+                                  ? Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(", ")
+                                  : value?.toString()}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {/* Save Button */}
                 <button
                   onClick={handleApplyFilters}
                   disabled={isApplying}
