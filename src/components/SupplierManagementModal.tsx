@@ -50,16 +50,18 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
   const fetchTotalDiamonds = async () => {
     setLoadingCounts(true);
     try {
-      const response = await fetch(
-        "https://dalila-inventory-service-dev.caratlogic.com/api/diamonds/admin/search",
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      // Build URL with encoded query params and pagination
+      const url = new URL("https://dalila-inventory-service-dev.caratlogic.com/api/diamonds/admin/search");
+      url.searchParams.set("source", SUPPLIER_NAME);
+      url.searchParams.set("page", "1");
+      url.searchParams.set("limit", "10");
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch diamond count");
@@ -78,43 +80,11 @@ const SupplierManagementModal: React.FC<SupplierManagementModalProps> = ({
   };
 
   // Fetch supplier visibility status
-  const fetchSupplierStatus = async () => {
-    try {
-      // First, try to get from localStorage
-      const storedStatus = localStorage.getItem(`supplier_${SUPPLIER_NAME}_visible`);
-      if (storedStatus !== null) {
-        setIsVisible(storedStatus === 'true');
-      }
-
-      const response = await fetch(
-        `https://dalila-inventory-service-dev.caratlogic.com/api/users/admin/supplier-settings/${encodeURIComponent(SUPPLIER_NAME)}`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.isVisible !== undefined) {
-          setIsVisible(data.isVisible);
-          // Store in localStorage
-          localStorage.setItem(`supplier_${SUPPLIER_NAME}_visible`, String(data.isVisible));
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching supplier status:", error);
-    }
-  };
 
   // Load data when modal opens
   useEffect(() => {
     if (isOpen) {
       fetchTotalDiamonds();
-      fetchSupplierStatus();
     }
   }, [isOpen]);
 
