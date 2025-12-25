@@ -770,7 +770,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                 <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Star</th>
                 <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">H&A</th>
                 <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Branch</th>
-                <th className="w-30 px-2 py-3 text-left text-[14px] font-medium">DNA</th>
+                {/* <th className="w-30 px-2 py-3 text-left text-[14px] font-medium">DNA</th> */}
               </tr>
             </thead>
 
@@ -843,7 +843,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                   <td className="px-2 py-1 text-[14px] text-gray-700">{row.STAR || "N/A"}</td>
                   <td className="px-2 py-1 text-[14px] text-gray-700">{row.HA || "N/A"}</td>
                   <td className="px-2 py-1 text-[14px] text-gray-700">{row.BRANCH || "N/A"}</td>
-                  <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
+                  {/* <td className="px-2 py-1 text-[14px] text-gray-700 truncate">
                     {row.DNA ? (
                       <a 
                         href={row.DNA} 
@@ -854,7 +854,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
                         Link
                       </a>
                     ) : "N/A"}
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>
