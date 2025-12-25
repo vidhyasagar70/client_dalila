@@ -38,7 +38,7 @@ const STATIC_CARAT_RANGES: CaratRange[] = [
   { label: "4.00 - 4.99", value: "4.00-4.99", min: 4.0, max: 4.99 },
   { label: "5.00 - 6.99", value: "5.00-6.99", min: 5.0, max: 6.99 },
   { label: "7.01 - 9.99", value: "7.01-9.99", min: 7.01, max: 9.99 },
-  { label: "10.00 - 99.99", value: "10.00-99.99", min: 10.0, max: 99.99 },
+  
 ];
 
 

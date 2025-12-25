@@ -728,7 +728,7 @@ const InventoryDiamondTable: React.FC<InventoryTableProps> = ({
               className={`bg-[#050c3a] text-white sticky top-0 z-10 ${mavenPro.className}`}
             >
               <tr>
-                <th className="w-24 px-2 py-3 text-left text-[14px] font-medium">Stock ID</th>
+                <th className="w-28 px-2 py-3 text-left text-[14px] font-medium">Stock ID</th>
                 <th className="w-28 px-2 py-3 text-left text-[14px] font-medium">Source</th>
                 <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Location</th>
                 <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Stage</th>

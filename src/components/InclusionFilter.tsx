@@ -35,11 +35,13 @@ export interface InclusionFilters {
 interface InclusionFilterProps {
   inclusions: InclusionFilters;
   onInclusionChange: (inclusions: InclusionFilters) => void;
+  className?: string;
 }
 
 export default function InclusionFilter({
   inclusions,
   onInclusionChange,
+  className = "",
 }: InclusionFilterProps) {
   const toggleInclusion = (type: keyof InclusionFilters, value: string) => {
     const currentValues = inclusions[type] || [];
@@ -57,7 +59,7 @@ export default function InclusionFilter({
   };
 
   return (
-    <div className="mt-1" style={{ width: "100%" }}>
+    <div className={`mt-1 ${className}`} style={{ width: "100%" }}>
       {/* Header */}
       <div
         className="flex items-center gap-1.5 px-2.5 py-1.5"

@@ -220,7 +220,7 @@ const ConfigureAPIModal: React.FC<ConfigureAPIModalProps> = ({
 
       // Calculate min and max carat from selected ranges
       let minCarat = 0;
-      let maxCarat = 10;
+      let maxCarat = 0;
       if (selectedCaratRanges.length > 0) {
         const mins = selectedCaratRanges.map((r) => parseFloat(r.min));
         const maxs = selectedCaratRanges.map((r) => parseFloat(r.max));

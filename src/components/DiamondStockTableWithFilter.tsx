@@ -409,21 +409,27 @@ export default function DiamondStockTableWithFilter() {
           <InclusionFilter
             inclusions={inclusions}
             onInclusionChange={setInclusions}
+            className="ml-13 mr-5"
+            
           />
           <KeySymbolFilter
             filters={keySymbolFilters}
             onFiltersChange={setKeySymbolFilters}
+            className="ml-17 mr-5"
           />
-          <div>
-            <PriceLocationFilter
-              filters={priceLocationFilters}
-              onFiltersChange={setPriceLocationFilters}
+          <div className="ml-20">
+              <PriceLocationFilter
+                filters={priceLocationFilters}
+                onFiltersChange={setPriceLocationFilters}
             />
           </div>
+        <div className="ml-5">
           <MeasurementFilter
             measurements={measurements}
             onMeasurementChange={setMeasurements}
           />
+          </div>
+         
         </div>
       )}
 

@@ -26,11 +26,13 @@ export interface KeySymbolFilters {
 interface KeySymbolFilterProps {
   filters: KeySymbolFilters;
   onFiltersChange: (filters: KeySymbolFilters) => void;
+  className?: string;
 }
 
 export default function KeySymbolFilter({
   filters,
   onFiltersChange,
+  className = "",
 }: KeySymbolFilterProps) {
   const toggleFilter = (category: keyof KeySymbolFilters, value: string) => {
     const currentValues = filters[category] || [];
@@ -45,7 +47,7 @@ export default function KeySymbolFilter({
 
   return (
     <div
-      className="mt-1"
+      className={`mt-1 ${className}`}
       style={{ width: "100%", fontFamily: "'Maven Pro', sans-serif" }}
     >
       {/* Main Header with Icon */}
