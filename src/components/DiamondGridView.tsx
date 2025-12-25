@@ -70,6 +70,17 @@ const DiamondGridView: React.FC<GridViewProps> = ({
   // Memoize filter strings to prevent unnecessary re-renders
   // ...removed unused filterKey...
 
+  // Extracted variables for dependencies
+  const selectedShapeStr = JSON.stringify(selectedShape);
+  const selectedColorStr = JSON.stringify(selectedColor);
+  const selectedFluorStr = JSON.stringify(selectedFluor);
+  const selectedClarityStr = JSON.stringify(selectedClarity);
+  const selectedLocationsStr = JSON.stringify(selectedLocations);
+  const selectedLabsStr = JSON.stringify(selectedLabs);
+  const keySymbolFiltersStr = JSON.stringify(keySymbolFilters);
+  const inclusionFiltersStr = JSON.stringify(inclusionFilters);
+  const priceFiltersStr = JSON.stringify(priceFilters);
+
   useEffect(() => {
     const fetchDiamonds = async () => {
       try {
@@ -205,16 +216,24 @@ const DiamondGridView: React.FC<GridViewProps> = ({
     selectedCut,
     selectedPolish,
     selectedSymmetry,
-    // Extracted complex dependencies
-    useMemo(() => JSON.stringify(selectedShape), [selectedShape]),
-    useMemo(() => JSON.stringify(selectedColor), [selectedColor]),
-    useMemo(() => JSON.stringify(selectedFluor), [selectedFluor]),
-    useMemo(() => JSON.stringify(selectedClarity), [selectedClarity]),
-    useMemo(() => JSON.stringify(selectedLocations), [selectedLocations]),
-    useMemo(() => JSON.stringify(selectedLabs), [selectedLabs]),
-    useMemo(() => JSON.stringify(keySymbolFilters), [keySymbolFilters]),
-    useMemo(() => JSON.stringify(inclusionFilters), [inclusionFilters]),
-    useMemo(() => JSON.stringify(priceFilters), [priceFilters]),
+    selectedShapeStr,
+    selectedColorStr,
+    selectedFluorStr,
+    selectedClarityStr,
+    selectedLocationsStr,
+    selectedLabsStr,
+    keySymbolFiltersStr,
+    inclusionFiltersStr,
+    priceFiltersStr,
+    inclusionFilters,
+    keySymbolFilters,
+    priceFilters,
+    selectedClarity,
+    selectedColor,
+    selectedFluor,
+    selectedLabs,
+    selectedLocations,
+    selectedShape,
   ]);
 
   // Calculate pagination with rowsPerPage

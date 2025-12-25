@@ -920,6 +920,14 @@ const DiamondDetailView: React.FC<DiamondDetailViewProps> = ({
                     <div className="text-xs text-gray-600 mb-1">Comments</div>
                     <div className="font-bold text-gray-900">{diamond.COMMENTS_1 || 'N/A'}</div>
                   </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-1">Side effect</div>
+                    <div className="font-bold text-gray-900">{diamond.SW || 'N/A'}</div>
+                  </div>
+                   <div>
+                    <div className="text-xs text-gray-600 mb-1">Table inclusion</div>
+                    <div className="font-bold text-gray-900">{diamond.SN || 'N/A'}</div>
+                  </div>
                 </div>
               </div>
               </div>

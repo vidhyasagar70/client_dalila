@@ -46,6 +46,9 @@ export interface DiamondData {
   EY_CLN?: string;
   H_AND_A?: string;
   priceFilters?: string;
+  LENGTH?: string;
+  WIDTH?: string;
+  DEPTH?: string;
 }
 
 export interface FilterParams {
