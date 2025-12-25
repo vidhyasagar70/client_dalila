@@ -239,7 +239,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
           hasInclusionFilter ||
           hasKeySymbolFilter ||
           hasPriceFilter ||
-          hasMeasurementFilter; 
+          hasMeasurementFilter; // Add measurement filter check
 
         let response;
         if (hasAnyFilter) {
@@ -685,7 +685,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
     );
   }
 
-  if (!loading && data.length === 0) {
+  if (data.length === 0) {
     return (
       <div className="w-full h-96 flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -809,10 +809,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
                   <th className="w-60 px-2 py-3 text-left text-[14px] font-medium">Comments</th>
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Depth%</th>
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Table%</th>
-                 
-                   <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Length</th>
-                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Width</th>
-                <th className="w-16 px-2 py-3 text-left text-[14px] font-medium">Depth</th>
+                  <th className="w-30 px-2 py-3 text-left text-[14px] font-medium">Measure</th>
                   <th className="w-35 px-2 py-3 text-left text-[14px] font-medium">Key Symbols</th>
                   <th className="w-60 px-2 py-3 text-left text-[14px] font-medium">Report Comments</th>
                   <th className="w-20 px-2 py-3 text-left text-[14px] font-medium">Crn Angle</th>
@@ -913,10 +910,7 @@ const DiamondStockTable: React.FC<TableProps> = ({
                     <td className="px-2 py-1 text-[14px] text-gray-700 max-w-[240px]" title={row.COMMENTS_1}><div className="truncate">{row.COMMENTS_1 || "N/A"}</div></td>
                     <td className="px-2 py-1 text-[14px] text-gray-700">{row.DEPTH_PER || "N/A"}</td>
                     <td className="px-2 py-1 text-[14px] text-gray-700">{row.TABLE_PER || "N/A"}</td>
-                    
-                    <td className="px-2 py-1 text-[14px] text-gray-700">{row.LENGTH || "N/A"}</td>
-                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.WIDTH || "N/A"}</td>
-                  <td className="px-2 py-1 text-[14px] text-gray-700">{row.DEPTH || "N/A"}</td>
+                    <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.MEASUREMENTS || "N/A"}</td>
                     <td className="px-2 py-1 text-[14px] text-gray-700 truncate">{row.KEY_TO_SYMBOLS || "N/A"}</td>
                     <td className="px-2 py-1 text-[14px] text-gray-700 max-w-[240px]" title={row.REPORT_COMMENTS}><div className="truncate">{row.REPORT_COMMENTS || "N/A"}</div></td>
                     <td className="px-2 py-1 text-[14px] text-gray-700">{row.CROWN_ANGLE || "N/A"}</td>
